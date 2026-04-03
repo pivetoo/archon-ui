@@ -61,7 +61,8 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
       setLoading(true);
       setError(null);
       const response = await httpClient.get<Notificacao[]>('/Notificacao/GetMinhas');
-      const mapped = response.data.map(mapToNotificationItem);
+      const notificationsData = response.data ?? [];
+      const mapped = notificationsData.map(mapToNotificationItem);
       setNotifications(mapped);
     } catch {
       setError('Erro ao carregar notificações');

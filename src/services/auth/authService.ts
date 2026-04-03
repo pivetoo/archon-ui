@@ -9,13 +9,17 @@ export class AuthService {
       password: credentials.password,
     })
 
-    return response.data
+    return response.data ?? null
   }
 
   static async loginWithContract(request: ContractLoginRequest): Promise<LoginResult> {
     const response = await httpClient.post<LoginResult>("/auth/LoginWithContract", request)
 
     const loginData = response.data
+    if (!loginData) {
+      throw new Error("Login response is empty.")
+    }
+
     const { accessToken, refreshToken, user, contract } = loginData
 
     localStorage.setItem("@Archon:accessToken", accessToken)
@@ -97,6 +101,10 @@ export class AuthService {
       })
 
       const tokenData = response.data
+      if (!tokenData) {
+        throw new Error("Refresh token response is empty.")
+      }
+
       const { accessToken, refreshToken: newRefreshToken } = tokenData
 
       localStorage.setItem("@Archon:accessToken", accessToken)
