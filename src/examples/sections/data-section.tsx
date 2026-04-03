@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Database, Eye, Filter, Search } from "lucide-react"
+import { Eye, Filter, Search } from "lucide-react"
 import {
   Badge,
   Button,
@@ -55,7 +55,6 @@ export function DataSection() {
       <PageLayout
         title="Gestão de usuários"
         subtitle="Exemplo com cabeçalho contextual, ações rápidas e tabela de leitura mais refinada"
-        icon={<Database className="h-5 w-5" />}
         filtersSlot={
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap items-center gap-2">

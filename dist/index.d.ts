@@ -568,7 +568,6 @@ export declare const PageLayout: React_2.FC<PageLayoutProps>;
 export declare interface PageLayoutProps {
     title: string;
     subtitle?: string;
-    icon?: React_2.ReactNode;
     titleClassName?: string;
     density?: "default" | "compact";
     filtersSlot?: React_2.ReactNode;

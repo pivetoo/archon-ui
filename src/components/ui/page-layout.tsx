@@ -16,7 +16,6 @@ export interface PageAction {
 export interface PageLayoutProps {
   title: string
   subtitle?: string
-  icon?: React.ReactNode
   titleClassName?: string
   density?: "default" | "compact"
   filtersSlot?: React.ReactNode
@@ -34,7 +33,6 @@ export interface PageLayoutProps {
 export const PageLayout: React.FC<PageLayoutProps> = ({
   title,
   subtitle,
-  icon,
   titleClassName,
   density = "default",
   filtersSlot,
@@ -141,12 +139,6 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         >
           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div className="flex min-w-0 items-start gap-4">
-              {icon && (
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-border/70 bg-muted/35 text-primary">
-                  {icon}
-                </div>
-              )}
-
               <div className="min-w-0 space-y-2">
                 <div className="flex items-center gap-2">
                   <h1
