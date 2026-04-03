@@ -574,6 +574,7 @@ export declare interface PageLayoutProps {
     actions?: PageAction[];
     showDefaultActions?: boolean;
     onAdd?: () => void;
+    onView?: () => void;
     onEdit?: () => void;
     onDelete?: () => void;
     onRefresh?: () => void;

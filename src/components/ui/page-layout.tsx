@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Plus, Edit, Trash2, RefreshCw } from "lucide-react"
+import { Eye, Plus, Edit, Trash2, RefreshCw } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Button } from "./button"
 import { useToast } from "./use-toast"
@@ -22,6 +22,7 @@ export interface PageLayoutProps {
   actions?: PageAction[]
   showDefaultActions?: boolean
   onAdd?: () => void
+  onView?: () => void
   onEdit?: () => void
   onDelete?: () => void
   onRefresh?: () => void
@@ -39,6 +40,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   actions = [],
   showDefaultActions = true,
   onAdd,
+  onView,
   onEdit,
   onDelete,
   onRefresh,
@@ -79,6 +81,26 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     onEdit?.()
   }
 
+  const handleView = () => {
+    if (selectedRowsCount === 0) {
+      toast({
+        title: 'Atenção',
+        description: 'Selecione um registro para visualizar.',
+        variant: 'warning',
+      })
+      return
+    }
+    if (selectedRowsCount > 1) {
+      toast({
+        title: 'Atenção',
+        description: 'Selecione apenas um registro para visualizar.',
+        variant: 'warning',
+      })
+      return
+    }
+    onView?.()
+  }
+
   const handleDelete = () => {
     if (selectedRowsCount === 0) {
       toast({
@@ -101,6 +123,16 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         icon: <Plus className="h-4 w-4" />,
         variant: "secondary",
         onClick: onAdd
+      })
+    }
+
+    if (onView) {
+      defaultActions.push({
+        key: "view",
+        label: "Visualizar",
+        icon: <Eye className="h-4 w-4" />,
+        variant: "outline",
+        onClick: handleView
       })
     }
 

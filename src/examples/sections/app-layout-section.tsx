@@ -217,6 +217,7 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
           title="Usuários"
           subtitle="Gestão de acessos e perfis"
           onAdd={() => toast({ title: "Usuários", description: "Incluir acionado", variant: "success" })}
+          onView={() => toast({ title: "Usuários", description: "Visualizar acionado", variant: "info" })}
           onEdit={() => toast({ title: "Usuários", description: "Editar acionado", variant: "info" })}
           onDelete={() => toast({ title: "Usuários", description: "Excluir acionado", variant: "warning" })}
           selectedRowsCount={selectedUsers.length}
