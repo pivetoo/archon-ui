@@ -21,7 +21,7 @@ import {
 const systems = [
   { value: "portal", label: "FinanceChannel" },
   { value: "workforce", label: "MarketChannel" },
-  { value: "identity", label: "IdentityProvider" },
+  { value: "identity", label: "IdentityManagement" },
 ]
 
 export function FormsSection() {

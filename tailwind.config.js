@@ -22,6 +22,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["IBM Plex Sans", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

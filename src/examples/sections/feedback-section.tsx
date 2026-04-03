@@ -82,7 +82,7 @@ export function FeedbackSection() {
             <ModalHeader>
               <ModalTitle>Novo vínculo</ModalTitle>
               <ModalDescription>
-                Este exemplo demonstra a composição padrão do modal no dRTS.
+                Este exemplo demonstra a composição padrão do modal no archon-ui.
               </ModalDescription>
             </ModalHeader>
             <ModalFooter>

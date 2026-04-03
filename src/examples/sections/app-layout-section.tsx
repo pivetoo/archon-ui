@@ -296,7 +296,7 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
 
   return (
     <AppLayout
-      title="dRTS"
+      title="archon-ui"
       logo={sidebarLogo}
       subtitle={companyName}
       user={{ name: "Usuário Exemplo", email: "usuario@empresa.com", role: "Administrador" }}
@@ -312,7 +312,7 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
         <Modal open onOpenChange={(open) => { if (!open) { close() } }}>
           <ModalContent size="md">
             <ModalHeader>
-              <ModalTitle>Sobre o dRTS</ModalTitle>
+              <ModalTitle>Sobre o archon-ui</ModalTitle>
               <ModalDescription>
                 Exemplo de injeção do modal via `renderAboutModal` no AppLayout.
               </ModalDescription>

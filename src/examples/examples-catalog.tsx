@@ -25,7 +25,7 @@ export function ExamplesCatalog() {
         <Card>
           <CardHeader className="pb-3">
             <div className="flex flex-wrap items-center gap-2">
-              <CardTitle>dRTS - Catálogo de exemplos</CardTitle>
+              <CardTitle>archon-ui - Catálogo de exemplos</CardTitle>
               <Badge variant="info">Playground</Badge>
             </div>
           </CardHeader>
