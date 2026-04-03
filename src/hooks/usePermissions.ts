@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 interface UsePermissionsReturn {
   permissions: string[];
-  isSuperUser: boolean;
+  isRoot: boolean;
   hasPermission: (permission: string) => boolean;
   hasAnyPermission: (permissions: string[]) => boolean;
   hasAllPermissions: (permissions: string[]) => boolean;
@@ -28,9 +28,9 @@ function decodeJwtPayload(token: string): Record<string, unknown> {
 export function usePermissions(): UsePermissionsReturn {
   const { accessToken } = useAuth();
 
-  const { permissions, isSuperUser } = useMemo(() => {
+  const { permissions, isRoot } = useMemo(() => {
     if (!accessToken) {
-      return { permissions: [], isSuperUser: false };
+      return { permissions: [], isRoot: false };
     }
 
     const payload = decodeJwtPayload(accessToken);
@@ -44,28 +44,28 @@ export function usePermissions(): UsePermissionsReturn {
 
     return {
       permissions: perms,
-      isSuperUser: payload.super_user === 'true'
+      isRoot: payload.root === 'true'
     };
   }, [accessToken]);
 
   const hasPermission = (permission: string): boolean => {
-    if (isSuperUser) return true;
+    if (isRoot) return true;
     return permissions.includes(permission);
   };
 
   const hasAnyPermission = (perms: string[]): boolean => {
-    if (isSuperUser) return true;
+    if (isRoot) return true;
     return perms.some(p => permissions.includes(p));
   };
 
   const hasAllPermissions = (perms: string[]): boolean => {
-    if (isSuperUser) return true;
+    if (isRoot) return true;
     return perms.every(p => permissions.includes(p));
   };
 
   return {
     permissions,
-    isSuperUser,
+    isRoot,
     hasPermission,
     hasAnyPermission,
     hasAllPermissions

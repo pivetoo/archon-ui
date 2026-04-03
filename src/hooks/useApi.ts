@@ -7,6 +7,8 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
     data: null,
     loading: false,
     error: null,
+    message: '',
+    pagination: null,
   });
 
   const execute = async (apiCall: () => Promise<any>) => {
@@ -14,17 +16,16 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
 
     try {
       const response = await apiCall();
-      const data = (response && typeof response === 'object' && ('total' in response || 'page' in response))
-        ? response
-        : (response.data || response);
-      const successMessage =
-        (typeof response?.message === 'string' ? response.message : undefined) ||
-        (typeof response?.data?.message === 'string' ? response.data.message : undefined);
+      const data = response?.data ?? null;
+      const successMessage = typeof response?.message === 'string' ? response.message : '';
+      const pagination = response?.pagination ?? null;
 
       setState({
         data,
         loading: false,
         error: null,
+        message: successMessage,
+        pagination,
       });
 
       if (options.onSuccess) {
@@ -51,6 +52,8 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
         data: null,
         loading: false,
         error: apiError,
+        message: '',
+        pagination: null,
       });
 
       if (options.onError) {
@@ -74,6 +77,8 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
       data: null,
       loading: false,
       error: null,
+      message: '',
+      pagination: null,
     });
   };
 

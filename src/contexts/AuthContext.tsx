@@ -19,21 +19,21 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }) => {
   const [user, setUser] = React.useState<User | null>(() => {
-    const storedUser = localStorage.getItem("@IdentityProvider:user")
+    const storedUser = localStorage.getItem("@Archon:user")
     return storedUser ? JSON.parse(storedUser) : null
   })
 
   const [contract, setContract] = React.useState<ContractType | null>(() => {
-    const storedContract = localStorage.getItem("@IdentityProvider:contract")
+    const storedContract = localStorage.getItem("@Archon:contract")
     return storedContract ? JSON.parse(storedContract) : null
   })
 
   const [accessToken, setAccessToken] = React.useState<string | null>(() => {
-    return localStorage.getItem("@IdentityProvider:accessToken")
+    return localStorage.getItem("@Archon:accessToken")
   })
 
   const [refreshToken, setRefreshToken] = React.useState<string | null>(() => {
-    return localStorage.getItem("@IdentityProvider:refreshToken")
+    return localStorage.getItem("@Archon:refreshToken")
   })
 
   const login = React.useCallback((data: LoginResult) => {
@@ -42,11 +42,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
     setAccessToken(data.accessToken)
     setRefreshToken(data.refreshToken)
 
-    const { criadoEm, ultimaAlteracao, lastLoginAt, ...userToStore } = data.user as User & { criadoEm?: string; ultimaAlteracao?: string }
-    localStorage.setItem("@IdentityProvider:user", JSON.stringify(userToStore))
-    localStorage.setItem("@IdentityProvider:contract", JSON.stringify(data.contract))
-    localStorage.setItem("@IdentityProvider:accessToken", data.accessToken)
-    localStorage.setItem("@IdentityProvider:refreshToken", data.refreshToken)
+    localStorage.setItem("@Archon:user", JSON.stringify(data.user))
+    localStorage.setItem("@Archon:contract", JSON.stringify(data.contract))
+    localStorage.setItem("@Archon:accessToken", data.accessToken)
+    localStorage.setItem("@Archon:refreshToken", data.refreshToken)
   }, [])
 
   const logout = React.useCallback(() => {
@@ -55,10 +54,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
     setAccessToken(null)
     setRefreshToken(null)
 
-    localStorage.removeItem("@IdentityProvider:user")
-    localStorage.removeItem("@IdentityProvider:contract")
-    localStorage.removeItem("@IdentityProvider:accessToken")
-    localStorage.removeItem("@IdentityProvider:refreshToken")
+    localStorage.removeItem("@Archon:user")
+    localStorage.removeItem("@Archon:contract")
+    localStorage.removeItem("@Archon:accessToken")
+    localStorage.removeItem("@Archon:refreshToken")
 
     onLogout?.()
   }, [onLogout])
@@ -74,8 +73,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
       if (tokenData) {
         setAccessToken(tokenData.accessToken)
         setRefreshToken(tokenData.refreshToken)
-        localStorage.setItem("@IdentityProvider:accessToken", tokenData.accessToken)
-        localStorage.setItem("@IdentityProvider:refreshToken", tokenData.refreshToken)
+        localStorage.setItem("@Archon:accessToken", tokenData.accessToken)
+        localStorage.setItem("@Archon:refreshToken", tokenData.refreshToken)
       }
     } catch (error) {
       logout()
@@ -83,11 +82,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
   }, [logout])
 
   const getActiveSessions = React.useCallback(async (): Promise<ActiveSession[]> => {
-    try {
-      return await AuthService.getActiveSessions()
-    } catch (error) {
-      return []
-    }
+    return []
   }, [])
 
   const updateUser = React.useCallback(
@@ -95,8 +90,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
       if (user) {
         const updatedUser = { ...user, ...userData }
         setUser(updatedUser)
-        const { criadoEm, ultimaAlteracao, lastLoginAt, ...userToStore } = updatedUser as User & { criadoEm?: string; ultimaAlteracao?: string }
-        localStorage.setItem("@IdentityProvider:user", JSON.stringify(userToStore))
+        localStorage.setItem("@Archon:user", JSON.stringify(updatedUser))
       }
     },
     [user]

@@ -1,17 +1,18 @@
 export interface IdentifyResult {
-  usuarioId: number
-  usuarioName: string
-  usuarioEmail: string
+  authenticationStep: 'contractSelection'
+  userId: number
+  userName: string
+  userEmail: string
   temporaryToken: string
-  availableContratos: ContractType[]
+  availableContracts: ContractType[]
 }
 
 export interface ContractType {
-  contratoId: number
-  sistemaName: string
-  empresaName: string
-  redirectUris: string[]
-  perfilName?: string
+  contractId: number
+  systemApplicationName: string
+  companyName: string
+  redirectUris: string
+  roleName?: string
 }
 
 export interface User {
@@ -25,6 +26,7 @@ export interface User {
 }
 
 export interface LoginResult {
+  authenticationStep: 'completed'
   accessToken: string
   refreshToken: string
   tokenType?: string
@@ -40,8 +42,8 @@ export interface LoginCredentials {
 }
 
 export interface ContractLoginRequest {
-  usuarioId: number
-  contratoId: number
+  userId: number
+  contractId: number
   temporaryToken: string
 }
 
@@ -78,7 +80,7 @@ export interface AuthContextData {
   isAuthenticated: boolean
   login: (data: LoginResult) => void
   logout: () => void
-  logoutAllDevices: () => void
+  logoutAllDevices: () => Promise<void>
   refreshAccessToken: () => Promise<void>
   getActiveSessions: () => Promise<ActiveSession[]>
   updateUser: (userData: Partial<User>) => void

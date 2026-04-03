@@ -1,10 +1,10 @@
 import axios from "axios"
-import { httpClient, getIdentityProviderURL } from "../http/client"
+import { httpClient, getIdentityManagementURL } from "../http/client"
 import type { IdentifyResult, LoginResult, LoginCredentials, ContractLoginRequest, RefreshTokenResponse, ActiveSession } from "../../types/auth"
 
 export class AuthService {
   static async identify(credentials: LoginCredentials): Promise<IdentifyResult | LoginResult | null> {
-    const response = await httpClient.post<IdentifyResult | LoginResult>("/auth/IdentifyUser", {
+    const response = await httpClient.post<IdentifyResult | LoginResult>("/auth/Identify", {
       username: credentials.username,
       password: credentials.password,
     })
@@ -18,53 +18,52 @@ export class AuthService {
     const loginData = response.data
     const { accessToken, refreshToken, user, contract } = loginData
 
-    localStorage.setItem("@IdentityProvider:accessToken", accessToken)
-    localStorage.setItem("@IdentityProvider:refreshToken", refreshToken)
-    localStorage.setItem("@IdentityProvider:user", JSON.stringify(user))
-    localStorage.setItem("@IdentityProvider:contract", JSON.stringify(contract))
+    localStorage.setItem("@Archon:accessToken", accessToken)
+    localStorage.setItem("@Archon:refreshToken", refreshToken)
+    localStorage.setItem("@Archon:user", JSON.stringify(user))
+    localStorage.setItem("@Archon:contract", JSON.stringify(contract))
 
     return loginData
   }
 
   static async login(credentials: LoginCredentials) {
-    const response = await httpClient.post<LoginResult>("/auth/login", {
-      username: credentials.username,
-      password: credentials.password,
-    })
+    const result = await this.identify(credentials)
 
-    const loginData = response.data
-    const { accessToken, refreshToken, user } = loginData
+    if (!result || result.authenticationStep !== "completed") {
+      throw new Error("Login requires contract selection.")
+    }
 
-    localStorage.setItem("@IdentityProvider:accessToken", accessToken)
-    localStorage.setItem("@IdentityProvider:refreshToken", refreshToken)
-    localStorage.setItem("@IdentityProvider:user", JSON.stringify(user))
+    localStorage.setItem("@Archon:accessToken", result.accessToken)
+    localStorage.setItem("@Archon:refreshToken", result.refreshToken)
+    localStorage.setItem("@Archon:user", JSON.stringify(result.user))
+    localStorage.setItem("@Archon:contract", JSON.stringify(result.contract))
 
-    return loginData
+    return result
   }
 
   static logout(): void {
-    localStorage.removeItem("@IdentityProvider:accessToken")
-    localStorage.removeItem("@IdentityProvider:refreshToken")
-    localStorage.removeItem("@IdentityProvider:user")
-    localStorage.removeItem("@IdentityProvider:contract")
+    localStorage.removeItem("@Archon:accessToken")
+    localStorage.removeItem("@Archon:refreshToken")
+    localStorage.removeItem("@Archon:user")
+    localStorage.removeItem("@Archon:contract")
   }
 
   static isAuthenticated(): boolean {
-    const token = localStorage.getItem("@IdentityProvider:accessToken")
+    const token = localStorage.getItem("@Archon:accessToken")
     return !!token
   }
 
   static getCurrentUser(): any | null {
-    const userStr = localStorage.getItem("@IdentityProvider:user")
+    const userStr = localStorage.getItem("@Archon:user")
     return userStr ? JSON.parse(userStr) : null
   }
 
   static getAccessToken(): string | null {
-    return localStorage.getItem("@IdentityProvider:accessToken")
+    return localStorage.getItem("@Archon:accessToken")
   }
 
   static getRefreshToken(): string | null {
-    return localStorage.getItem("@IdentityProvider:refreshToken")
+    return localStorage.getItem("@Archon:refreshToken")
   }
 
   static async logoutFromServer(): Promise<void> {
@@ -72,7 +71,7 @@ export class AuthService {
       const refreshToken = this.getRefreshToken()
       if (refreshToken) {
         await axios.post(
-          `${getIdentityProviderURL()}/auth/Logout`,
+          `${getIdentityManagementURL()}/api/auth/Logout`,
           { refreshToken },
           { headers: { "Content-Type": "application/json" } }
         )
@@ -83,18 +82,7 @@ export class AuthService {
   }
 
   static async logoutAllDevices(): Promise<void> {
-    try {
-      const refreshToken = this.getRefreshToken()
-      if (refreshToken) {
-        await axios.post(
-          `${getIdentityProviderURL()}/auth/LogoutAllDevices`,
-          { refreshToken },
-          { headers: { "Content-Type": "application/json" } }
-        )
-      }
-    } finally {
-      this.logout()
-    }
+    await this.logoutFromServer()
   }
 
   static async refreshAccessToken(): Promise<RefreshTokenResponse | null> {
@@ -111,8 +99,8 @@ export class AuthService {
       const tokenData = response.data
       const { accessToken, refreshToken: newRefreshToken } = tokenData
 
-      localStorage.setItem("@IdentityProvider:accessToken", accessToken)
-      localStorage.setItem("@IdentityProvider:refreshToken", newRefreshToken)
+      localStorage.setItem("@Archon:accessToken", accessToken)
+      localStorage.setItem("@Archon:refreshToken", newRefreshToken)
 
       return tokenData
     } catch (error) {
@@ -121,20 +109,8 @@ export class AuthService {
     }
   }
 
-  static async revokeRefreshToken(refreshToken?: string): Promise<void> {
-    const tokenToRevoke = refreshToken || this.getRefreshToken()
-    if (!tokenToRevoke) {
-      return
-    }
-
-    await httpClient.post("/auth/RevokeRefreshToken", {
-      refreshToken: tokenToRevoke,
-    })
-  }
-
   static async getActiveSessions(): Promise<ActiveSession[]> {
-    const response = await httpClient.get<ActiveSession[]>("/auth/GetActiveSessions")
-    return response.data
+    return []
   }
 
   static isTokenExpiringSoon(token: string, minutesBeforeExpiry: number = 5): boolean {

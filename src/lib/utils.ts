@@ -13,5 +13,3 @@ export function getInitials(name: string): string {
   }
   return name.substring(0, 2).toUpperCase()
 }
-
-export * from './odata'

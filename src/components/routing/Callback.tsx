@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts';
 
 export interface CallbackProps {
   redirectTo?: string;
-  identityProviderUrl?: string;
+  identityManagementUrl?: string;
   onSuccess?: () => void;
   onError?: (error: Error) => void;
 }
@@ -17,11 +17,11 @@ interface JwtPayload {
   email?: string | string[];
   name?: string;
   given_name?: string;
-  contrato_id?: string;
+  contract_id?: string;
   client_id?: string;
-  perfil_name?: string;
-  empresa_name?: string;
-  sistema_name?: string;
+  role_name?: string;
+  company_name?: string;
+  system_application_name?: string;
   [key: string]: unknown;
 }
 
@@ -43,7 +43,7 @@ const parseJwt = (token: string): JwtPayload | null => {
 
 export const Callback: React.FC<CallbackProps> = ({
   redirectTo = '/',
-  identityProviderUrl,
+  identityManagementUrl,
   onSuccess,
   onError
 }) => {
@@ -76,12 +76,13 @@ export const Callback: React.FC<CallbackProps> = ({
             name: payload?.name || payload?.given_name || ''
           },
           contract: {
-            contratoId: Number(payload?.contrato_id || 0),
-            sistemaName: payload?.sistema_name || '',
-            empresaName: payload?.empresa_name || '',
-            redirectUris: [],
-            perfilName: payload?.perfil_name || ''
-          }
+            contractId: Number(payload?.contract_id || 0),
+            systemApplicationName: payload?.system_application_name || '',
+            companyName: payload?.company_name || '',
+            redirectUris: '',
+            roleName: payload?.role_name || ''
+          },
+          authenticationStep: 'completed' as const
         };
 
         login(loginData);
@@ -96,7 +97,7 @@ export const Callback: React.FC<CallbackProps> = ({
           onError(error as Error);
         }
 
-        const idpUrl = identityProviderUrl || import.meta.env.VITE_IDENTITY_PROVIDER_URL;
+        const idpUrl = identityManagementUrl || import.meta.env.VITE_IDENTITY_MANAGEMENT_URL;
         if (idpUrl) {
           window.location.href = idpUrl;
         }
@@ -104,7 +105,7 @@ export const Callback: React.FC<CallbackProps> = ({
     };
 
     processCallback();
-  }, [searchParams, login, navigate, redirectTo, identityProviderUrl, onSuccess, onError]);
+  }, [searchParams, login, navigate, redirectTo, identityManagementUrl, onSuccess, onError]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background gap-6">

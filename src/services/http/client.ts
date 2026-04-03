@@ -3,7 +3,11 @@ import type { ApiResponse, ApiError } from "./types"
 
 let globalLoaderContext: any = null
 let apiBaseURL: string = ""
-let identityProviderURL: string = ""
+let identityManagementURL: string = ""
+const ACCESS_TOKEN_KEY = "@Archon:accessToken"
+const REFRESH_TOKEN_KEY = "@Archon:refreshToken"
+const USER_KEY = "@Archon:user"
+const CONTRACT_KEY = "@Archon:contract"
 
 export const setGlobalLoaderContext = (context: any) => {
   globalLoaderContext = context
@@ -16,11 +20,11 @@ export const setApiBaseURL = (url: string) => {
 
 export const getApiBaseURL = () => apiBaseURL
 
-export const setIdentityProviderURL = (url: string) => {
-  identityProviderURL = url
+export const setIdentityManagementURL = (url: string) => {
+  identityManagementURL = url
 }
 
-export const getIdentityProviderURL = () => identityProviderURL
+export const getIdentityManagementURL = () => identityManagementURL
 
 class HttpClient {
   private instance
@@ -43,7 +47,7 @@ class HttpClient {
 
   private setupInterceptors() {
     this.instance.interceptors.request.use((config) => {
-      const token = localStorage.getItem("@IdentityProvider:accessToken")
+      const token = localStorage.getItem(ACCESS_TOKEN_KEY)
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
@@ -71,12 +75,12 @@ class HttpClient {
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true
 
-          const refreshToken = localStorage.getItem("@IdentityProvider:refreshToken")
+          const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
 
-          if (refreshToken) {
+          if (refreshToken && identityManagementURL) {
             try {
               const response = await axios.post(
-                `${identityProviderURL}/auth/RefreshToken`,
+                `${identityManagementURL}/api/auth/RefreshToken`,
                 { refreshToken },
                 {
                   headers: {
@@ -85,28 +89,26 @@ class HttpClient {
                 }
               )
 
-              const { accessToken, refreshToken: newRefreshToken } = response.data
+              const accessToken = response.data?.data?.accessToken ?? response.data?.accessToken
+              const newRefreshToken = response.data?.data?.refreshToken ?? response.data?.refreshToken
 
-              localStorage.setItem("@IdentityProvider:accessToken", accessToken)
+              localStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
               if (newRefreshToken) {
-                localStorage.setItem("@IdentityProvider:refreshToken", newRefreshToken)
+                localStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken)
               }
 
               originalRequest.headers.Authorization = `Bearer ${accessToken}`
               return this.instance(originalRequest)
             } catch (refreshError) {
-              localStorage.removeItem("@IdentityProvider:accessToken")
-              localStorage.removeItem("@IdentityProvider:refreshToken")
-              localStorage.removeItem("@IdentityProvider:user")
-              localStorage.removeItem("@IdentityProvider:contract")
+              localStorage.removeItem(ACCESS_TOKEN_KEY)
+              localStorage.removeItem(REFRESH_TOKEN_KEY)
+              localStorage.removeItem(USER_KEY)
+              localStorage.removeItem(CONTRACT_KEY)
 
               return Promise.reject(refreshError)
             }
           } else {
-            const isAuthEndpoint =
-              originalRequest.url?.includes("/auth/") ||
-              originalRequest.url?.includes("IdentifyUser") ||
-              originalRequest.url?.includes("LoginWithContract")
+            const isAuthEndpoint = originalRequest.url?.includes("/auth/")
 
             if (!isAuthEndpoint) {
               window.location.href = "/"
@@ -173,70 +175,65 @@ class HttpClient {
   async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.instance.get(url, config)
 
-    if (response.data && typeof response.data === "object" && "data" in response.data) {
+    if (response.data && typeof response.data === "object" && "message" in response.data) {
       return response.data
     }
 
     return {
+      message: "",
       data: response.data,
-      success: true,
-      statusCode: response.status,
     }
   }
 
   async post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.instance.post(url, data, config)
 
-    if (response.data && typeof response.data === "object" && "data" in response.data) {
+    if (response.data && typeof response.data === "object" && "message" in response.data) {
       return response.data
     }
 
     return {
+      message: "",
       data: response.data,
-      success: true,
-      statusCode: response.status,
     }
   }
 
   async put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.instance.put(url, data, config)
 
-    if (response.data && typeof response.data === "object" && "data" in response.data) {
+    if (response.data && typeof response.data === "object" && "message" in response.data) {
       return response.data
     }
 
     return {
+      message: "",
       data: response.data,
-      success: true,
-      statusCode: response.status,
     }
   }
 
   async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.instance.delete(url, config)
 
-    if (response.data && typeof response.data === "object" && "data" in response.data) {
+    if (response.data && typeof response.data === "object" && "message" in response.data) {
       return response.data
     }
 
     return {
+      message: "",
       data: response.data,
-      success: true,
-      statusCode: response.status,
     }
   }
 
   async patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.instance.patch(url, data, config)
 
-    if (response.data && typeof response.data === "object" && "data" in response.data) {
+    if (response.data && typeof response.data === "object" && "message" in response.data) {
       return response.data
     }
 
     return {
+      message: "",
       data: response.data,
-      success: true,
-      statusCode: response.status,
     }
   }
 }
