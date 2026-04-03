@@ -43,8 +43,7 @@ type DepartmentRow = { id: number; nome: string; responsavel: string; colaborado
 export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
   const [currentModule, setCurrentModule] = React.useState("portal")
   const [currentPage, setCurrentPage] = React.useState<PageKey>("dashboard")
-  const [companyName, setCompanyName] = React.useState("Empresa de Testes ME")
-  const [supportEmail, setSupportEmail] = React.useState("suporte@empresa.com")
+  const companyName = "Empresa de Testes ME"
   const [maintenanceMode, setMaintenanceMode] = React.useState(false)
   const [selectedUsers, setSelectedUsers] = React.useState<UserRow[]>([])
   const [selectedDepartment, setSelectedDepartment] = React.useState<DepartmentRow | null>(null)

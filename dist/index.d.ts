@@ -293,6 +293,30 @@ export declare interface DataTableColumn<T = any> {
     width?: string | number;
 }
 
+export declare function DataTablePreview<T = any>({ columns, data, rowKey, selectedRow, onRowSelect, renderDetail, renderPagination, className, tableClassName, detailClassName, gridRatio, }: DataTablePreviewProps<T>): JSX.Element;
+
+export declare interface DataTablePreviewColumn<T = any> {
+    key: string;
+    title: string;
+    dataIndex?: keyof T;
+    render?: (value: any, record: T) => React_2.ReactNode;
+    width?: string | number;
+}
+
+export declare interface DataTablePreviewProps<T = any> {
+    columns: DataTablePreviewColumn<T>[];
+    data: T[];
+    rowKey: keyof T | ((record: T) => string | number);
+    selectedRow?: T | null;
+    onRowSelect?: (record: T | null) => void;
+    renderDetail?: (record: T) => React_2.ReactNode;
+    renderPagination?: () => React_2.ReactNode;
+    className?: string;
+    tableClassName?: string;
+    detailClassName?: string;
+    gridRatio?: [number, number];
+}
+
 export declare interface DataTableProps<T = any> {
     columns: DataTableColumn<T>[];
     data: T[];
@@ -308,30 +332,6 @@ export declare interface DataTableProps<T = any> {
     dragSelect?: boolean;
     pageSize?: number;
     pageSizeOptions?: number[];
-}
-
-export declare function DataTableWithDetail<T = any>({ columns, data, rowKey, selectedRow, onRowSelect, renderDetail, renderPagination, className, tableClassName, detailClassName, gridRatio, }: DataTableWithDetailProps<T>): JSX.Element;
-
-export declare interface DataTableWithDetailColumn<T = any> {
-    key: string;
-    title: string;
-    dataIndex?: keyof T;
-    render?: (value: any, record: T) => React_2.ReactNode;
-    width?: string | number;
-}
-
-export declare interface DataTableWithDetailProps<T = any> {
-    columns: DataTableWithDetailColumn<T>[];
-    data: T[];
-    rowKey: keyof T | ((record: T) => string | number);
-    selectedRow?: T | null;
-    onRowSelect?: (record: T | null) => void;
-    renderDetail?: (record: T) => React_2.ReactNode;
-    renderPagination?: () => React_2.ReactNode;
-    className?: string;
-    tableClassName?: string;
-    detailClassName?: string;
-    gridRatio?: [number, number];
 }
 
 export declare const Dropdown: React_2.FC<DropdownMenuPrimitive.DropdownMenuProps>;
@@ -569,6 +569,7 @@ export declare interface PageLayoutProps {
     title: string;
     subtitle?: string;
     icon?: React_2.ReactNode;
+    titleClassName?: string;
     density?: "default" | "compact";
     filtersSlot?: React_2.ReactNode;
     actions?: PageAction[];
@@ -809,6 +810,18 @@ export declare const TableHead: React_2.ForwardRefExoticComponent<React_2.ThHTML
 export declare const TableHeader: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLTableSectionElement> & React_2.RefAttributes<HTMLTableSectionElement>>;
 
 export declare const TableRow: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLTableRowElement> & React_2.RefAttributes<HTMLTableRowElement>>;
+
+export declare function TableToolbar({ summary, searchValue, onSearchChange, searchPlaceholder, leftSlot, rightSlot, className, }: TableToolbarProps): JSX.Element;
+
+export declare interface TableToolbarProps {
+    summary?: React_2.ReactNode;
+    searchValue?: string;
+    onSearchChange?: (value: string) => void;
+    searchPlaceholder?: string;
+    leftSlot?: React_2.ReactNode;
+    rightSlot?: React_2.ReactNode;
+    className?: string;
+}
 
 export declare const Tabs: React_2.ForwardRefExoticComponent<TabsPrimitive.TabsProps & React_2.RefAttributes<HTMLDivElement>>;
 
