@@ -16,6 +16,11 @@ import {
   ModalDescription,
   ModalHeader,
   ModalTitle,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
   Switch,
   TableToolbar,
   toast,
@@ -167,6 +172,8 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
     )
   })
 
+  const previewUser = selectedUsers.length === 1 ? selectedUsers[0] : null
+
   const filteredDepartments = departmentsData.filter((department) => {
     const search = departmentSearch.trim().toLowerCase()
     if (!search) {
@@ -213,43 +220,98 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
 
     if (currentPage === "usuarios") {
       return (
-        <PageLayout
-          title="Usuários"
-          subtitle="Gestão de acessos e perfis"
-          onAdd={() => toast({ title: "Usuários", description: "Incluir acionado", variant: "success" })}
-          onView={() => toast({ title: "Usuários", description: "Visualizar acionado", variant: "info" })}
-          onEdit={() => toast({ title: "Usuários", description: "Editar acionado", variant: "info" })}
-          onDelete={() => toast({ title: "Usuários", description: "Excluir acionado", variant: "warning" })}
-          selectedRowsCount={selectedUsers.length}
-          actions={[
-            {
-              key: "invite",
-              label: "Convidar usuário",
-              variant: "outline-primary",
-              onClick: () => toast({ title: "Usuários", description: "Convite enviado", variant: "success" }),
-            },
-          ]}
-        >
-          <div className="space-y-4">
-            <TableToolbar
-              searchValue={userSearch}
-              onSearchChange={setUserSearch}
-              searchPlaceholder="Buscar por nome, e-mail ou perfil"
-              rightSlot={
-                <Button variant="outline" size="sm" icon={<Filter className="h-4 w-4" />} />
-              }
-            />
+        <>
+          <PageLayout
+            title="Usuários"
+            subtitle="Gestão de acessos e perfis"
+            onAdd={() => toast({ title: "Usuários", description: "Incluir acionado", variant: "success" })}
+            onEdit={() => toast({ title: "Usuários", description: "Editar acionado", variant: "info" })}
+            onDelete={() => toast({ title: "Usuários", description: "Excluir acionado", variant: "warning" })}
+            selectedRowsCount={selectedUsers.length}
+            actions={[
+              {
+                key: "invite",
+                label: "Convidar usuário",
+                variant: "outline-primary",
+                onClick: () => toast({ title: "Usuários", description: "Convite enviado", variant: "success" }),
+              },
+            ]}
+          >
+            <div className="space-y-4">
+              <TableToolbar
+                searchValue={userSearch}
+                onSearchChange={setUserSearch}
+                searchPlaceholder="Buscar por nome, e-mail ou perfil"
+                rightSlot={
+                  <Button variant="outline" size="sm" icon={<Filter className="h-4 w-4" />} />
+                }
+              />
 
-            <DataTable
-              columns={usersColumns}
-              data={filteredUsers}
-              rowKey="id"
-              selectedRows={selectedUsers}
-              onSelectionChange={setSelectedUsers}
-              pageSize={5}
-            />
-          </div>
-        </PageLayout>
+              <DataTable
+                columns={usersColumns}
+                data={filteredUsers}
+                rowKey="id"
+                selectedRows={selectedUsers}
+                onSelectionChange={setSelectedUsers}
+                pageSize={5}
+              />
+            </div>
+          </PageLayout>
+
+          <Sheet open={!!previewUser} onOpenChange={(open) => !open && setSelectedUsers([])}>
+            <SheetContent side="right" className="w-full sm:max-w-md">
+              {previewUser ? (
+                <div className="flex h-full flex-col">
+                  <SheetHeader>
+                    <SheetTitle>{previewUser.nome}</SheetTitle>
+                    <SheetDescription>
+                      Preview lateral acionado pela seleção do usuário.
+                    </SheetDescription>
+                  </SheetHeader>
+
+                  <div className="mt-6 flex-1 space-y-5 overflow-y-auto">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">
+                          Perfil
+                        </div>
+                        <div className="mt-1 text-sm font-medium text-foreground">{previewUser.perfil}</div>
+                      </div>
+
+                      <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">
+                          Situação
+                        </div>
+                        <div className="mt-2">
+                          <Badge variant={previewUser.status === "Ativo" ? "success" : "warning"}>
+                            {previewUser.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">
+                        E-mail
+                      </div>
+                      <div className="mt-1 text-sm font-medium text-foreground">{previewUser.email}</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex justify-end">
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => toast({ title: "Usuários", description: `Abrindo detalhes de ${previewUser.nome}`, variant: "info" })}
+                    >
+                      Abrir detalhes
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
+            </SheetContent>
+          </Sheet>
+        </>
       )
     }
 

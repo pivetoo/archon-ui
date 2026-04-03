@@ -8,6 +8,11 @@ import {
   DataTable,
   DataTablePreview,
   PageLayout,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
   Table,
   TableBody,
   TableCell,
@@ -49,6 +54,7 @@ const contractColumns: DataTablePreviewColumn<ContractRow>[] = [
 export function DataSection() {
   const [selectedRows, setSelectedRows] = React.useState<PersonRow[]>([])
   const [selectedContract, setSelectedContract] = React.useState<ContractRow | null>(contractRows[0])
+  const [selectedPreviewRow, setSelectedPreviewRow] = React.useState<PersonRow | null>(null)
 
   return (
     <div className="space-y-4">
@@ -84,6 +90,88 @@ export function DataSection() {
           pageSize={5}
         />
       </PageLayout>
+
+      <Card>
+        <CardContent className="space-y-4 p-4">
+          <div className="space-y-1">
+            <h3 className="text-base font-semibold text-foreground">DataTable com painel lateral</h3>
+            <p className="text-sm text-muted-foreground">
+              Selecione uma linha para abrir um preview lateral leve, mantendo o grid principal visível.
+            </p>
+          </div>
+
+          <DataTable
+            columns={personColumns}
+            data={personRows}
+            rowKey="id"
+            selectedRows={selectedPreviewRow ? [selectedPreviewRow] : []}
+            onSelectionChange={(rows) => setSelectedPreviewRow(rows.length > 0 ? rows[0] : null)}
+            pageSize={5}
+          />
+
+          <Sheet open={!!selectedPreviewRow} onOpenChange={(open) => !open && setSelectedPreviewRow(null)}>
+            <SheetContent side="right" className="w-full sm:max-w-md">
+              {selectedPreviewRow ? (
+                <div className="flex h-full flex-col">
+                  <SheetHeader>
+                    <SheetTitle>{selectedPreviewRow.nome}</SheetTitle>
+                    <SheetDescription>
+                      Preview lateral acionado pela seleção da linha.
+                    </SheetDescription>
+                  </SheetHeader>
+
+                  <div className="mt-6 flex-1 space-y-5 overflow-y-auto">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">
+                          Perfil
+                        </div>
+                        <div className="mt-1 text-sm font-medium text-foreground">
+                          {selectedPreviewRow.perfil}
+                        </div>
+                      </div>
+
+                      <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">
+                          Situação
+                        </div>
+                        <div className="mt-2">
+                          <Badge
+                            variant={
+                              selectedPreviewRow.status === "Ativo"
+                                ? "success"
+                                : selectedPreviewRow.status === "Pendente"
+                                  ? "warning"
+                                  : "destructive"
+                            }
+                          >
+                            {selectedPreviewRow.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">
+                        E-mail
+                      </div>
+                      <div className="mt-1 text-sm font-medium text-foreground">
+                        {selectedPreviewRow.email}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex justify-end">
+                    <Button variant="outline-primary" size="sm">
+                      Abrir detalhes
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
+            </SheetContent>
+          </Sheet>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardContent className="p-4">

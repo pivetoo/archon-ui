@@ -52,6 +52,18 @@ export function FeedbackSection() {
         <Button
           onClick={() =>
             toast({
+              title: "Registro criado",
+              description: "A empresa foi cadastrada com sucesso e já está disponível na listagem.",
+              variant: "success",
+            })
+          }
+        >
+          Toast de sucesso
+        </Button>
+
+        <Button
+          onClick={() =>
+            toast({
               title: "Dados atualizados",
               description: "Os dados da tela foram recarregados.",
               variant: "info",
@@ -59,6 +71,46 @@ export function FeedbackSection() {
           }
         >
           Toast informativo
+        </Button>
+
+        <Button
+          variant="secondary"
+          onClick={() =>
+            toast({
+              title: "Falha de validação",
+              description:
+                "- O campo Telefone deve conter entre 8 e 30 caracteres válidos.\n- O campo E-mail deve ser um endereço válido.",
+              variant: "destructive",
+            })
+          }
+        >
+          Toast de erro
+        </Button>
+
+        <Button
+          variant="outline"
+          onClick={() =>
+            toast({
+              title: "Alterações pendentes",
+              description: "Existem campos modificados que ainda não foram salvos.",
+              variant: "warning",
+            })
+          }
+        >
+          Toast de aviso
+        </Button>
+
+        <Button
+          variant="outline-primary"
+          onClick={() =>
+            toast({
+              title: "Edição iniciada",
+              description: "Você entrou no modo de edição do contrato selecionado.",
+              variant: "info",
+            })
+          }
+        >
+          Toast de edição
         </Button>
 
         <Button variant="secondary" onClick={() => setIsModalOpen(true)}>

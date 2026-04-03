@@ -36,6 +36,75 @@ function resolvePagination(value: unknown): PaginationMetadata | null {
   return null
 }
 
+function getValidationMessages(error: ApiError): string[] {
+  if (!error.errors) {
+    return []
+  }
+
+  if (Array.isArray(error.errors)) {
+    return error.errors.filter((item): item is string => typeof item === 'string')
+  }
+
+  if (typeof error.errors === 'object') {
+    const validationErrors = error.errors as Record<string, unknown>
+
+    return Object.values(validationErrors)
+      .flatMap((value) => {
+        if (Array.isArray(value)) {
+          return value.filter((item): item is string => typeof item === 'string')
+        }
+
+        return typeof value === 'string' ? [value] : []
+      })
+  }
+
+  return []
+}
+
+function buildErrorDescription(apiError: ApiError): string {
+  const validationMessages = getValidationMessages(apiError)
+
+  if (validationMessages.length === 0) {
+    return apiError.message
+  }
+
+  const visibleMessages = validationMessages.slice(0, 2)
+  const hiddenCount = validationMessages.length - visibleMessages.length
+  const showMessage =
+    apiError.message &&
+    apiError.message.trim().length > 0 &&
+    apiError.message.trim().toLowerCase() !== 'validation failed.'
+
+  const lines: string[] = []
+
+  if (showMessage) {
+    lines.push(apiError.message)
+  }
+
+  lines.push(...visibleMessages.map((message) => `- ${message}`))
+
+  if (hiddenCount > 0) {
+    lines.push(`E mais ${hiddenCount} erro(s).`)
+  }
+
+  return lines.join('\n')
+}
+
+function getErrorTitle(apiError: ApiError): string {
+  const hasValidationMessages = getValidationMessages(apiError).length > 0
+  const normalizedMessage = apiError.message?.trim()
+
+  if (normalizedMessage) {
+    if (normalizedMessage.toLowerCase() === 'validation failed.') {
+      return 'Falha de validação'
+    }
+
+    return normalizedMessage
+  }
+
+  return hasValidationMessages ? 'Falha de validação' : 'Erro'
+}
+
 export function useApi<T = any>(options: UseApiOptions = {}) {
   const [state, setState] = useState<RequestState<T>>({
     data: null,
@@ -99,8 +168,8 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
 
       if (options.showErrorMessage !== false) {
         toast({
-          title: 'Erro',
-          description: apiError.message,
+          title: getErrorTitle(apiError),
+          description: buildErrorDescription(apiError),
           variant: 'destructive',
         });
       }
