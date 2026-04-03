@@ -1,0 +1,12 @@
+{
+  "entryPoints": ["dist/index.d.ts"],
+  "tsconfig": "tsconfig.typedoc.json",
+  "out": "docs/api",
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "categorizeByGroup": true,
+  "sort": ["source-order"]
+}
