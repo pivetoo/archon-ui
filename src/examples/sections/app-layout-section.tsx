@@ -1,5 +1,5 @@
 import * as React from "react"
-import { BarChart3, Building2, Home, Settings, Users } from "lucide-react"
+import { BarChart3, Building2, Filter, Home, Settings, Users } from "lucide-react"
 import {
   AppLayout,
   Badge,
@@ -17,6 +17,7 @@ import {
   ModalHeader,
   ModalTitle,
   Switch,
+  TableToolbar,
   toast,
   type DataTableColumn,
   type DataTablePreviewColumn,
@@ -47,6 +48,8 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
   const [maintenanceMode, setMaintenanceMode] = React.useState(false)
   const [selectedUsers, setSelectedUsers] = React.useState<UserRow[]>([])
   const [selectedDepartment, setSelectedDepartment] = React.useState<DepartmentRow | null>(null)
+  const [userSearch, setUserSearch] = React.useState("")
+  const [departmentSearch, setDepartmentSearch] = React.useState("")
 
   const pageLabels: Record<PageKey, string> = {
     dashboard: "Dashboard",
@@ -154,6 +157,28 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
     },
   ]
 
+  const filteredUsers = usersData.filter((user) => {
+    const search = userSearch.trim().toLowerCase()
+    if (!search) {
+      return true
+    }
+
+    return [user.nome, user.email, user.perfil].some((value) =>
+      value.toLowerCase().includes(search)
+    )
+  })
+
+  const filteredDepartments = departmentsData.filter((department) => {
+    const search = departmentSearch.trim().toLowerCase()
+    if (!search) {
+      return true
+    }
+
+    return [department.nome, department.responsavel, department.status].some((value) =>
+      value.toLowerCase().includes(search)
+    )
+  })
+
   const renderPageContent = () => {
     if (currentPage === "dashboard") {
       return (
@@ -205,14 +230,25 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
             },
           ]}
         >
-          <DataTable
-            columns={usersColumns}
-            data={usersData}
-            rowKey="id"
-            selectedRows={selectedUsers}
-            onSelectionChange={setSelectedUsers}
-            pageSize={5}
-          />
+          <div className="space-y-4">
+            <TableToolbar
+              searchValue={userSearch}
+              onSearchChange={setUserSearch}
+              searchPlaceholder="Buscar por nome, e-mail ou perfil"
+              rightSlot={
+                <Button variant="outline" size="sm" icon={<Filter className="h-4 w-4" />} />
+              }
+            />
+
+            <DataTable
+              columns={usersColumns}
+              data={filteredUsers}
+              rowKey="id"
+              selectedRows={selectedUsers}
+              onSelectionChange={setSelectedUsers}
+              pageSize={5}
+            />
+          </div>
         </PageLayout>
       )
     }
@@ -227,59 +263,68 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
           onDelete={() => toast({ title: "Empresa", description: "Excluir departamento acionado", variant: "warning" })}
           selectedRowsCount={selectedDepartment ? 1 : 0}
         >
-          <DataTablePreview
-            columns={departmentsColumns}
-            data={departmentsData}
-            rowKey="id"
-            selectedRow={selectedDepartment}
-            onRowSelect={setSelectedDepartment}
-            renderDetail={(record) => (
-              <div className="space-y-5 p-5">
-                <div className="space-y-1">
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/80">
-                    Preview do departamento
-                  </div>
-                  <h3 className="text-xl font-semibold text-primary">{record.nome}</h3>
-                  <p className="text-sm text-primary/80">
-                    Estrutura organizacional e dados operacionais do departamento selecionado.
-                  </p>
-                </div>
+          <div className="space-y-4">
+            <TableToolbar
+              searchValue={departmentSearch}
+              onSearchChange={setDepartmentSearch}
+              searchPlaceholder="Buscar departamento ou responsável"
+              rightSlot={<Button variant="outline" size="sm" icon={<Filter className="h-4 w-4" />} />}
+            />
 
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
-                    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                      Responsável
+            <DataTablePreview
+              columns={departmentsColumns}
+              data={filteredDepartments}
+              rowKey="id"
+              selectedRow={selectedDepartment}
+              onRowSelect={setSelectedDepartment}
+              renderDetail={(record) => (
+                <div className="space-y-5 p-5">
+                  <div className="space-y-1">
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/80">
+                      Preview do departamento
                     </div>
-                    <div className="mt-1 text-sm font-medium text-foreground">{record.responsavel}</div>
+                    <h3 className="text-xl font-semibold text-primary">{record.nome}</h3>
+                    <p className="text-sm text-primary/80">
+                      Estrutura organizacional e dados operacionais do departamento selecionado.
+                    </p>
                   </div>
 
-                  <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
-                    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                      Colaboradores
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                        Responsável
+                      </div>
+                      <div className="mt-1 text-sm font-medium text-foreground">{record.responsavel}</div>
                     </div>
-                    <div className="mt-1 text-sm font-medium text-foreground">{record.colaboradores}</div>
-                  </div>
-                </div>
 
-                <div className="rounded-lg border border-border/70 bg-muted/20 p-4">
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    Situação atual
+                    <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                        Colaboradores
+                      </div>
+                      <div className="mt-1 text-sm font-medium text-foreground">{record.colaboradores}</div>
+                    </div>
                   </div>
-                  <div className="mt-2">
-                    <Badge variant={record.status === "Ativo" ? "success" : "warning"}>{record.status}</Badge>
-                  </div>
-                </div>
 
-                <Button
-                  variant="outline-primary"
-                  size="sm"
-                  onClick={() => toast({ title: "Empresa", description: `Abrindo detalhes de ${record.nome}`, variant: "info" })}
-                >
-                  Abrir detalhes
-                </Button>
-              </div>
-            )}
-          />
+                  <div className="rounded-lg border border-border/70 bg-muted/20 p-4">
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Situação atual
+                    </div>
+                    <div className="mt-2">
+                      <Badge variant={record.status === "Ativo" ? "success" : "warning"}>{record.status}</Badge>
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="outline-primary"
+                    size="sm"
+                    onClick={() => toast({ title: "Empresa", description: `Abrindo detalhes de ${record.nome}`, variant: "info" })}
+                  >
+                    Abrir detalhes
+                  </Button>
+                </div>
+              )}
+            />
+          </div>
         </PageLayout>
       )
     }
