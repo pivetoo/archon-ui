@@ -1,12 +1,12 @@
 import * as React from "react"
-import { Database, Eye } from "lucide-react"
+import { Database, Eye, Filter, Search } from "lucide-react"
 import {
   Badge,
   Button,
   Card,
   CardContent,
   DataTable,
-  DataTableWithDetail,
+  DataTablePreview,
   PageLayout,
   Table,
   TableBody,
@@ -16,7 +16,7 @@ import {
   TableRow,
   toast,
 } from "../../components/ui"
-import type { DataTableColumn, DataTableWithDetailColumn } from "../../components/ui"
+import type { DataTableColumn, DataTablePreviewColumn } from "../../components/ui"
 import type { ContractRow, PersonRow } from "../mock-data"
 import { contractRows, personRows } from "../mock-data"
 
@@ -36,7 +36,7 @@ const personColumns: DataTableColumn<PersonRow>[] = [
   { key: "perfil", title: "Perfil", dataIndex: "perfil" },
 ]
 
-const contractColumns: DataTableWithDetailColumn<ContractRow>[] = [
+const contractColumns: DataTablePreviewColumn<ContractRow>[] = [
   { key: "cliente", title: "Cliente", dataIndex: "cliente" },
   { key: "plano", title: "Plano", dataIndex: "plano" },
   {
@@ -54,8 +54,23 @@ export function DataSection() {
     <div className="space-y-4">
       <PageLayout
         title="Gestão de usuários"
-        subtitle="Exemplo com ações de página e DataTable"
+        subtitle="Exemplo com cabeçalho contextual, ações rápidas e tabela de leitura mais refinada"
         icon={<Database className="h-5 w-5" />}
+        filtersSlot={
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <Button variant="outline" size="sm" icon={<Search className="h-4 w-4" />}>
+                Buscar por usuário
+              </Button>
+              <Button variant="outline" size="sm" icon={<Filter className="h-4 w-4" />}>
+                Filtrar status
+              </Button>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Última atualização há 2 minutos
+            </div>
+          </div>
+        }
         onAdd={() => toast({ title: "Ação", description: "Incluir acionado", variant: "info" })}
         onEdit={() => toast({ title: "Ação", description: "Editar acionado", variant: "info" })}
         onDelete={() => toast({ title: "Ação", description: "Excluir acionado", variant: "warning" })}
@@ -73,7 +88,7 @@ export function DataSection() {
 
       <Card>
         <CardContent className="p-4">
-          <DataTableWithDetail
+          <DataTablePreview
             columns={contractColumns}
             data={contractRows}
             rowKey="id"

@@ -9,8 +9,7 @@ import {
   CardHeader,
   CardTitle,
   DataTable,
-  DataTableWithDetail,
-  Input,
+  DataTablePreview,
   Modal,
   PageLayout,
   ModalContent,
@@ -20,7 +19,7 @@ import {
   Switch,
   toast,
   type DataTableColumn,
-  type DataTableWithDetailColumn,
+  type DataTablePreviewColumn,
   type Module,
   type NotificationItem,
   type SidebarGroup,
@@ -145,7 +144,7 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
     { id: 3, nome: "Compras", responsavel: "Patrícia Nunes", colaboradores: 6, status: "Revisão" },
   ]
 
-  const departmentsColumns: DataTableWithDetailColumn<DepartmentRow>[] = [
+  const departmentsColumns: DataTablePreviewColumn<DepartmentRow>[] = [
     { key: "nome", title: "Departamento", dataIndex: "nome" },
     { key: "responsavel", title: "Responsável", dataIndex: "responsavel" },
     {
@@ -193,28 +192,27 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
         <PageLayout
           title="Usuários"
           subtitle="Gestão de acessos e perfis"
-          showDefaultActions={false}
+          onAdd={() => toast({ title: "Usuários", description: "Incluir acionado", variant: "success" })}
+          onEdit={() => toast({ title: "Usuários", description: "Editar acionado", variant: "info" })}
+          onDelete={() => toast({ title: "Usuários", description: "Excluir acionado", variant: "warning" })}
+          selectedRowsCount={selectedUsers.length}
           actions={[
             {
               key: "invite",
               label: "Convidar usuário",
-              variant: "secondary",
+              variant: "outline-primary",
               onClick: () => toast({ title: "Usuários", description: "Convite enviado", variant: "success" }),
             },
           ]}
         >
-          <Card>
-            <CardContent className="pt-6">
-              <DataTable
-                columns={usersColumns}
-                data={usersData}
-                rowKey="id"
-                selectedRows={selectedUsers}
-                onSelectionChange={setSelectedUsers}
-                pageSize={5}
-              />
-            </CardContent>
-          </Card>
+          <DataTable
+            columns={usersColumns}
+            data={usersData}
+            rowKey="id"
+            selectedRows={selectedUsers}
+            onSelectionChange={setSelectedUsers}
+            pageSize={5}
+          />
         </PageLayout>
       )
     }
@@ -223,51 +221,65 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
       return (
         <PageLayout
           title="Empresa"
-          subtitle="Configurações institucionais"
-          showDefaultActions={false}
-          actions={[
-            {
-              key: "save-company",
-              label: "Salvar",
-              variant: "secondary",
-              onClick: () => toast({ title: "Empresa", description: "Dados salvos", variant: "success" }),
-            },
-          ]}
+          subtitle="Configurações institucionais e visão rápida da estrutura interna"
+          onAdd={() => toast({ title: "Empresa", description: "Incluir departamento acionado", variant: "success" })}
+          onEdit={() => toast({ title: "Empresa", description: "Editar departamento acionado", variant: "info" })}
+          onDelete={() => toast({ title: "Empresa", description: "Excluir departamento acionado", variant: "warning" })}
+          selectedRowsCount={selectedDepartment ? 1 : 0}
         >
-          <Card>
-            <CardContent className="grid gap-4 pt-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Nome fantasia</label>
-                <Input value={companyName} onChange={(event) => setCompanyName(event.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">E-mail de suporte</label>
-                <Input value={supportEmail} onChange={(event) => setSupportEmail(event.target.value)} />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <DataTableWithDetail
-                columns={departmentsColumns}
-                data={departmentsData}
-                rowKey="id"
-                selectedRow={selectedDepartment}
-                onRowSelect={setSelectedDepartment}
-                renderDetail={(record) => (
-                  <div className="p-4 space-y-2">
-                    <h3 className="text-sm font-semibold">{record.nome}</h3>
-                    <p className="text-sm"><strong>Responsável:</strong> {record.responsavel}</p>
-                    <p className="text-sm"><strong>Colaboradores:</strong> {record.colaboradores}</p>
-                    <p className="text-sm">
-                      <strong>Status:</strong>{" "}
-                      <Badge variant={record.status === "Ativo" ? "success" : "warning"}>{record.status}</Badge>
-                    </p>
+          <DataTablePreview
+            columns={departmentsColumns}
+            data={departmentsData}
+            rowKey="id"
+            selectedRow={selectedDepartment}
+            onRowSelect={setSelectedDepartment}
+            renderDetail={(record) => (
+              <div className="space-y-5 p-5">
+                <div className="space-y-1">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/80">
+                    Preview do departamento
                   </div>
-                )}
-              />
-            </CardContent>
-          </Card>
+                  <h3 className="text-xl font-semibold text-primary">{record.nome}</h3>
+                  <p className="text-sm text-primary/80">
+                    Estrutura organizacional e dados operacionais do departamento selecionado.
+                  </p>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Responsável
+                    </div>
+                    <div className="mt-1 text-sm font-medium text-foreground">{record.responsavel}</div>
+                  </div>
+
+                  <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Colaboradores
+                    </div>
+                    <div className="mt-1 text-sm font-medium text-foreground">{record.colaboradores}</div>
+                  </div>
+                </div>
+
+                <div className="rounded-lg border border-border/70 bg-muted/20 p-4">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    Situação atual
+                  </div>
+                  <div className="mt-2">
+                    <Badge variant={record.status === "Ativo" ? "success" : "warning"}>{record.status}</Badge>
+                  </div>
+                </div>
+
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={() => toast({ title: "Empresa", description: `Abrindo detalhes de ${record.nome}`, variant: "info" })}
+                >
+                  Abrir detalhes
+                </Button>
+              </div>
+            )}
+          />
         </PageLayout>
       )
     }

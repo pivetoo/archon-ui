@@ -17,6 +17,7 @@ export interface PageLayoutProps {
   title: string
   subtitle?: string
   icon?: React.ReactNode
+  titleClassName?: string
   density?: "default" | "compact"
   filtersSlot?: React.ReactNode
   actions?: PageAction[]
@@ -34,6 +35,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   title,
   subtitle,
   icon,
+  titleClassName,
   density = "default",
   filtersSlot,
   actions = [],
@@ -130,77 +132,86 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
 
   return (
     <div className={cn("flex flex-col h-full w-full", className)}>
-      <div className="mb-4 rounded-lg border bg-muted/30">
-        <div className={cn(
-          "flex flex-col gap-3 md:flex-row md:items-center md:justify-between",
-          isCompact ? "px-3 py-2.5" : "px-4 py-3"
-        )}>
-          <div className="flex items-center gap-3">
-          {icon && (
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary border border-primary/20 shadow-sm hover:shadow hover:scale-[1.02] transition-all duration-200 cursor-default">
-              {icon}
-            </div>
+      <div className={cn("mb-5 flex flex-col gap-4", isCompact ? "py-1" : "py-2")}>
+        <div
+          className={cn(
+            "flex flex-col gap-4",
+            isCompact ? "px-1" : "px-0.5"
           )}
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <h1 className={cn(
-                "font-bold text-foreground tracking-tight",
-                isCompact ? "text-xl" : "text-2xl"
-              )}>
-                {title}
-              </h1>
-              {onRefresh && (
-                <button
-                  onClick={handleRefresh}
-                  disabled={isRefreshing}
-                  className={cn(
-                    "p-1.5 rounded-md transition-all hover:bg-accent text-muted-foreground hover:text-foreground",
-                    isRefreshing && "text-primary"
-                  )}
-                  title="Atualizar"
-                >
-                  <RefreshCw className={cn("h-4 w-4 transition-transform", isRefreshing && "animate-spin")} />
-                </button>
+        >
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+            <div className="flex min-w-0 items-start gap-4">
+              {icon && (
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-border/70 bg-muted/35 text-primary">
+                  {icon}
+                </div>
               )}
+
+              <div className="min-w-0 space-y-2">
+                <div className="flex items-center gap-2">
+                  <h1
+                    className={cn(
+                      "truncate font-semibold tracking-tight text-primary drop-shadow-[0_1px_0_hsl(var(--primary)/0.15)]",
+                      isCompact ? "text-2xl" : "text-3xl",
+                      titleClassName
+                    )}
+                  >
+                    {title}
+                  </h1>
+
+                  {onRefresh && (
+                    <button
+                      onClick={handleRefresh}
+                      disabled={isRefreshing}
+                      className={cn(
+                        "rounded-lg border border-transparent p-2 text-muted-foreground transition-all hover:border-border/80 hover:bg-muted/35 hover:text-foreground",
+                        isRefreshing && "text-primary"
+                      )}
+                      title="Atualizar"
+                    >
+                      <RefreshCw className={cn("h-4 w-4 transition-transform", isRefreshing && "animate-spin")} />
+                    </button>
+                  )}
+                </div>
+
+                {subtitle && (
+                  <p
+                    className={cn(
+                      "max-w-3xl text-pretty text-muted-foreground",
+                      isCompact ? "text-sm" : "text-[15px]"
+                    )}
+                  >
+                    {subtitle}
+                  </p>
+                )}
+              </div>
             </div>
-            {subtitle && (
-              <p className={cn(
-                "text-muted-foreground mt-0.5",
-                isCompact ? "text-xs" : "text-sm"
-              )}>
-                {subtitle}
-              </p>
+
+            {allActions.length > 0 && (
+              <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto xl:justify-end">
+                {allActions.map((action) => (
+                  <Button
+                    key={action.key}
+                    variant={action.variant || "outline"}
+                    size="sm"
+                    onClick={action.onClick}
+                    disabled={action.disabled}
+                    className="gap-2 rounded-lg px-3.5"
+                  >
+                    {action.icon}
+                    {action.label}
+                  </Button>
+                ))}
+              </div>
             )}
           </div>
-        </div>
 
-        {allActions.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2 md:justify-end">
-            {allActions.map(action => (
-              <Button
-                key={action.key}
-                variant={action.variant || "outline"}
-                size="sm"
-                onClick={action.onClick}
-                disabled={action.disabled}
-                className="gap-2"
-              >
-                {action.icon}
-                {action.label}
-              </Button>
-            ))}
-          </div>
-        )}
+          {filtersSlot && (
+            <div className="flex flex-col gap-3 rounded-lg border border-border/70 bg-muted/18 p-3 backdrop-blur supports-[backdrop-filter]:bg-background/65">
+              {filtersSlot}
+            </div>
+          )}
         </div>
-
-        {filtersSlot && (
-          <div className={cn(
-            "border-t bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60",
-            isCompact ? "px-3 py-2" : "px-4 py-2.5"
-          )}>
-            {filtersSlot}
-          </div>
-        )}
       </div>
 
       <div className="overflow-auto">

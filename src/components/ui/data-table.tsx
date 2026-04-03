@@ -75,7 +75,6 @@ export function DataTable<T = any>({
   const startIndex = (currentPage - 1) * pageSize
   const endIndex = startIndex + pageSize
   const paginatedData = data.slice(startIndex, endIndex)
-
   React.useEffect(() => {
     setCurrentPage(1)
   }, [data.length, pageSize])
@@ -248,10 +247,10 @@ export function DataTable<T = any>({
   }
 
   return (
-    <div className={cn("flex flex-col", className)}>
+    <div className={cn("flex flex-col overflow-hidden rounded-lg border border-border/70 bg-background shadow-sm", className)}>
       <div
         ref={containerRef}
-        className="rounded-md border relative"
+        className="relative"
         onClick={handleTableClick}
         onMouseDown={handleMouseDown}
       >
@@ -259,94 +258,104 @@ export function DataTable<T = any>({
           <div style={getSelectionBoxStyle()} />
         )}
         <Table>
-        <TableHeader>
-          <TableRow>
-            {columns.map((column) => (
-              <TableHead
-                key={column.key}
-                style={column.width ? { width: column.width } : undefined}
-              >
-                {column.title}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {loading ? (
-            Array.from({ length: 5 }).map((_, i) => (
-              <TableRow key={`skeleton-${i}`}>
-                {columns.map((column) => (
-                  <TableCell key={column.key}>
-                    <div className="h-4 bg-muted animate-pulse rounded" />
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : data.length === 0 ? (
+          <TableHeader>
             <TableRow>
-              <TableCell
-                colSpan={columns.length + (isSelectable ? 1 : 0)}
-                className="text-center py-8 text-muted-foreground"
-              >
-                {emptyText}
-              </TableCell>
-            </TableRow>
-          ) : (
-            paginatedData.map((record, index) => {
-              const key = getRowKey(record)
-              const selected = isRowSelected(record)
-
-              return (
-                <TableRow
-                  key={key}
-                  ref={(el) => {
-                    if (el) rowRefs.current.set(key, el)
-                  }}
-                  data-row="true"
-                  data-state={selected ? "selected" : ""}
-                  onClick={(e) => {
-                    if (isSelectable) {
-                      handleSelectRow(record, e)
-                    } else {
-                      onRowClick?.(record)
-                    }
-                  }}
-                  onDoubleClick={() => onRowDoubleClick?.(record)}
-                  className={cn(
-                    isSelectable || onRowClick || onRowDoubleClick ? "cursor-pointer" : "",
-                    isSelectable && "select-none",
-                    selected && "!bg-secondary/20"
-                  )}
+              {columns.map((column) => (
+                <TableHead
+                  key={column.key}
+                  style={column.width ? { width: column.width } : undefined}
                 >
-                  {columns.map((column) => {
-                    const value = column.dataIndex
-                      ? record[column.dataIndex]
-                      : undefined
-
-                    return (
-                      <TableCell key={column.key}>
-                        {column.render
-                          ? column.render(value, record, index)
-                          : (value as React.ReactNode) || "-"}
-                      </TableCell>
-                    )
-                  })}
+                  {column.title}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={`skeleton-${i}`}>
+                  {columns.map((column) => (
+                    <TableCell key={column.key}>
+                      <div className="h-4 animate-pulse rounded-full bg-muted" />
+                    </TableCell>
+                  ))}
                 </TableRow>
-              )
-            })
-          )}
-        </TableBody>
+              ))
+            ) : data.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length + (isSelectable ? 1 : 0)}
+                  className="py-14 text-center"
+                >
+                  <div className="mx-auto flex max-w-sm flex-col items-center gap-2 text-center">
+                    <div className="rounded-2xl border border-border/70 bg-muted/35 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Sem resultados
+                    </div>
+                    <div className="text-base font-medium text-foreground">
+                      {emptyText}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Ajuste filtros, paginação ou critérios de busca para continuar.
+                    </div>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              paginatedData.map((record, index) => {
+                const key = getRowKey(record)
+                const selected = isRowSelected(record)
+
+                return (
+                  <TableRow
+                    key={key}
+                    ref={(el) => {
+                      if (el) rowRefs.current.set(key, el)
+                    }}
+                    data-row="true"
+                    data-state={selected ? "selected" : ""}
+                    onClick={(e) => {
+                      if (isSelectable) {
+                        handleSelectRow(record, e)
+                      } else {
+                        onRowClick?.(record)
+                      }
+                    }}
+                    onDoubleClick={() => onRowDoubleClick?.(record)}
+                    className={cn(
+                      isSelectable || onRowClick || onRowDoubleClick ? "cursor-pointer" : "",
+                      isSelectable && "select-none",
+                      selected && "!bg-[hsl(var(--secondary)/0.22)] hover:!bg-[hsl(var(--secondary)/0.28)]"
+                    )}
+                  >
+                    {columns.map((column) => {
+                      const value = column.dataIndex
+                        ? record[column.dataIndex]
+                        : undefined
+
+                      return (
+                        <TableCell key={column.key}>
+                          {column.render
+                            ? column.render(value, record, index)
+                            : (value as React.ReactNode) || "-"}
+                        </TableCell>
+                      )
+                    })}
+                  </TableRow>
+                )
+              })
+            )}
+          </TableBody>
         </Table>
       </div>
 
       {data.length > 0 && (
-        <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex flex-col gap-3 border-t border-border/70 bg-muted/20 px-4 py-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>Linhas por página:</span>
             <select
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
-              className="h-8 rounded border border-input bg-background px-2 text-sm"
+              className="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-sm"
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size}>
@@ -368,7 +377,7 @@ export function DataTable<T = any>({
               size="sm"
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
-              className="h-8 w-8 p-0"
+              className="h-9 w-9 rounded-md p-0"
             >
               <ChevronsLeft className="h-4 w-4" />
             </Button>
@@ -377,11 +386,11 @@ export function DataTable<T = any>({
               size="sm"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="h-8 w-8 p-0"
+              className="h-9 w-9 rounded-md p-0"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="px-2 text-sm">
+            <span className="px-3 text-sm font-medium text-foreground">
               {currentPage} / {totalPages || 1}
             </span>
             <Button
@@ -389,7 +398,7 @@ export function DataTable<T = any>({
               size="sm"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages || totalPages === 0}
-              className="h-8 w-8 p-0"
+              className="h-9 w-9 rounded-md p-0"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -398,7 +407,7 @@ export function DataTable<T = any>({
               size="sm"
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages || totalPages === 0}
-              className="h-8 w-8 p-0"
+              className="h-9 w-9 rounded-md p-0"
             >
               <ChevronsRight className="h-4 w-4" />
             </Button>
