@@ -1,6 +1,40 @@
 import { useState } from 'react';
 import { toast } from '../components/ui/use-toast';
-import type { ApiError, RequestState, UseApiOptions } from '../services/http/types';
+import type { ApiError, PaginationMetadata, RequestState, UseApiOptions } from '../services/http/types';
+
+function isArchonResponse(value: unknown): value is {
+  message: string
+  data?: unknown
+  pagination?: unknown
+} {
+  return !!value && typeof value === 'object' && 'message' in value
+}
+
+function resolvePagination(value: unknown): PaginationMetadata | null {
+  if (!value || typeof value !== 'object') {
+    return null
+  }
+
+  if (
+    'page' in value &&
+    'pageSize' in value &&
+    'totalCount' in value &&
+    'totalPages' in value &&
+    'hasPreviousPage' in value &&
+    'hasNextPage' in value
+  ) {
+    return {
+      page: value.page as number,
+      pageSize: value.pageSize as number,
+      totalCount: value.totalCount as number,
+      totalPages: value.totalPages as number,
+      hasPreviousPage: value.hasPreviousPage as boolean,
+      hasNextPage: value.hasNextPage as boolean,
+    }
+  }
+
+  return null
+}
 
 export function useApi<T = any>(options: UseApiOptions = {}) {
   const [state, setState] = useState<RequestState<T>>({
@@ -16,9 +50,12 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
 
     try {
       const response = await apiCall();
-      const data = response?.data ?? null;
-      const successMessage = typeof response?.message === 'string' ? response.message : '';
-      const pagination = response?.pagination ?? null;
+      const isHttpEnvelope = isArchonResponse(response);
+      const data = isHttpEnvelope ? response.data ?? null : response ?? null;
+      const successMessage = isHttpEnvelope ? response.message : '';
+      const pagination: PaginationMetadata | null = isHttpEnvelope
+        ? resolvePagination(response.pagination)
+        : resolvePagination(response);
 
       setState({
         data,
