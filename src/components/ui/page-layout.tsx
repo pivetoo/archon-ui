@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Eye, Plus, Edit, Trash2, RefreshCw } from "lucide-react"
 import { cn } from "../../lib/utils"
+import { useI18n } from "../../i18n"
 import { Button } from "./button"
 import { useToast } from "./use-toast"
 
@@ -48,6 +49,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   children,
   className
 }) => {
+  const { t } = useI18n()
   const { toast } = useToast()
   const [isRefreshing, setIsRefreshing] = React.useState(false)
 
@@ -64,16 +66,16 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   const handleEdit = () => {
     if (selectedRowsCount === 0) {
       toast({
-        title: 'Atenção',
-        description: 'Selecione um registro para editar.',
+        title: t("common.toast.warningTitle"),
+        description: t("pageLayout.edit.selectOne"),
         variant: 'warning',
       })
       return
     }
     if (selectedRowsCount > 1) {
       toast({
-        title: 'Atenção',
-        description: 'Selecione apenas um registro para editar.',
+        title: t("common.toast.warningTitle"),
+        description: t("pageLayout.edit.selectOnlyOne"),
         variant: 'warning',
       })
       return
@@ -84,16 +86,16 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   const handleView = () => {
     if (selectedRowsCount === 0) {
       toast({
-        title: 'Atenção',
-        description: 'Selecione um registro para visualizar.',
+        title: t("common.toast.warningTitle"),
+        description: t("pageLayout.view.selectOne"),
         variant: 'warning',
       })
       return
     }
     if (selectedRowsCount > 1) {
       toast({
-        title: 'Atenção',
-        description: 'Selecione apenas um registro para visualizar.',
+        title: t("common.toast.warningTitle"),
+        description: t("pageLayout.view.selectOnlyOne"),
         variant: 'warning',
       })
       return
@@ -104,8 +106,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   const handleDelete = () => {
     if (selectedRowsCount === 0) {
       toast({
-        title: 'Atenção',
-        description: 'Selecione ao menos um registro para excluir.',
+        title: t("common.toast.warningTitle"),
+        description: t("pageLayout.delete.selectAtLeastOne"),
         variant: 'warning',
       })
       return
@@ -119,7 +121,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     if (onAdd) {
       defaultActions.push({
         key: "add",
-        label: "Incluir",
+        label: t("pageLayout.action.add"),
         icon: <Plus className="h-4 w-4" />,
         variant: "secondary",
         onClick: onAdd
@@ -129,7 +131,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     if (onView) {
       defaultActions.push({
         key: "view",
-        label: "Visualizar",
+        label: t("pageLayout.action.view"),
         icon: <Eye className="h-4 w-4" />,
         variant: "outline",
         onClick: handleView
@@ -139,7 +141,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     if (onEdit) {
       defaultActions.push({
         key: "edit",
-        label: "Editar",
+        label: t("pageLayout.action.edit"),
         icon: <Edit className="h-4 w-4" />,
         variant: "outline",
         onClick: handleEdit
@@ -149,7 +151,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     if (onDelete) {
       defaultActions.push({
         key: "delete",
-        label: "Excluir",
+        label: t("pageLayout.action.delete"),
         icon: <Trash2 className="h-4 w-4" />,
         variant: "outline",
         onClick: handleDelete
@@ -190,7 +192,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                       "rounded-lg border border-transparent p-2 text-muted-foreground transition-all hover:border-border/80 hover:bg-muted/35 hover:text-foreground",
                       isRefreshing && "text-primary"
                     )}
-                    title="Atualizar"
+                    title={t("pageLayout.action.refresh")}
                   >
                     <RefreshCw className={cn("h-4 w-4 transition-transform", isRefreshing && "animate-spin")} />
                   </button>

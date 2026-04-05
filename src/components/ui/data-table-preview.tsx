@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useI18n } from "../../i18n"
 import { cn } from "../../lib/utils"
 
 export interface DataTablePreviewColumn<T = any> {
@@ -36,6 +37,7 @@ export function DataTablePreview<T = any>({
   detailClassName,
   gridRatio = [7, 5],
 }: DataTablePreviewProps<T>) {
+  const { t } = useI18n()
   const tableSpanClass = gridRatio[0] >= 8 ? "xl:col-span-8" : gridRatio[0] <= 6 ? "xl:col-span-6" : "xl:col-span-7"
   const detailSpanClass = gridRatio[1] >= 6 ? "xl:col-span-6" : gridRatio[1] <= 4 ? "xl:col-span-4" : "xl:col-span-5"
 
@@ -81,7 +83,7 @@ export function DataTablePreview<T = any>({
                       colSpan={columns.length}
                       className="py-12 text-center text-sm text-muted-foreground"
                     >
-                      Nenhum registro encontrado
+                      {t("common.state.noRecordsFound")}
                     </td>
                   </tr>
                 ) : (

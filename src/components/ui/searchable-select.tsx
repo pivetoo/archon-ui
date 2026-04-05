@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Search } from "lucide-react"
+import { useI18n } from "../../i18n"
 import {
   Select,
   SelectContent,
@@ -34,14 +35,15 @@ export const SearchableSelect = React.forwardRef<
       options,
       value,
       onValueChange,
-      placeholder = "Selecione uma opção",
-      searchPlaceholder = "Pesquisar...",
+      placeholder,
+      searchPlaceholder,
       disabled,
       className,
-      emptyMessage = "Nenhum resultado encontrado",
+      emptyMessage,
     },
     ref
   ) => {
+    const { t } = useI18n()
     const [search, setSearch] = React.useState("")
     const [open, setOpen] = React.useState(false)
 
@@ -69,13 +71,13 @@ export const SearchableSelect = React.forwardRef<
         onOpenChange={setOpen}
       >
         <SelectTrigger ref={ref} className={className}>
-          <SelectValue placeholder={placeholder} />
+          <SelectValue placeholder={placeholder ?? t("searchableSelect.placeholder")} />
         </SelectTrigger>
         <SelectContent>
           <div className="flex items-center border-b px-3 pb-2">
             <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
             <Input
-              placeholder={searchPlaceholder}
+              placeholder={searchPlaceholder ?? t("common.action.search")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="h-8 border-0 shadow-none focus-visible:ring-0 px-0 bg-transparent"
@@ -84,7 +86,7 @@ export const SearchableSelect = React.forwardRef<
           <div className="max-h-[300px] overflow-auto">
             {filteredOptions.length === 0 ? (
               <div className="py-6 text-center text-sm text-muted-foreground">
-                {emptyMessage}
+                {emptyMessage ?? t("searchableSelect.noResults")}
               </div>
             ) : (
               filteredOptions.map((option) => (

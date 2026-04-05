@@ -771,6 +771,8 @@ export declare const setIdentityManagementURL: (url: string) => void;
 
 export declare const setRequestLanguage: (language: string) => void;
 
+export declare function setTranslationMessages(messages: Record<string, string>): void;
+
 export declare const Sheet: React_2.FC<DialogPrimitive.DialogProps>;
 
 export declare const SheetClose: React_2.ForwardRefExoticComponent<DialogPrimitive.DialogCloseProps & React_2.RefAttributes<HTMLButtonElement>>;
@@ -1001,6 +1003,8 @@ export declare const TooltipProvider: React_2.FC<TooltipPrimitive.TooltipProvide
 
 export declare const TooltipTrigger: React_2.ForwardRefExoticComponent<TooltipPrimitive.TooltipTriggerProps & React_2.RefAttributes<HTMLButtonElement>>;
 
+export declare function translate(key: string): string;
+
 export declare function useApi<T = any>(options?: UseApiOptions): {
     execute: (apiCall: () => Promise<any>) => Promise<any>;
     reset: () => void;
@@ -1020,6 +1024,7 @@ export declare interface UseApiOptions {
     onError?: (error: ApiError) => void;
     showSuccessMessage?: boolean;
     showErrorMessage?: boolean;
+    throwOnError?: boolean;
 }
 
 export declare const useAppNavigation: (config: NavigationConfig) => {

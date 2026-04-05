@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Search } from "lucide-react"
+import { useI18n } from "../../i18n"
 import { cn } from "../../lib/utils"
 import { Input } from "./input"
 
@@ -17,11 +18,13 @@ export function TableToolbar({
   summary,
   searchValue,
   onSearchChange,
-  searchPlaceholder = "Buscar...",
+  searchPlaceholder,
   leftSlot,
   rightSlot,
   className,
 }: TableToolbarProps) {
+  const { t } = useI18n()
+
   return (
     <div
       className={cn(
@@ -37,7 +40,7 @@ export function TableToolbar({
               <Input
                 value={searchValue ?? ""}
                 onChange={(event) => onSearchChange(event.target.value)}
-                placeholder={searchPlaceholder}
+                placeholder={searchPlaceholder ?? t("common.action.search")}
                 className="pl-9"
               />
             </div>

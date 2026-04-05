@@ -1,4 +1,5 @@
 import axios, { type AxiosRequestConfig } from "axios"
+import { translate } from "../../i18n/store"
 import type { ApiResponse, ApiError } from "./types"
 
 let globalLoaderContext: any = null
@@ -9,6 +10,13 @@ const ACCESS_TOKEN_KEY = "@Archon:accessToken"
 const REFRESH_TOKEN_KEY = "@Archon:refreshToken"
 const USER_KEY = "@Archon:user"
 const CONTRACT_KEY = "@Archon:contract"
+
+const formatMessage = (key: string, ...values: Array<string | number>) => {
+  return values.reduce(
+    (message: string, value, index) => message.replace(`{${index}}`, String(value)),
+    translate(key) as string
+  )
+}
 
 export const setGlobalLoaderContext = (context: any) => {
   globalLoaderContext = context
@@ -147,18 +155,22 @@ class HttpClient {
           errors = data
           const errorCount = keys.length
           message =
-            errorCount === 1 ? "Erro de validação no formulário" : `${errorCount} erros de validação no formulário`
+            errorCount === 1
+              ? translate("client.validation.single")
+              : formatMessage("client.validation.many", errorCount)
         }
       }
 
       if (!message && errors) {
         const errorCount = Object.keys(errors).length
         message =
-          errorCount === 1 ? "Erro de validação no formulário" : `${errorCount} erros de validação no formulário`
+          errorCount === 1
+            ? translate("client.validation.single")
+            : formatMessage("client.validation.many", errorCount)
       }
 
       if (!message) {
-        message = "Erro na requisição"
+        message = translate("common.error.request")
       }
 
       return {
@@ -169,13 +181,13 @@ class HttpClient {
       }
     } else if (error.request) {
       return {
-        message: "Erro de conexão. Verifique sua internet.",
+        message: translate("common.error.connection"),
         status: 0,
         isApiError: true,
       }
     } else {
       return {
-        message: error.message || "Erro desconhecido",
+        message: error.message || translate("common.error.unknown"),
         status: 500,
         isApiError: true,
       }

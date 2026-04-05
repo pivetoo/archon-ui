@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useI18n } from "../../i18n"
 import { cn } from "../../lib/utils"
 
 export interface ChartContainerProps {
@@ -12,7 +13,9 @@ export interface ChartContainerProps {
 }
 
 export const ChartContainer = React.forwardRef<HTMLDivElement, ChartContainerProps>(
-  ({ title, icon, children, emptyMessage = "Nenhum dado disponível", isEmpty = false, height = 400, className }, ref) => {
+  ({ title, icon, children, emptyMessage, isEmpty = false, height = 400, className }, ref) => {
+    const { t } = useI18n()
+
     return (
       <div ref={ref} className={cn("bg-card rounded-lg border shadow-sm", className)}>
         {title && (
@@ -29,7 +32,7 @@ export const ChartContainer = React.forwardRef<HTMLDivElement, ChartContainerPro
         >
           {isEmpty ? (
             <div className="flex items-center justify-center h-full text-muted-foreground">
-              {emptyMessage}
+              {emptyMessage ?? t("chart.empty")}
             </div>
           ) : (
             children

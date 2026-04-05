@@ -80,6 +80,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
   ) => {
     const { isDark, toggleDark } = useTheme()
     const i18n = useOptionalI18n()
+    const translate = React.useCallback((key: string) => i18n?.t(key) ?? key, [i18n])
     const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false)
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = React.useState(false)
     const [isAboutModalOpen, setIsAboutModalOpen] = React.useState(false)
@@ -110,6 +111,13 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
 
     const unreadCount = notifications.filter(n => !n.read).length
     const hasNotifications = unreadCount > 0
+
+    const formatMessage = React.useCallback((key: string, ...values: Array<string | number>) => {
+      return values.reduce(
+        (message: string, value, index) => message.replace(`{${index}}`, String(value)),
+        translate(key) as string
+      )
+    }, [translate])
 
     const getNotificationIcon = (type?: 'info' | 'success' | 'warning' | 'error') => {
       switch (type) {
@@ -155,10 +163,10 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       const hours = Math.floor(diff / 3600000)
       const days = Math.floor(diff / 86400000)
 
-      if (minutes < 1) return 'Agora'
-      if (minutes < 60) return `${minutes}m atrás`
-      if (hours < 24) return `${hours}h atrás`
-      if (days < 7) return `${days}d atrás`
+      if (minutes < 1) return translate("nav.time.now")
+      if (minutes < 60) return formatMessage("nav.time.minutesAgo", minutes)
+      if (hours < 24) return formatMessage("nav.time.hoursAgo", hours)
+      if (days < 7) return formatMessage("nav.time.daysAgo", days)
       return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
     }
     return (
@@ -178,7 +186,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
             <button
               type="button"
               onClick={onMobileMenuToggle}
-              aria-label="Abrir menu lateral"
+              aria-label={translate("nav.openSidebar")}
               className="p-2 rounded-sm transition-all hover:bg-accent dark:hover:bg-accent/80 text-muted-foreground hover:text-foreground active:scale-95"
             >
               <Menu className="h-5 w-5" />
@@ -197,7 +205,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                   </span>
                 )}
                 <span className="font-semibold text-sm text-foreground">
-                  {modules.find(m => m.id === currentModule)?.name || 'Selecione'}
+                  {modules.find(m => m.id === currentModule)?.name || translate("nav.select")}
                 </span>
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </button>
@@ -210,7 +218,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                   />
                   <div className="absolute left-0 top-full mt-2 w-64 bg-popover border border-border rounded-lg shadow-lg z-50 py-2">
                     <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase">
-                      Módulos
+                      {translate("nav.modules")}
                     </div>
                     {modules.map((module) => (
                       <button
@@ -279,10 +287,12 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                   <div className="absolute right-0 top-full mt-2 w-96 bg-popover border border-border rounded-lg shadow-lg z-50 max-h-[32rem] flex flex-col">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-border">
                       <div>
-                        <h3 className="text-sm font-semibold text-foreground">Notificações</h3>
+                        <h3 className="text-sm font-semibold text-foreground">{translate("nav.notifications")}</h3>
                         {unreadCount > 0 && (
                           <p className="text-xs text-muted-foreground mt-0.5">
-                            {unreadCount} não {unreadCount === 1 ? 'lida' : 'lidas'}
+                            {unreadCount === 1
+                              ? formatMessage("nav.notifications.unread.one", unreadCount)
+                              : formatMessage("nav.notifications.unread.many", unreadCount)}
                           </p>
                         )}
                       </div>
@@ -294,7 +304,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                             }}
                             className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
                           >
-                            Marcar como lidas
+                            {translate("nav.notifications.markAllAsRead")}
                           </button>
                         )}
                         {onClearAllNotifications && notifications.length > 0 && (
@@ -304,7 +314,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                             }}
                             className="text-xs text-destructive hover:text-destructive/80 font-medium transition-colors"
                           >
-                            Limpar todas
+                            {translate("nav.notifications.clearAll")}
                           </button>
                         )}
                       </div>
@@ -316,9 +326,9 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                           <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-3">
                             <Bell className="h-8 w-8 text-muted-foreground/50" />
                           </div>
-                          <p className="text-sm font-medium text-foreground">Nenhuma notificação</p>
+                          <p className="text-sm font-medium text-foreground">{translate("nav.notifications.emptyTitle")}</p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            Você está em dia!
+                            {translate("nav.notifications.emptyDescription")}
                           </p>
                         </div>
                       ) : (
@@ -369,7 +379,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                           }}
                           className="w-full text-center py-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors hover:bg-accent dark:hover:bg-accent/80 rounded-md"
                         >
-                          Ver todas as notificações
+                          {translate("nav.notifications.viewAll")}
                         </button>
                       </div>
                     )}
@@ -432,7 +442,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            {i18n?.t("nav.about") ?? "Sobre"}
+                            {translate("nav.about")}
                           </button>
                         </div>
 
@@ -448,7 +458,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                     >
                       <div className="flex items-center gap-3">
                         {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-                        <span>{i18n?.t(isDark ? "nav.theme.dark" : "nav.theme.light") ?? `Modo ${isDark ? "Escuro" : "Claro"}`}</span>
+                        <span>{translate(isDark ? "nav.theme.dark" : "nav.theme.light")}</span>
                       </div>
                       <div className={cn(
                         "relative w-9 h-5 rounded-full transition-colors",
@@ -475,7 +485,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                           >
                             <div className="flex items-center gap-3">
                               <LanguageFlag culture={i18n.culture} />
-                              <span>{i18n.t("nav.language")}</span>
+                              <span>{translate("nav.language")}</span>
                             </div>
                             <ChevronLeft className={cn("h-4 w-4 text-muted-foreground transition-transform", isLanguageMenuOpen && "-rotate-90")} />
                           </button>
@@ -523,7 +533,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                         className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80 text-destructive"
                       >
                         <LogOut className="h-4 w-4" />
-                        {i18n?.t("nav.logout") ?? "Sair"}
+                        {translate("nav.logout")}
                       </button>
                     </div>
                   </div>

@@ -1,6 +1,7 @@
 import * as React from "react"
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { cn } from "../../lib/utils"
+import { useI18n } from "../../i18n"
 import {
   Table,
   TableHeader,
@@ -55,11 +56,12 @@ export function DataTable<T = any>({
   onRowClick,
   onRowDoubleClick,
   className,
-  emptyText = "Nenhum registro encontrado",
+  emptyText,
   dragSelect = true,
   pageSize: initialPageSize = 10,
   pageSizeOptions = [5, 10, 20, 50]
 }: DataTableProps<T>) {
+  const { t } = useI18n()
   const isSelectable = selectable !== undefined ? selectable : !!onSelectionChange
   const containerRef = React.useRef<HTMLDivElement>(null)
   const rowRefs = React.useRef<Map<string | number, HTMLTableRowElement>>(new Map())
@@ -71,6 +73,7 @@ export function DataTable<T = any>({
 
   const [currentPage, setCurrentPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(initialPageSize)
+  const resolvedEmptyText = emptyText || t("common.state.noRecordsFound")
 
   const totalPages = Math.ceil(data.length / pageSize)
   const startIndex = (currentPage - 1) * pageSize
@@ -290,13 +293,13 @@ export function DataTable<T = any>({
                 >
                   <div className="mx-auto flex max-w-sm flex-col items-center gap-2 text-center">
                     <div className="rounded-2xl border border-border/70 bg-muted/35 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                      Sem resultados
+                      {t("common.state.noResults")}
                     </div>
                     <div className="text-base font-medium text-foreground">
-                      {emptyText}
+                      {resolvedEmptyText}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Ajuste filtros, paginação ou critérios de busca para continuar.
+                      {t("common.state.adjustFilters")}
                     </div>
                   </div>
                 </TableCell>

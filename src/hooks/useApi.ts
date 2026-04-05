@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useI18n } from '../i18n';
 import { toast } from '../components/ui/use-toast';
 import type { ApiError, PaginationMetadata, RequestState, UseApiOptions } from '../services/http/types';
 
@@ -61,7 +62,7 @@ function getValidationMessages(error: ApiError): string[] {
   return []
 }
 
-function buildErrorDescription(apiError: ApiError): string {
+function buildErrorDescription(apiError: ApiError, t: (key: string) => string): string {
   const validationMessages = getValidationMessages(apiError)
 
   if (validationMessages.length === 0) {
@@ -84,28 +85,29 @@ function buildErrorDescription(apiError: ApiError): string {
   lines.push(...visibleMessages.map((message) => `- ${message}`))
 
   if (hiddenCount > 0) {
-    lines.push(`E mais ${hiddenCount} erro(s).`)
+    lines.push(t("common.validation.moreErrors").replace("{0}", String(hiddenCount)))
   }
 
   return lines.join('\n')
 }
 
-function getErrorTitle(apiError: ApiError): string {
+function getErrorTitle(apiError: ApiError, t: (key: string) => string): string {
   const hasValidationMessages = getValidationMessages(apiError).length > 0
   const normalizedMessage = apiError.message?.trim()
 
   if (normalizedMessage) {
     if (normalizedMessage.toLowerCase() === 'validation failed.') {
-      return 'Falha de validação'
+      return t("validation.failed")
     }
 
     return normalizedMessage
   }
 
-  return hasValidationMessages ? 'Falha de validação' : 'Erro'
+  return hasValidationMessages ? t("validation.failed") : t("common.error.title")
 }
 
 export function useApi<T = any>(options: UseApiOptions = {}) {
+  const { t } = useI18n()
   const [state, setState] = useState<RequestState<T>>({
     data: null,
     loading: false,
@@ -140,7 +142,7 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
 
       if (options.showSuccessMessage && successMessage) {
         toast({
-          title: 'Sucesso',
+          title: t("common.success.title"),
           description: successMessage,
           variant: 'success',
         });
@@ -149,7 +151,7 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
       return data;
     } catch (error: any) {
       const apiError: ApiError = error.isApiError ? error : {
-        message: 'Erro desconhecido',
+        message: t("common.error.unknown"),
         status: 500,
         isApiError: true,
       };
@@ -168,13 +170,17 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
 
       if (options.showErrorMessage !== false) {
         toast({
-          title: getErrorTitle(apiError),
-          description: buildErrorDescription(apiError),
+          title: getErrorTitle(apiError, t),
+          description: buildErrorDescription(apiError, t),
           variant: 'destructive',
         });
       }
 
-      throw apiError;
+      if (options.throwOnError) {
+        throw apiError;
+      }
+
+      return null;
     }
   };
 

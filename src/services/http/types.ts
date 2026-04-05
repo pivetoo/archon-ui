@@ -52,4 +52,5 @@ export interface UseApiOptions {
   onError?: (error: ApiError) => void
   showSuccessMessage?: boolean
   showErrorMessage?: boolean
+  throwOnError?: boolean
 }

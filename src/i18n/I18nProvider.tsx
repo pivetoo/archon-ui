@@ -1,5 +1,6 @@
 import * as React from "react"
 import { httpClient, setRequestLanguage } from "../services/http/client"
+import { setTranslationMessages } from "./store"
 import type { ArchonCulture, I18nContextValue, LocalizationCatalog } from "./types"
 
 const LANGUAGE_STORAGE_KEY = "@Archon:language"
@@ -65,6 +66,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
       setCultureState(nextCulture)
       setUiCulture(catalog.uiCulture)
       setMessages(catalog.messages ?? {})
+      setTranslationMessages(catalog.messages ?? {})
       localStorage.setItem(LANGUAGE_STORAGE_KEY, nextCulture)
     } catch (currentError) {
       const message = currentError instanceof Error

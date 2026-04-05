@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useI18n } from "../../i18n"
 import { Modal, ModalContent, ModalDescription, ModalFooter, ModalHeader, ModalTitle } from "./modal"
 import { Button } from "./button"
 
@@ -20,10 +21,10 @@ const ConfirmModal = React.forwardRef<HTMLDivElement, ConfirmModalProps>(
     {
       open,
       onOpenChange,
-      title = "Confirmar ação",
-      description = "Tem certeza que deseja continuar?",
-      confirmText = "Confirmar",
-      cancelText = "Cancelar",
+      title,
+      description,
+      confirmText,
+      cancelText,
       onConfirm,
       onCancel,
       variant = "primary",
@@ -31,6 +32,8 @@ const ConfirmModal = React.forwardRef<HTMLDivElement, ConfirmModalProps>(
     },
     ref
   ) => {
+    const { t } = useI18n()
+
     const handleConfirm = () => {
       onConfirm?.()
     }
@@ -44,15 +47,17 @@ const ConfirmModal = React.forwardRef<HTMLDivElement, ConfirmModalProps>(
       <Modal open={open} onOpenChange={onOpenChange}>
         <ModalContent ref={ref}>
           <ModalHeader>
-            <ModalTitle>{title}</ModalTitle>
-            {description && <ModalDescription>{description}</ModalDescription>}
+            <ModalTitle>{title ?? t("confirmModal.title")}</ModalTitle>
+            {(description ?? t("confirmModal.description")) && (
+              <ModalDescription>{description ?? t("confirmModal.description")}</ModalDescription>
+            )}
           </ModalHeader>
           <ModalFooter>
             <Button variant="outline" onClick={handleCancel} disabled={loading}>
-              {cancelText}
+              {cancelText ?? t("common.action.cancel")}
             </Button>
             <Button variant={variant} onClick={handleConfirm} loading={loading}>
-              {confirmText}
+              {confirmText ?? t("common.action.confirm")}
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useI18n } from '../i18n';
 import { httpClient } from '../services/http/client';
 import type { NotificationItem } from '../components/ui/navbar';
 
@@ -48,6 +49,7 @@ interface UseNotificationsReturn {
 }
 
 export function useNotifications(options: UseNotificationsOptions = {}): UseNotificationsReturn {
+  const { t } = useI18n();
   const { pollingInterval = 30000, enabled = true } = options;
 
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
@@ -65,7 +67,7 @@ export function useNotifications(options: UseNotificationsOptions = {}): UseNoti
       const mapped = notificationsData.map(mapToNotificationItem);
       setNotifications(mapped);
     } catch {
-      setError('Erro ao carregar notificações');
+      setError(t('notifications.error.load'));
     } finally {
       setLoading(false);
     }
