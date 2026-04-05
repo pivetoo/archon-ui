@@ -487,6 +487,11 @@ export declare interface LoginResult {
 
 export declare const Modal: React_2.FC<DialogPrimitive.DialogProps>;
 
+export declare const ModalBody: {
+    ({ className, ...props }: React_2.HTMLAttributes<HTMLDivElement>): JSX.Element;
+    displayName: string;
+};
+
 export declare const ModalClose: React_2.ForwardRefExoticComponent<DialogPrimitive.DialogCloseProps & React_2.RefAttributes<HTMLButtonElement>>;
 
 export declare const ModalContent: React_2.ForwardRefExoticComponent<ModalContentProps & React_2.RefAttributes<HTMLDivElement>>;
