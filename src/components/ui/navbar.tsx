@@ -406,26 +406,27 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                       <p className="text-xs text-muted-foreground">{user.role}</p>
                     </div>
 
-                    <div className="py-1">
-                      {showAboutMenuItem && renderAboutModal && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsAboutModalOpen(true)
-                            setIsUserMenuOpen(false)
-                          }}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
-                        >
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          Sobre
-                        </button>
-                      )}
+                    {showAboutMenuItem && renderAboutModal && (
+                      <>
+                        <div className="py-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsAboutModalOpen(true)
+                              setIsUserMenuOpen(false)
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
+                          >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Sobre
+                          </button>
+                        </div>
 
-                    </div>
-
-                    <div className="border-t border-border my-1" />
+                        <div className="border-t border-border my-1" />
+                      </>
+                    )}
 
                     <button
                       onClick={() => {

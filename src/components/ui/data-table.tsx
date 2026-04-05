@@ -63,6 +63,7 @@ export function DataTable<T = any>({
   const isSelectable = selectable !== undefined ? selectable : !!onSelectionChange
   const containerRef = React.useRef<HTMLDivElement>(null)
   const rowRefs = React.useRef<Map<string | number, HTMLTableRowElement>>(new Map())
+  const pageSizeSelectId = React.useId()
   const [selectionBox, setSelectionBox] = React.useState<SelectionBox | null>(null)
   const [showSelectionBox, setShowSelectionBox] = React.useState(false)
   const dragStartRef = React.useRef<{ x: number; y: number; clientX: number; clientY: number } | null>(null)
@@ -351,8 +352,11 @@ export function DataTable<T = any>({
       {data.length > 0 && (
         <div className="flex flex-col gap-3 border-t border-border/70 bg-muted/20 px-4 py-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>Linhas por página:</span>
+            <label htmlFor={pageSizeSelectId}>Linhas por página:</label>
             <select
+              id={pageSizeSelectId}
+              name="pageSize"
+              aria-label="Linhas por página"
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
               className="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-sm"

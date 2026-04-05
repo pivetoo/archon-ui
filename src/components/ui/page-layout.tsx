@@ -170,45 +170,43 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
           )}
         >
           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-            <div className="flex min-w-0 items-start gap-4">
-              <div className="min-w-0 space-y-2">
-                <div className="flex items-center gap-2">
-                  <h1
-                    className={cn(
-                      "truncate font-semibold tracking-tight text-primary drop-shadow-[0_1px_0_hsl(var(--primary)/0.15)]",
-                      isCompact ? "text-2xl" : "text-3xl",
-                      titleClassName
-                    )}
-                  >
-                    {title}
-                  </h1>
-
-                  {onRefresh && (
-                    <button
-                      onClick={handleRefresh}
-                      disabled={isRefreshing}
-                      className={cn(
-                        "rounded-lg border border-transparent p-2 text-muted-foreground transition-all hover:border-border/80 hover:bg-muted/35 hover:text-foreground",
-                        isRefreshing && "text-primary"
-                      )}
-                      title="Atualizar"
-                    >
-                      <RefreshCw className={cn("h-4 w-4 transition-transform", isRefreshing && "animate-spin")} />
-                    </button>
+            <div className="min-w-0 space-y-2">
+              <div className="flex items-center gap-2">
+                <h1
+                  className={cn(
+                    "truncate font-semibold tracking-tight text-primary drop-shadow-[0_1px_0_hsl(var(--primary)/0.15)]",
+                    isCompact ? "text-2xl" : "text-3xl",
+                    titleClassName
                   )}
-                </div>
+                >
+                  {title}
+                </h1>
 
-                {subtitle && (
-                  <p
+                {onRefresh && (
+                  <button
+                    onClick={handleRefresh}
+                    disabled={isRefreshing}
                     className={cn(
-                      "max-w-3xl text-pretty text-muted-foreground",
-                      isCompact ? "text-sm" : "text-[15px]"
+                      "rounded-lg border border-transparent p-2 text-muted-foreground transition-all hover:border-border/80 hover:bg-muted/35 hover:text-foreground",
+                      isRefreshing && "text-primary"
                     )}
+                    title="Atualizar"
                   >
-                    {subtitle}
-                  </p>
+                    <RefreshCw className={cn("h-4 w-4 transition-transform", isRefreshing && "animate-spin")} />
+                  </button>
                 )}
               </div>
+
+              {subtitle && (
+                <p
+                  className={cn(
+                    "max-w-3xl text-pretty text-muted-foreground",
+                    isCompact ? "text-sm" : "text-[15px]"
+                  )}
+                >
+                  {subtitle}
+                </p>
+              )}
             </div>
 
             {allActions.length > 0 && (

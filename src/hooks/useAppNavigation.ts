@@ -15,7 +15,7 @@ export const useAppNavigation = (config: NavigationConfig) => {
   const isActive = (path: string): boolean => {
     const fullPath = basePath + path
     return location.pathname === fullPath ||
-           (path !== '/' && location.pathname.startsWith(fullPath))
+           (path !== '/' && location.pathname.startsWith(`${fullPath}/`))
   }
 
   const handleNavigate = (path: string) => {

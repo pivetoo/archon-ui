@@ -73,11 +73,17 @@ export class AuthService {
   static async logoutFromServer(): Promise<void> {
     try {
       const refreshToken = this.getRefreshToken()
+      const accessToken = this.getAccessToken()
       if (refreshToken) {
         await axios.post(
           `${getIdentityManagementURL()}/api/auth/Logout`,
           { refreshToken },
-          { headers: { "Content-Type": "application/json" } }
+          {
+            headers: {
+              "Content-Type": "application/json",
+              ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+            },
+          }
         )
       }
     } finally {

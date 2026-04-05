@@ -12,6 +12,18 @@ export interface PagedRequest {
   pageSize?: number
 }
 
+export interface PaginationParams extends PagedRequest {
+  search?: string
+  orderBy?: string
+}
+
+export interface PaginatedResult<T> {
+  data: T[]
+  total: number
+  page?: number
+  pageSize?: number
+}
+
 export interface ApiResponse<T = unknown, TErrors = unknown> {
   message: string
   data?: T

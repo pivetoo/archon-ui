@@ -201,6 +201,8 @@ export declare interface BreadcrumbProps extends React_2.HTMLAttributes<HTMLElem
     separator?: React_2.ReactNode;
 }
 
+export declare function buildPaginationQuery(params?: PagedRequest): string;
+
 export declare const Button: React_2.ForwardRefExoticComponent<ButtonProps & React_2.RefAttributes<HTMLButtonElement>>;
 
 export declare interface ButtonProps extends React_2.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
@@ -372,6 +374,22 @@ export declare const DropdownSubTrigger: React_2.ForwardRefExoticComponent<Omit<
 } & React_2.RefAttributes<HTMLDivElement>>;
 
 export declare const DropdownTrigger: React_2.ForwardRefExoticComponent<DropdownMenuPrimitive.DropdownMenuTriggerProps & React_2.RefAttributes<HTMLButtonElement>>;
+
+export declare function FilterDropdown({ label, value, options, onChange, clearLabel, allValue, }: FilterDropdownProps): JSX.Element;
+
+export declare interface FilterDropdownOption {
+    value: string;
+    label: string;
+}
+
+export declare interface FilterDropdownProps {
+    label: string;
+    value: string;
+    options: FilterDropdownOption[];
+    onChange: (value: string) => void;
+    clearLabel?: string;
+    allValue?: string;
+}
 
 export declare const getApiBaseURL: () => string;
 
@@ -583,6 +601,13 @@ export declare interface PageLayoutProps {
     className?: string;
 }
 
+export declare interface PaginatedResult<T> {
+    data: T[];
+    total: number;
+    page?: number;
+    pageSize?: number;
+}
+
 export declare interface PaginationMetadata {
     page: number;
     pageSize: number;
@@ -590,6 +615,11 @@ export declare interface PaginationMetadata {
     totalPages: number;
     hasPreviousPage: boolean;
     hasNextPage: boolean;
+}
+
+export declare interface PaginationParams extends PagedRequest {
+    search?: string;
+    orderBy?: string;
 }
 
 export declare const PieChart: React_2.ForwardRefExoticComponent<PieChartProps & React_2.RefAttributes<HTMLDivElement>>;
@@ -722,6 +752,38 @@ export declare const SheetHeader: {
 export declare const SheetOverlay: React_2.ForwardRefExoticComponent<Omit<DialogPrimitive.DialogOverlayProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
 
 export declare const SheetPortal: React_2.FC<DialogPrimitive.DialogPortalProps>;
+
+export declare function SheetPreviewField({ label, value, className, ...props }: SheetPreviewFieldProps): JSX.Element;
+
+export declare interface SheetPreviewFieldProps extends React_2.HTMLAttributes<HTMLDivElement> {
+    label: React_2.ReactNode;
+    value: React_2.ReactNode;
+}
+
+export declare function SheetPreviewGrid({ className, ...props }: SheetPreviewGridProps): JSX.Element;
+
+export declare interface SheetPreviewGridProps extends React_2.HTMLAttributes<HTMLDivElement> {
+}
+
+export declare function SheetPreviewHeader({ eyebrow, title, meta, description, className, }: SheetPreviewHeaderProps): JSX.Element;
+
+export declare interface SheetPreviewHeaderProps {
+    eyebrow?: React_2.ReactNode;
+    title: React_2.ReactNode;
+    meta?: React_2.ReactNode;
+    description?: React_2.ReactNode;
+    className?: string;
+}
+
+export declare function SheetPreviewSection({ title, description, defaultOpen, children, className, }: SheetPreviewSectionProps): JSX.Element;
+
+export declare interface SheetPreviewSectionProps {
+    title: React_2.ReactNode;
+    description?: React_2.ReactNode;
+    defaultOpen?: boolean;
+    children: React_2.ReactNode;
+    className?: string;
+}
 
 export declare const SheetTitle: React_2.ForwardRefExoticComponent<Omit<DialogPrimitive.DialogTitleProps & React_2.RefAttributes<HTMLHeadingElement>, "ref"> & React_2.RefAttributes<HTMLHeadingElement>>;
 
