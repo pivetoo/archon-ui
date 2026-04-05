@@ -31,11 +31,52 @@ import {
   type SidebarGroup,
   type SidebarItemData,
 } from "../../components/ui"
+import { I18nProvider, type ArchonCulture, type LocalizationCatalog } from "../../i18n"
 
 const modules: Module[] = [
   { id: "portal", name: "FinanceChannel", icon: <Home className="h-4 w-4" /> },
   { id: "workforce", name: "MarketChannel", icon: <Users className="h-4 w-4" /> },
 ]
+
+const layoutCatalogs: Record<ArchonCulture, LocalizationCatalog> = {
+  "pt-BR": {
+    culture: "pt-BR",
+    uiCulture: "pt-BR",
+    messages: {
+      "nav.about": "Sobre",
+      "nav.language": "Idioma",
+      "nav.logout": "Sair",
+      "nav.theme.dark": "Modo Escuro",
+      "nav.theme.light": "Modo Claro",
+    },
+  },
+  "en-US": {
+    culture: "en-US",
+    uiCulture: "en-US",
+    messages: {
+      "nav.about": "About",
+      "nav.language": "Language",
+      "nav.logout": "Sign out",
+      "nav.theme.dark": "Dark mode",
+      "nav.theme.light": "Light mode",
+    },
+  },
+  "es-AR": {
+    culture: "es-AR",
+    uiCulture: "es-AR",
+    messages: {
+      "nav.about": "Acerca de",
+      "nav.language": "Idioma",
+      "nav.logout": "Salir",
+      "nav.theme.dark": "Modo oscuro",
+      "nav.theme.light": "Modo claro",
+    },
+  },
+}
+
+const loadLayoutCatalog = async (culture: ArchonCulture): Promise<LocalizationCatalog> => {
+  return layoutCatalogs[culture]
+}
 
 interface AppLayoutSectionProps {
   onBackToCatalog?: () => void
@@ -414,43 +455,45 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
   }
 
   return (
-    <AppLayout
-      title="archon-ui"
-      logo={sidebarLogo}
-      subtitle={companyName}
-      user={{ name: "Usuário Exemplo", email: "usuario@empresa.com", role: "Administrador" }}
-      menuItems={menuItems}
-      menuGroups={menuGroups}
-      breadcrumbs={[{ label: "Início" }, { label: "Gestão" }, { label: pageLabels[currentPage] }]}
-      notifications={notifications}
-      modules={modules}
-      currentModule={currentModule}
-      onModuleChange={setCurrentModule}
-      showAboutMenuItem
-      renderAboutModal={(close) => (
-        <Modal open onOpenChange={(open) => { if (!open) { close() } }}>
-          <ModalContent size="md">
-            <ModalHeader>
-              <ModalTitle>Sobre o archon-ui</ModalTitle>
-              <ModalDescription>
-                Exemplo de injeção do modal via `renderAboutModal` no AppLayout.
-              </ModalDescription>
-            </ModalHeader>
-          </ModalContent>
-        </Modal>
-      )}
-      onLogout={() => toast({ title: "Logout", description: "Ação de sair acionada", variant: "info" })}
-    >
-      <div className="space-y-4">
-        {onBackToCatalog && currentPage === "dashboard" && (
-          <div className="flex">
-            <Button size="sm" variant="secondary" onClick={onBackToCatalog}>
-              Voltar ao catálogo
-            </Button>
-          </div>
+    <I18nProvider initialCulture="pt-BR" catalogLoader={loadLayoutCatalog}>
+      <AppLayout
+        title="archon-ui"
+        logo={sidebarLogo}
+        subtitle={companyName}
+        user={{ name: "Usuário Exemplo", email: "usuario@empresa.com", role: "Administrador" }}
+        menuItems={menuItems}
+        menuGroups={menuGroups}
+        breadcrumbs={[{ label: "Início" }, { label: "Gestão" }, { label: pageLabels[currentPage] }]}
+        notifications={notifications}
+        modules={modules}
+        currentModule={currentModule}
+        onModuleChange={setCurrentModule}
+        showAboutMenuItem
+        renderAboutModal={(close) => (
+          <Modal open onOpenChange={(open) => { if (!open) { close() } }}>
+            <ModalContent size="md">
+              <ModalHeader>
+                <ModalTitle>Sobre o archon-ui</ModalTitle>
+                <ModalDescription>
+                  Exemplo de injeção do modal via `renderAboutModal` no AppLayout.
+                </ModalDescription>
+              </ModalHeader>
+            </ModalContent>
+          </Modal>
         )}
-        {renderPageContent()}
-      </div>
-    </AppLayout>
+        onLogout={() => toast({ title: "Logout", description: "Ação de sair acionada", variant: "info" })}
+      >
+        <div className="space-y-4">
+          {onBackToCatalog && currentPage === "dashboard" && (
+            <div className="flex">
+              <Button size="sm" variant="secondary" onClick={onBackToCatalog}>
+                Voltar ao catálogo
+              </Button>
+            </div>
+          )}
+          {renderPageContent()}
+        </div>
+      </AppLayout>
+    </I18nProvider>
   )
 }

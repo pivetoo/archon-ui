@@ -98,6 +98,8 @@ export declare interface AppLayoutProps {
     children?: React_2.ReactNode;
 }
 
+export declare type ArchonCulture = "pt-BR" | "en-US" | "es-AR";
+
 export declare const AreaChart: React_2.ForwardRefExoticComponent<AreaChartProps & React_2.RefAttributes<HTMLDivElement>>;
 
 export declare interface AreaChartDataItem {
@@ -397,6 +399,8 @@ export declare const getIdentityManagementURL: () => string;
 
 export declare function getInitials(name: string): string;
 
+export declare const getRequestLanguage: () => string;
+
 export declare const GlobalLoader: React_2.FC<GlobalLoaderProps>;
 
 declare interface GlobalLoaderContextType {
@@ -431,6 +435,25 @@ declare class HttpClient {
 
 export declare const httpClient: HttpClient;
 
+export declare interface I18nContextValue {
+    culture: ArchonCulture;
+    uiCulture: string;
+    messages: Record<string, string>;
+    isLoading: boolean;
+    error: string | null;
+    setCulture: (culture: ArchonCulture) => Promise<void>;
+    t: (key: string) => string;
+}
+
+export declare const I18nProvider: React_2.FC<I18nProviderProps>;
+
+export declare interface I18nProviderProps {
+    children: React_2.ReactNode;
+    initialCulture?: ArchonCulture;
+    catalogLoader?: (culture: ArchonCulture) => Promise<LocalizationCatalog>;
+    loadingFallback?: React_2.ReactNode;
+}
+
 export declare interface IdentifyResult {
     authenticationStep: 'contractSelection';
     userId: number;
@@ -445,6 +468,13 @@ export declare const Input: React_2.ForwardRefExoticComponent<InputProps & React
 export declare interface InputProps extends React_2.InputHTMLAttributes<HTMLInputElement> {
     error?: boolean;
     helperText?: string;
+}
+
+export declare const LanguageFlag: React_2.FC<LanguageFlagProps>;
+
+export declare interface LanguageFlagProps {
+    culture: ArchonCulture;
+    className?: string;
 }
 
 export declare const LineChart: React_2.ForwardRefExoticComponent<LineChartProps & React_2.RefAttributes<HTMLDivElement>>;
@@ -467,6 +497,12 @@ export declare interface LineChartProps {
     height?: number | `${number}%`;
     className?: string;
     strokeWidth?: number;
+}
+
+export declare interface LocalizationCatalog {
+    culture: string;
+    uiCulture: string;
+    messages: Record<string, string>;
 }
 
 export declare interface LoginCredentials {
@@ -732,6 +768,8 @@ export declare const setApiBaseURL: (url: string) => void;
 export declare const setGlobalLoaderContext: (context: any) => void;
 
 export declare const setIdentityManagementURL: (url: string) => void;
+
+export declare const setRequestLanguage: (language: string) => void;
 
 export declare const Sheet: React_2.FC<DialogPrimitive.DialogProps>;
 
@@ -1021,6 +1059,8 @@ export declare const useFormErrors: () => {
 
 export declare const useGlobalLoader: () => GlobalLoaderContextType;
 
+export declare const useI18n: () => I18nContextValue;
+
 export declare function useNotifications(options?: UseNotificationsOptions): UseNotificationsReturn;
 
 declare interface UseNotificationsOptions {
@@ -1038,6 +1078,8 @@ declare interface UseNotificationsReturn {
     markAllAsRead: () => Promise<void>;
     clearAll: () => Promise<void>;
 }
+
+export declare const useOptionalI18n: () => I18nContextValue | null;
 
 export declare function usePermissions(): UsePermissionsReturn;
 

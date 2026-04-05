@@ -4,6 +4,7 @@ import type { ApiResponse, ApiError } from "./types"
 let globalLoaderContext: any = null
 let apiBaseURL: string = ""
 let identityManagementURL: string = ""
+let requestLanguage: string = "pt-BR"
 const ACCESS_TOKEN_KEY = "@Archon:accessToken"
 const REFRESH_TOKEN_KEY = "@Archon:refreshToken"
 const USER_KEY = "@Archon:user"
@@ -25,6 +26,12 @@ export const setIdentityManagementURL = (url: string) => {
 }
 
 export const getIdentityManagementURL = () => identityManagementURL
+
+export const setRequestLanguage = (language: string) => {
+  requestLanguage = language
+}
+
+export const getRequestLanguage = () => requestLanguage
 
 class HttpClient {
   private instance
@@ -51,6 +58,8 @@ class HttpClient {
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
+
+      config.headers["Accept-Language"] = requestLanguage
 
       if (globalLoaderContext) {
         globalLoaderContext.showLoader()
@@ -85,6 +94,7 @@ class HttpClient {
                 {
                   headers: {
                     "Content-Type": "application/json",
+                    "Accept-Language": requestLanguage,
                   },
                 }
               )

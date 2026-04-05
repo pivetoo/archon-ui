@@ -1,10 +1,12 @@
 import * as React from "react"
-import { Bell, ChevronDown, LogOut, Moon, Sun, Menu, Check } from "lucide-react"
+import { Bell, ChevronDown, ChevronLeft, LogOut, Moon, Sun, Menu, Check } from "lucide-react"
 import { cn, getInitials } from "../../lib/utils"
 import { getApiBaseURL } from "../../services/http/client"
 import { Breadcrumb } from "./breadcrumb"
 import type { BreadcrumbItem } from "./breadcrumb"
 import { useTheme } from "./use-theme"
+import { useOptionalI18n, type ArchonCulture } from "../../i18n"
+import { LanguageFlag } from "./language-flag"
 
 export interface NotificationItem {
   id: string
@@ -77,10 +79,17 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
     ref
   ) => {
     const { isDark, toggleDark } = useTheme()
+    const i18n = useOptionalI18n()
     const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false)
+    const [isLanguageMenuOpen, setIsLanguageMenuOpen] = React.useState(false)
     const [isAboutModalOpen, setIsAboutModalOpen] = React.useState(false)
     const [isNotificationMenuOpen, setIsNotificationMenuOpen] = React.useState(false)
     const [isModuleSwitcherOpen, setIsModuleSwitcherOpen] = React.useState(false)
+    const supportedCultures: Array<{ value: ArchonCulture; label: string }> = [
+      { value: "pt-BR", label: "Português" },
+      { value: "en-US", label: "English" },
+      { value: "es-AR", label: "Español" },
+    ]
 
     const renderAvatar = () => {
       if (user?.avatarUrl) {
@@ -375,7 +384,10 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           {user && !userMenuTrigger && (
             <div className="relative">
               <button
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                onClick={() => {
+                  setIsUserMenuOpen(!isUserMenuOpen)
+                  setIsLanguageMenuOpen(false)
+                }}
                 className="flex items-center gap-3 bg-transparent border-0 py-1 px-2.5 pr-2.5 rounded-md transition-all hover:bg-accent dark:hover:bg-accent/80 active:scale-[0.98]"
               >
                 <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground text-xs font-semibold overflow-hidden border-2 border-background">
@@ -420,7 +432,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            Sobre
+                            {i18n?.t("nav.about") ?? "Sobre"}
                           </button>
                         </div>
 
@@ -436,7 +448,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                     >
                       <div className="flex items-center gap-3">
                         {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-                        <span>Modo {isDark ? "Escuro" : "Claro"}</span>
+                        <span>{i18n?.t(isDark ? "nav.theme.dark" : "nav.theme.light") ?? `Modo ${isDark ? "Escuro" : "Claro"}`}</span>
                       </div>
                       <div className={cn(
                         "relative w-9 h-5 rounded-full transition-colors",
@@ -449,18 +461,69 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                       </div>
                     </button>
 
+                    {i18n && (
+                      <>
+                        <div className="border-t border-border my-1" />
+
+                        <div className="relative py-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsLanguageMenuOpen((current) => !current)
+                            }}
+                            className="w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
+                          >
+                            <div className="flex items-center gap-3">
+                              <LanguageFlag culture={i18n.culture} />
+                              <span>{i18n.t("nav.language")}</span>
+                            </div>
+                            <ChevronLeft className={cn("h-4 w-4 text-muted-foreground transition-transform", isLanguageMenuOpen && "-rotate-90")} />
+                          </button>
+
+                          {isLanguageMenuOpen && (
+                            <div className="absolute right-full top-0 mr-2 w-56 rounded-md border border-border bg-popover py-1 shadow-lg">
+                              {supportedCultures.map((culture) => (
+                                <button
+                                  key={culture.value}
+                                  type="button"
+                                  onClick={() => {
+                                    void i18n.setCulture(culture.value)
+                                    setIsLanguageMenuOpen(false)
+                                    setIsUserMenuOpen(false)
+                                  }}
+                                  className={cn(
+                                    "w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80",
+                                    i18n.culture === culture.value && "text-primary"
+                                  )}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <LanguageFlag culture={culture.value} />
+                                    <span>{culture.label}</span>
+                                  </div>
+                                  {i18n.culture === culture.value && (
+                                    <Check className="h-4 w-4" />
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+
                     <div className="border-t border-border my-1" />
 
                     <div className="py-1">
                       <button
                         onClick={() => {
+                          setIsLanguageMenuOpen(false)
                           setIsUserMenuOpen(false)
                           onLogout?.()
                         }}
                         className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80 text-destructive"
                       >
                         <LogOut className="h-4 w-4" />
-                        Sair
+                        {i18n?.t("nav.logout") ?? "Sair"}
                       </button>
                     </div>
                   </div>
