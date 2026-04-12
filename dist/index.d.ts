@@ -91,7 +91,8 @@ export declare interface AppLayoutProps {
     modules?: Module[];
     currentModule?: string;
     onModuleChange?: (moduleId: string) => void;
-    renderProfilePanel?: (close: () => void) => React_2.ReactNode;
+    profilePath?: string;
+    onProfileNavigate?: (path: string) => void;
     onLogoClick?: () => void;
     companyLogo?: string;
     headerMode?: SidebarHeaderMode;
@@ -242,6 +243,12 @@ export declare const CardFooter: React_2.ForwardRefExoticComponent<React_2.HTMLA
 export declare const CardHeader: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLDivElement> & React_2.RefAttributes<HTMLDivElement>>;
 
 export declare const CardTitle: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLDivElement> & React_2.RefAttributes<HTMLDivElement>>;
+
+export declare interface ChangePasswordPayload {
+    userId: number;
+    currentPassword: string;
+    newPassword: string;
+}
 
 export declare const ChartContainer: React_2.ForwardRefExoticComponent<ChartContainerProps & React_2.RefAttributes<HTMLDivElement>>;
 
@@ -594,7 +601,8 @@ export declare interface NavbarProps extends React_2.HTMLAttributes<HTMLElement>
     modules?: Module[];
     currentModule?: string;
     onModuleChange?: (moduleId: string) => void;
-    renderProfilePanel?: (close: () => void) => React_2.ReactNode;
+    profilePath?: string;
+    onProfileNavigate?: (path: string) => void;
     onLogout?: () => void;
 }
 
@@ -694,6 +702,11 @@ export declare interface PieChartProps {
     width?: number | `${number}%`;
     height?: number | `${number}%`;
     className?: string;
+}
+
+export declare class ProfileService {
+    static updateProfile(request: UpdateProfileRequest): Promise<User>;
+    static changePassword(payload: ChangePasswordPayload): Promise<void>;
 }
 
 export declare const ProtectedRoute: default_2.FC<ProtectedRouteProps>;
@@ -1016,6 +1029,15 @@ export declare const TooltipTrigger: React_2.ForwardRefExoticComponent<TooltipPr
 
 export declare function translate(key: string): string;
 
+export declare interface UpdateProfileRequest {
+    id: number;
+    username: string;
+    email: string;
+    name: string;
+    avatarUrl?: string;
+    isActive?: boolean;
+}
+
 export declare function useApi<T = any>(options?: UseApiOptions): {
     execute: (apiCall: () => Promise<any>) => Promise<any>;
     reset: () => void;
@@ -1095,6 +1117,8 @@ declare interface UseNotificationsReturn {
     clearAll: () => Promise<void>;
 }
 
+export declare const useOptionalAuth: () => AuthContextData | null;
+
 export declare const useOptionalI18n: () => I18nContextValue | null;
 
 export declare function usePermissions(): UsePermissionsReturn;
@@ -1117,6 +1141,17 @@ export declare interface User {
     lastLoginAt?: string;
 }
 
+export declare function UserProfilePage({ user, onEditProfile, onSaveProfile, onChangePassword, onManageSessions, className, }: UserProfilePageProps): JSX.Element;
+
+export declare interface UserProfilePageProps {
+    user: UserProfileUser;
+    onEditProfile?: () => void;
+    onSaveProfile?: (user: UserProfileUser) => void | Promise<void>;
+    onChangePassword?: () => void;
+    onManageSessions?: () => void;
+    className?: string;
+}
+
 export declare function UserProfilePanel({ user, onEditProfile, onChangePassword, onManageSessions, className, }: UserProfilePanelProps): JSX.Element;
 
 export declare interface UserProfilePanelProps {
@@ -1133,6 +1168,16 @@ export declare interface UserProfilePanelProps {
     onChangePassword?: () => void;
     onManageSessions?: () => void;
     className?: string;
+}
+
+export declare interface UserProfileUser {
+    name: string;
+    email: string;
+    username?: string;
+    role?: string;
+    avatarUrl?: string;
+    preferredLanguage?: string;
+    lastLoginAt?: string;
 }
 
 export declare const useTheme: () => ThemeContextType;
