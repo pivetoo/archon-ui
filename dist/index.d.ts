@@ -72,8 +72,11 @@ export declare interface AppLayoutProps {
     user: {
         name: string;
         email: string;
+        username?: string;
         role?: string;
         avatarUrl?: string;
+        preferredLanguage?: string;
+        lastLoginAt?: string;
     };
     menuItems?: SidebarItemData[];
     menuGroups?: SidebarGroup[];
@@ -88,8 +91,7 @@ export declare interface AppLayoutProps {
     modules?: Module[];
     currentModule?: string;
     onModuleChange?: (moduleId: string) => void;
-    showAboutMenuItem?: boolean;
-    renderAboutModal?: (close: () => void) => React_2.ReactNode;
+    renderProfilePanel?: (close: () => void) => React_2.ReactNode;
     onLogoClick?: () => void;
     companyLogo?: string;
     headerMode?: SidebarHeaderMode;
@@ -574,8 +576,12 @@ export declare interface NavbarProps extends React_2.HTMLAttributes<HTMLElement>
     breadcrumbs?: BreadcrumbItem[];
     user?: {
         name: string;
+        email: string;
+        username?: string;
         role?: string;
         avatarUrl?: string;
+        preferredLanguage?: string;
+        lastLoginAt?: string;
     };
     companyName?: string;
     notifications?: NotificationItem[];
@@ -588,9 +594,8 @@ export declare interface NavbarProps extends React_2.HTMLAttributes<HTMLElement>
     modules?: Module[];
     currentModule?: string;
     onModuleChange?: (moduleId: string) => void;
+    renderProfilePanel?: (close: () => void) => React_2.ReactNode;
     onLogout?: () => void;
-    showAboutMenuItem?: boolean;
-    renderAboutModal?: (close: () => void) => React_2.ReactNode;
 }
 
 export declare interface NavigationConfig {
@@ -644,9 +649,13 @@ export declare interface PageLayoutProps {
 
 export declare interface PaginatedResult<T> {
     data: T[];
-    total: number;
+    total?: number;
+    totalCount?: number;
     page?: number;
     pageSize?: number;
+    totalPages?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
 }
 
 export declare interface PaginationMetadata {
@@ -695,6 +704,8 @@ export declare interface ProtectedRouteProps {
     redirectTo?: string;
     externalRedirect?: boolean;
 }
+
+export declare function queryCollection<T extends object>(items: T[], params?: PaginationParams, searchFields?: string[]): PaginatedResult<T>;
 
 export declare const RadioGroup: React_2.ForwardRefExoticComponent<Omit<RadioGroupPrimitive.RadioGroupProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
 
@@ -1104,6 +1115,24 @@ export declare interface User {
     avatarUrl?: string;
     isActive?: boolean;
     lastLoginAt?: string;
+}
+
+export declare function UserProfilePanel({ user, onEditProfile, onChangePassword, onManageSessions, className, }: UserProfilePanelProps): JSX.Element;
+
+export declare interface UserProfilePanelProps {
+    user: {
+        name: string;
+        email: string;
+        username?: string;
+        role?: string;
+        avatarUrl?: string;
+        preferredLanguage?: string;
+        lastLoginAt?: string;
+    };
+    onEditProfile?: () => void;
+    onChangePassword?: () => void;
+    onManageSessions?: () => void;
+    className?: string;
 }
 
 export declare const useTheme: () => ThemeContextType;

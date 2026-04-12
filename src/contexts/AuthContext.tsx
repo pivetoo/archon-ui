@@ -12,6 +12,10 @@ export const useAuth = () => {
   return context
 }
 
+export const useOptionalAuth = () => {
+  return React.useContext(AuthContext)
+}
+
 interface AuthProviderProps {
   children: React.ReactNode
   onLogout?: () => void

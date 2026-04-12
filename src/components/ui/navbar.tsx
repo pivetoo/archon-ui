@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Bell, ChevronDown, ChevronLeft, LogOut, Moon, Sun, Menu, Check } from "lucide-react"
+import { Bell, ChevronDown, ChevronLeft, LogOut, Moon, Sun, Menu, Check, UserRound } from "lucide-react"
 import { cn, getInitials } from "../../lib/utils"
 import { getApiBaseURL } from "../../services/http/client"
 import { Breadcrumb } from "./breadcrumb"
@@ -30,8 +30,12 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   breadcrumbs?: BreadcrumbItem[]
   user?: {
     name: string
+    email: string
+    username?: string
     role?: string
     avatarUrl?: string
+    preferredLanguage?: string
+    lastLoginAt?: string
   }
   companyName?: string
   notifications?: NotificationItem[]
@@ -44,9 +48,9 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   modules?: Module[]
   currentModule?: string
   onModuleChange?: (moduleId: string) => void
+  profilePath?: string
+  onProfileNavigate?: (path: string) => void
   onLogout?: () => void
-  showAboutMenuItem?: boolean
-  renderAboutModal?: (close: () => void) => React.ReactNode
 }
 
 export type { BreadcrumbItem }
@@ -71,9 +75,9 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       modules,
       currentModule,
       onModuleChange,
+      profilePath,
+      onProfileNavigate,
       onLogout,
-      showAboutMenuItem = false,
-      renderAboutModal,
       ...props
     },
     ref
@@ -83,7 +87,6 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
     const translate = React.useCallback((key: string) => i18n?.t(key) ?? key, [i18n])
     const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false)
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = React.useState(false)
-    const [isAboutModalOpen, setIsAboutModalOpen] = React.useState(false)
     const [isNotificationMenuOpen, setIsNotificationMenuOpen] = React.useState(false)
     const [isModuleSwitcherOpen, setIsModuleSwitcherOpen] = React.useState(false)
     const supportedCultures: Array<{ value: ArchonCulture; label: string }> = [
@@ -425,24 +428,22 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                   <div className="absolute right-0 top-full mt-2 w-64 bg-popover border border-border rounded-md shadow-lg z-50 py-2">
                     <div className="px-4 py-3 border-b border-border">
                       <p className="text-sm font-semibold">{user.name}</p>
-                      <p className="text-xs text-muted-foreground">{user.role}</p>
+                      <p className="text-xs text-muted-foreground">{user.email}</p>
                     </div>
 
-                    {showAboutMenuItem && renderAboutModal && (
+                    {profilePath && onProfileNavigate && (
                       <>
                         <div className="py-1">
                           <button
                             type="button"
                             onClick={() => {
-                              setIsAboutModalOpen(true)
+                              onProfileNavigate(profilePath)
                               setIsUserMenuOpen(false)
                             }}
                             className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
                           >
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            {translate("nav.about")}
+                            <UserRound className="h-4 w-4" />
+                            {translate("nav.profile")}
                           </button>
                         </div>
 
@@ -542,9 +543,6 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
             </div>
           )}
         </div>
-
-        {isAboutModalOpen && renderAboutModal && renderAboutModal(() => setIsAboutModalOpen(false))}
-
       </nav>
     )
   }

@@ -19,9 +19,13 @@ export interface PaginationParams extends PagedRequest {
 
 export interface PaginatedResult<T> {
   data: T[]
-  total: number
+  total?: number
+  totalCount?: number
   page?: number
   pageSize?: number
+  totalPages?: number
+  hasPreviousPage?: boolean
+  hasNextPage?: boolean
 }
 
 export interface ApiResponse<T = unknown, TErrors = unknown> {

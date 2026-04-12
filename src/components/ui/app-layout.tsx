@@ -14,8 +14,11 @@ export interface AppLayoutProps {
   user: {
     name: string
     email: string
+    username?: string
     role?: string
     avatarUrl?: string
+    preferredLanguage?: string
+    lastLoginAt?: string
   }
   menuItems?: SidebarItemData[]
   menuGroups?: SidebarGroup[]
@@ -30,8 +33,8 @@ export interface AppLayoutProps {
   modules?: Module[]
   currentModule?: string
   onModuleChange?: (moduleId: string) => void
-  showAboutMenuItem?: boolean
-  renderAboutModal?: (close: () => void) => React.ReactNode
+  profilePath?: string
+  onProfileNavigate?: (path: string) => void
   onLogoClick?: () => void
   companyLogo?: string
   headerMode?: SidebarHeaderMode
@@ -58,8 +61,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   modules,
   currentModule,
   onModuleChange,
-  showAboutMenuItem = false,
-  renderAboutModal,
+  profilePath,
+  onProfileNavigate,
   onLogoClick,
   companyLogo,
   headerMode,
@@ -126,8 +129,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         breadcrumbs={breadcrumbs}
         user={{
           name: user.name,
+          email: user.email,
+          username: user.username,
           role: user.role,
           avatarUrl: user.avatarUrl,
+          preferredLanguage: user.preferredLanguage,
+          lastLoginAt: user.lastLoginAt,
         }}
         companyName={subtitle}
         notifications={notifications}
@@ -138,8 +145,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         modules={modules}
         currentModule={currentModule}
         onModuleChange={onModuleChange}
-        showAboutMenuItem={showAboutMenuItem}
-        renderAboutModal={renderAboutModal}
+        profilePath={profilePath}
+        onProfileNavigate={onProfileNavigate}
         onLogout={onLogout}
       />
 
