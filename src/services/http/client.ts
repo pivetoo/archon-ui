@@ -6,6 +6,7 @@ let globalLoaderContext: any = null
 let apiBaseURL: string = ""
 let identityManagementURL: string = ""
 let requestLanguage: string = "pt-BR"
+let authFailureHandler: (() => void) | null = null
 const ACCESS_TOKEN_KEY = "@Archon:accessToken"
 const REFRESH_TOKEN_KEY = "@Archon:refreshToken"
 const USER_KEY = "@Archon:user"
@@ -40,6 +41,10 @@ export const setRequestLanguage = (language: string) => {
 }
 
 export const getRequestLanguage = () => requestLanguage
+
+export const setAuthFailureHandler = (handler: (() => void) | null) => {
+  authFailureHandler = handler
+}
 
 class HttpClient {
   private instance
@@ -122,6 +127,7 @@ class HttpClient {
               localStorage.removeItem(REFRESH_TOKEN_KEY)
               localStorage.removeItem(USER_KEY)
               localStorage.removeItem(CONTRACT_KEY)
+              authFailureHandler?.()
 
               return Promise.reject(refreshError)
             }

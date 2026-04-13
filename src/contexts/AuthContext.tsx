@@ -1,6 +1,7 @@
 import * as React from "react"
 import type { AuthContextData, LoginResult, User, ContractType, ActiveSession } from "../types/auth"
 import { AuthService } from "../services/auth/authService"
+import { setAuthFailureHandler } from "../services/http/client"
 
 const AuthContext = React.createContext<AuthContextData | null>(null)
 
@@ -65,6 +66,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
 
     onLogout?.()
   }, [onLogout])
+
+  useEffect(() => {
+    setAuthFailureHandler(() => logout)
+
+    return () => {
+      setAuthFailureHandler(null)
+    }
+  }, [logout])
 
   const logoutAllDevices = React.useCallback(async () => {
     await AuthService.logoutAllDevices()
