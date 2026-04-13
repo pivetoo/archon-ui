@@ -206,6 +206,14 @@ export declare interface BreadcrumbProps extends React_2.HTMLAttributes<HTMLElem
     separator?: React_2.ReactNode;
 }
 
+export declare const buildCallbackRedirectUrl: (returnUrl: string, accessToken: string, refreshToken: string) => string;
+
+export declare const buildIdentityManagementLoginUrl: ({ identityManagementUrl, callbackPath, currentOrigin, }: {
+    identityManagementUrl?: string;
+    callbackPath?: string;
+    currentOrigin?: string;
+}) => string | undefined;
+
 export declare function buildPaginationQuery(params?: PagedRequest): string;
 
 export declare const Button: React_2.ForwardRefExoticComponent<ButtonProps & React_2.RefAttributes<HTMLButtonElement>>;
@@ -410,6 +418,8 @@ export declare function getInitials(name: string): string;
 
 export declare const getRequestLanguage: () => string;
 
+export declare const getReturnUrl: (search: string, currentOrigin?: string) => string | undefined;
+
 export declare const GlobalLoader: React_2.FC<GlobalLoaderProps>;
 
 declare interface GlobalLoaderContextType {
@@ -530,6 +540,8 @@ export declare interface LoginResult {
     redirectUrl?: string;
 }
 
+export declare const matchesReturnUrl: (returnUrl?: string, redirectUris?: string) => boolean;
+
 export declare const Modal: React_2.FC<DialogPrimitive.DialogProps>;
 
 export declare const ModalBody: {
@@ -611,6 +623,8 @@ export declare interface NavigationConfig {
     items?: SidebarItemData[];
     groups?: SidebarGroup[];
 }
+
+export declare const normalizeExternalUrl: (value: string) => string;
 
 export declare interface NotificationItem {
     id: string;
@@ -716,6 +730,8 @@ export declare interface ProtectedRouteProps {
     isAuthenticated: boolean;
     redirectTo?: string;
     externalRedirect?: boolean;
+    preserveExternalReturn?: boolean;
+    callbackPath?: string;
 }
 
 export declare function queryCollection<T extends object>(items: T[], params?: PaginationParams, searchFields?: string[]): PaginatedResult<T>;
