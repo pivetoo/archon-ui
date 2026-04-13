@@ -4986,11 +4986,12 @@ const PM = ko(
         "3xl": "max-w-3xl",
         "4xl": "max-w-4xl",
         "5xl": "max-w-5xl",
+        form: "max-w-3xl",
         full: "max-w-[95vw]"
       }
     },
     defaultVariants: {
-      size: "lg"
+      size: "form"
     }
   }
 ), gp = m.forwardRef(({ className: e, children: t, size: r, ...n }, o) => /* @__PURE__ */ T(EM, { children: [

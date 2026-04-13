@@ -557,7 +557,7 @@ export declare interface ModalContentProps extends React_2.ComponentPropsWithout
 }
 
 declare const modalContentVariants: (props?: ({
-    size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full" | null | undefined;
+    size?: "sm" | "md" | "lg" | "form" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 export declare const ModalDescription: React_2.ForwardRefExoticComponent<Omit<DialogPrimitive.DialogDescriptionProps & React_2.RefAttributes<HTMLParagraphElement>, "ref"> & React_2.RefAttributes<HTMLParagraphElement>>;
