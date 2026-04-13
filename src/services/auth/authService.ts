@@ -1,5 +1,5 @@
 import axios from "axios"
-import { httpClient, getIdentityManagementURL } from "../http/client"
+import { httpClient, getIdentityManagementURL, getRequestLanguage } from "../http/client"
 import type { IdentifyResult, LoginResult, LoginCredentials, ContractLoginRequest, RefreshTokenResponse, ActiveSession } from "../../types/auth"
 
 export class AuthService {
@@ -76,7 +76,7 @@ export class AuthService {
       const accessToken = this.getAccessToken()
       if (refreshToken) {
         await axios.post(
-          `${getIdentityManagementURL()}/api/auth/Logout`,
+          `${getIdentityManagementURL()}/auth/Logout`,
           { refreshToken },
           {
             headers: {
@@ -102,11 +102,25 @@ export class AuthService {
     }
 
     try {
-      const response = await httpClient.post<RefreshTokenResponse>("/auth/RefreshToken", {
-        refreshToken,
-      })
+      const identityManagementUrl = getIdentityManagementURL()
+      if (!identityManagementUrl) {
+        throw new Error("Identity Management URL não configurada")
+      }
 
-      const tokenData = response.data
+      const response = await axios.post<RefreshTokenResponse | { data?: RefreshTokenResponse }>(
+        `${identityManagementUrl}/auth/RefreshToken`,
+        { refreshToken },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Accept-Language": getRequestLanguage(),
+          },
+        }
+      )
+
+      const tokenData = response.data && typeof response.data === "object" && "data" in response.data
+        ? (response.data.data ?? null)
+        : response.data
       if (!tokenData) {
         throw new Error("Refresh token response is empty.")
       }

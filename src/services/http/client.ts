@@ -97,7 +97,7 @@ class HttpClient {
           if (refreshToken && identityManagementURL) {
             try {
               const response = await axios.post(
-                `${identityManagementURL}/api/auth/RefreshToken`,
+                `${identityManagementURL}/auth/RefreshToken`,
                 { refreshToken },
                 {
                   headers: {
