@@ -805,6 +805,8 @@ export declare const SelectValue: React_2.ForwardRefExoticComponent<SelectPrimit
 
 export declare const setApiBaseURL: (url: string) => void;
 
+export declare const setAuthFailureHandler: (handler: (() => void) | null) => void;
+
 export declare const setGlobalLoaderContext: (context: any) => void;
 
 export declare const setIdentityManagementURL: (url: string) => void;

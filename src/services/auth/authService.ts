@@ -107,7 +107,7 @@ export class AuthService {
         throw new Error("Identity Management URL não configurada")
       }
 
-      const response = await axios.post<RefreshTokenResponse | { data?: RefreshTokenResponse }>(
+      const response = await axios.post<unknown>(
         `${identityManagementUrl}/auth/RefreshToken`,
         { refreshToken },
         {
@@ -118,9 +118,10 @@ export class AuthService {
         }
       )
 
-      const tokenData = response.data && typeof response.data === "object" && "data" in response.data
-        ? (response.data.data ?? null)
-        : response.data
+      const rawData = response.data
+      const tokenData: RefreshTokenResponse | null = rawData && typeof rawData === "object" && "data" in rawData
+        ? (((rawData as { data?: RefreshTokenResponse }).data) ?? null)
+        : (rawData as RefreshTokenResponse)
       if (!tokenData) {
         throw new Error("Refresh token response is empty.")
       }
