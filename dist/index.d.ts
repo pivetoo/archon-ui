@@ -227,7 +227,7 @@ export declare interface ButtonProps extends React_2.ButtonHTMLAttributes<HTMLBu
 }
 
 export declare const buttonVariants: (props?: ({
-    variant?: "primary" | "secondary" | "success" | "error" | "danger" | "warning" | "info" | "outline" | "outline-secondary" | "outline-primary" | "outline-warning" | "outline-danger" | "ghost" | "text" | "link" | "dark" | null | undefined;
+    variant?: "primary" | "secondary" | "success" | "error" | "danger" | "warning" | "info" | "outline" | "outline-secondary" | "outline-primary" | "outline-success" | "outline-warning" | "outline-danger" | "ghost" | "text" | "link" | "dark" | null | undefined;
     size?: "sm" | "md" | "lg" | "icon" | null | undefined;
 } & ClassProp) | undefined) => string;
 
@@ -639,7 +639,7 @@ export declare interface PageAction {
     key: string;
     label: string;
     icon?: React_2.ReactNode;
-    variant?: "primary" | "secondary" | "outline" | "outline-primary" | "outline-secondary" | "outline-warning" | "outline-danger" | "ghost" | "danger";
+    variant?: "primary" | "secondary" | "outline" | "outline-primary" | "outline-secondary" | "outline-success" | "outline-warning" | "outline-danger" | "ghost" | "danger";
     onClick: () => void;
     disabled?: boolean;
 }

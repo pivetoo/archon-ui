@@ -9,7 +9,7 @@ export interface PageAction {
   key: string
   label: string
   icon?: React.ReactNode
-  variant?: "primary" | "secondary" | "outline" | "outline-primary" | "outline-secondary" | "outline-warning" | "outline-danger" | "ghost" | "danger"
+  variant?: "primary" | "secondary" | "outline" | "outline-primary" | "outline-secondary" | "outline-success" | "outline-warning" | "outline-danger" | "ghost" | "danger"
   onClick: () => void
   disabled?: boolean
 }

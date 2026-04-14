@@ -20,6 +20,7 @@ const buttonVariants = cva(
         outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         "outline-secondary": "border border-secondary bg-background text-secondary hover:bg-secondary/10",
         "outline-primary": "border border-primary bg-background text-primary hover:bg-primary/10",
+        "outline-success": "border border-success bg-background text-success hover:bg-success/10",
         "outline-warning": "border border-warning bg-background text-warning hover:bg-warning/10",
         "outline-danger": "border border-destructive bg-background text-destructive hover:bg-destructive/10",
         ghost: "hover:bg-accent hover:text-accent-foreground",
