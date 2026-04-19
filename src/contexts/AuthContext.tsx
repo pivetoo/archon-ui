@@ -109,7 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
     [user]
   )
 
-  const isAuthenticated = !!user && !!accessToken
+  const isAuthenticated = !!user && !!accessToken && !!refreshToken && !AuthService.isTokenExpiringSoon(accessToken, 0)
 
   const value = React.useMemo(
     () => ({

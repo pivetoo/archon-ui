@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts';
+import { AuthService } from '../../services/auth/authService';
 
 export interface CallbackProps {
   redirectTo?: string;
@@ -61,7 +62,14 @@ export const Callback: React.FC<CallbackProps> = ({
           throw new Error('Tokens não encontrados na URL');
         }
 
+        if (AuthService.isTokenExpiringSoon(accessToken, 0)) {
+          throw new Error('Access token expirado ou inválido');
+        }
+
         const payload = parseJwt(accessToken);
+        if (!payload) {
+          throw new Error('Access token inválido');
+        }
 
         const email = payload?.email;
         const userEmail = Array.isArray(email) ? email[0] : (email || '');

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { buildIdentityManagementLoginUrl } from './return-url'
 
@@ -20,18 +20,32 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   callbackPath = '/callback',
 }) => {
   const location = useLocation()
+  const hasRedirectedRef = useRef(false)
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      hasRedirectedRef.current = false
+      return
+    }
+
+    if (!externalRedirect || !redirectTo || hasRedirectedRef.current) {
+      return
+    }
+
+    const targetUrl = preserveExternalReturn
+      ? buildIdentityManagementLoginUrl({
+          identityManagementUrl: redirectTo,
+          callbackPath,
+          currentOrigin: typeof window === 'undefined' ? undefined : window.location.origin,
+        }) ?? redirectTo
+      : redirectTo
+
+    hasRedirectedRef.current = true
+    window.location.href = targetUrl
+  }, [callbackPath, externalRedirect, isAuthenticated, preserveExternalReturn, redirectTo])
 
   if (!isAuthenticated) {
     if (externalRedirect && redirectTo) {
-      const targetUrl = preserveExternalReturn
-        ? buildIdentityManagementLoginUrl({
-            identityManagementUrl: redirectTo,
-            callbackPath,
-            currentOrigin: typeof window === 'undefined' ? undefined : window.location.origin,
-          }) ?? redirectTo
-        : redirectTo
-
-      window.location.href = targetUrl
       return null
     }
 

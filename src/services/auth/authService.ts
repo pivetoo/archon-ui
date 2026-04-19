@@ -53,8 +53,10 @@ export class AuthService {
   }
 
   static isAuthenticated(): boolean {
-    const token = localStorage.getItem("@Archon:accessToken")
-    return !!token
+    const accessToken = localStorage.getItem("@Archon:accessToken")
+    const refreshToken = localStorage.getItem("@Archon:refreshToken")
+
+    return !!accessToken && !!refreshToken && !this.isTokenExpiringSoon(accessToken, 0)
   }
 
   static getCurrentUser(): any | null {
