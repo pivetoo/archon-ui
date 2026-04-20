@@ -68,7 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
   }, [onLogout])
 
   React.useEffect(() => {
-    setAuthFailureHandler(() => logout)
+    setAuthFailureHandler(logout)
 
     return () => {
       setAuthFailureHandler(null)
