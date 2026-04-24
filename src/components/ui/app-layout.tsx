@@ -9,6 +9,8 @@ export type { BreadcrumbItem, SidebarItemData, SidebarGroup, SidebarHeaderMode, 
 
 export interface AppLayoutProps {
   title: string
+  titleStyle?: React.CSSProperties
+  titleClassName?: string
   subtitle?: string
   logo?: React.ReactNode
   user: {
@@ -68,6 +70,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   headerMode,
   headerLogo,
   headerLogoCollapsed,
+  titleStyle,
+  titleClassName,
   children,
 }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(initialCollapsed)
@@ -106,6 +110,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     <div className="relative min-h-screen bg-background">
       <Sidebar
         title={title}
+        titleStyle={titleStyle}
+        titleClassName={titleClassName}
         logo={logo}
         items={menuItems}
         groups={menuGroups}

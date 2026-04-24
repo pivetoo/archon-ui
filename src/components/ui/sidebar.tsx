@@ -22,6 +22,8 @@ export type SidebarHeaderMode = 'default' | 'companyLogo'
 
 export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string
+  titleStyle?: React.CSSProperties
+  titleClassName?: string
   logo?: React.ReactNode
   items?: SidebarItemData[]
   groups?: SidebarGroup[]
@@ -47,6 +49,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     {
       className,
       title,
+      titleStyle,
+      titleClassName,
       logo,
       items = [],
       groups = [],
@@ -178,7 +182,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             {logo}
             {!collapsed && (
               <div className="flex-1 overflow-hidden ml-3">
-                {title && <div className="font-semibold text-base text-foreground leading-tight tracking-tight">{title}</div>}
+                {title && <div className={cn("font-semibold text-base text-foreground leading-tight tracking-tight", titleClassName)} style={titleStyle}>{title}</div>}
               </div>
             )}
           </div>
