@@ -67,6 +67,8 @@ export declare const AppLayout: React_2.FC<AppLayoutProps>;
 
 export declare interface AppLayoutProps {
     title: string;
+    titleStyle?: React_2.CSSProperties;
+    titleClassName?: string;
     subtitle?: string;
     logo?: React_2.ReactNode;
     user: {
@@ -918,6 +920,8 @@ export declare interface SidebarNavItemProps extends React_2.HTMLAttributes<HTML
 
 export declare interface SidebarProps extends React_2.HTMLAttributes<HTMLDivElement> {
     title?: string;
+    titleStyle?: React_2.CSSProperties;
+    titleClassName?: string;
     logo?: React_2.ReactNode;
     items?: SidebarItemData[];
     groups?: SidebarGroup[];
