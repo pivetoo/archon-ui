@@ -1,105 +1,63 @@
-import * as React from "react"
-import { Search } from "lucide-react"
-import { useI18n } from "../../i18n"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./select"
-import { Input } from "./input"
+import { useState } from 'react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
+import { Input } from './input'
 
 export interface SearchableSelectOption {
-  label: string
   value: string
+  label: string
 }
 
-export interface SearchableSelectProps {
-  options: SearchableSelectOption[]
+interface SearchableSelectProps {
   value?: string
-  onValueChange?: (value: string) => void
+  onValueChange: (value: string) => void
+  options: SearchableSelectOption[]
   placeholder?: string
   searchPlaceholder?: string
   disabled?: boolean
-  className?: string
-  emptyMessage?: string
 }
 
-export const SearchableSelect = React.forwardRef<
-  HTMLButtonElement,
-  SearchableSelectProps
->(
-  (
-    {
-      options,
-      value,
-      onValueChange,
-      placeholder,
-      searchPlaceholder,
-      disabled,
-      className,
-      emptyMessage,
-    },
-    ref
-  ) => {
-    const { t } = useI18n()
-    const [search, setSearch] = React.useState("")
-    const [open, setOpen] = React.useState(false)
+const EMPTY_SENTINEL = '__searchable_select_empty__'
 
-    const filteredOptions = React.useMemo(() => {
-      if (!search) return options
+export function SearchableSelect({
+  value,
+  onValueChange,
+  options,
+  placeholder = 'Selecione...',
+  searchPlaceholder = 'Buscar...',
+  disabled,
+}: SearchableSelectProps) {
+  const [search, setSearch] = useState('')
+  const safeValue = value ? value : EMPTY_SENTINEL
+  const filteredOptions = options.filter((opt) => opt.label.toLowerCase().includes(search.toLowerCase()))
+  const selectedLabel = options.find((opt) => opt.value === (value ?? ''))?.label ?? placeholder
 
-      const searchLower = search.toLowerCase()
-      return options.filter((option) =>
-        option.label.toLowerCase().includes(searchLower)
-      )
-    }, [options, search])
-
-    React.useEffect(() => {
-      if (!open) {
-        setSearch("")
-      }
-    }, [open])
-
-    return (
-      <Select
-        value={value}
-        onValueChange={onValueChange}
-        disabled={disabled}
-        open={open}
-        onOpenChange={setOpen}
-      >
-        <SelectTrigger ref={ref} className={className}>
-          <SelectValue placeholder={placeholder ?? t("searchableSelect.placeholder")} />
-        </SelectTrigger>
-        <SelectContent>
-          <div className="flex items-center border-b px-3 pb-2">
-            <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-            <Input
-              placeholder={searchPlaceholder ?? t("common.action.search")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="h-8 border-0 shadow-none focus-visible:ring-0 px-0 bg-transparent"
-            />
-          </div>
-          <div className="max-h-[300px] overflow-auto">
-            {filteredOptions.length === 0 ? (
-              <div className="py-6 text-center text-sm text-muted-foreground">
-                {emptyMessage ?? t("searchableSelect.noResults")}
-              </div>
-            ) : (
-              filteredOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))
-            )}
-          </div>
-        </SelectContent>
-      </Select>
-    )
-  }
-)
-
-SearchableSelect.displayName = "SearchableSelect"
+  return (
+    <Select value={safeValue} onValueChange={(v) => { setSearch(''); onValueChange(v === EMPTY_SENTINEL ? '' : v) }} disabled={disabled}>
+      <SelectTrigger>
+        <SelectValue placeholder={placeholder}>{selectedLabel}</SelectValue>
+      </SelectTrigger>
+      <SelectContent className="w-[var(--radix-select-trigger-width)]">
+        <div className="px-2 pt-2 pb-1">
+          <Input
+            placeholder={searchPlaceholder}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.stopPropagation()}
+            className="h-8 text-sm"
+          />
+        </div>
+        <div className="max-h-[200px] overflow-y-auto">
+          {filteredOptions.length === 0 ? (
+            <div className="px-2 py-3 text-sm text-muted-foreground text-center">Nenhum resultado</div>
+          ) : (
+            filteredOptions.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value ? opt.value : EMPTY_SENTINEL}>
+                {opt.label}
+              </SelectItem>
+            ))
+          )}
+        </div>
+      </SelectContent>
+    </Select>
+  )
+}
