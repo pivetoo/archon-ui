@@ -54,10 +54,10 @@ const iconContainerVariants = cva(
     variants: {
       variant: {
         default: "border-border bg-foreground/5 text-foreground",
-        success: "border-emerald-200 bg-white text-emerald-600 dark:border-emerald-800 dark:bg-white dark:text-emerald-400",
-        destructive: "border-red-200 bg-white text-red-600 dark:border-red-800 dark:bg-white dark:text-red-400",
-        warning: "border-amber-200 bg-white text-amber-600 dark:border-amber-800 dark:bg-white dark:text-amber-400",
-        info: "border-sky-200 bg-white text-sky-600 dark:border-sky-800 dark:bg-white dark:text-sky-400",
+        success: "border-transparent bg-emerald-50/80 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400",
+        destructive: "border-transparent bg-red-50/80 text-red-600 dark:bg-red-950/50 dark:text-red-400",
+        warning: "border-transparent bg-amber-50/80 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400",
+        info: "border-transparent bg-sky-50/80 text-sky-600 dark:bg-sky-950/50 dark:text-sky-400",
       },
     },
     defaultVariants: {
