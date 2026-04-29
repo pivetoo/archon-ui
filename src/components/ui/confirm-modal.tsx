@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useI18n } from "../../i18n"
+import { useOptionalI18n } from "../../i18n"
 import { Modal, ModalContent, ModalDescription, ModalFooter, ModalHeader, ModalTitle } from "./modal"
 import { Button } from "./button"
 
@@ -32,7 +32,8 @@ const ConfirmModal = React.forwardRef<HTMLDivElement, ConfirmModalProps>(
     },
     ref
   ) => {
-    const { t } = useI18n()
+    const i18n = useOptionalI18n()
+    const t = i18n?.t ?? ((key: string) => key)
 
     const handleConfirm = () => {
       onConfirm?.()

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { cn } from "../../lib/utils"
-import { useI18n } from "../../i18n"
+import { useOptionalI18n } from "../../i18n"
 import {
   Table,
   TableHeader,
@@ -61,7 +61,8 @@ export function DataTable<T = any>({
   pageSize: initialPageSize = 10,
   pageSizeOptions = [5, 10, 20, 50]
 }: DataTableProps<T>) {
-  const { t } = useI18n()
+  const i18n = useOptionalI18n()
+  const t = i18n?.t ?? ((key: string) => key)
   const isSelectable = selectable !== undefined ? selectable : !!onSelectionChange
   const containerRef = React.useRef<HTMLDivElement>(null)
   const rowRefs = React.useRef<Map<string | number, HTMLTableRowElement>>(new Map())
