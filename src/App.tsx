@@ -2,7 +2,7 @@ import { GlobalLoaderProvider, ThemeProvider, Toaster } from "./components/ui"
 import { ExamplesCatalog } from "./examples"
 import { I18nProvider, type ArchonCulture, type LocalizationCatalog } from "./i18n"
 
-const mockCatalog: Record<ArchonCulture, LocalizationCatalog> = {
+const mockCatalog: Partial<Record<ArchonCulture, LocalizationCatalog>> = {
   "pt-BR": {
     culture: "pt-BR",
     uiCulture: "pt-BR",
