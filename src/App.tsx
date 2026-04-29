@@ -74,7 +74,7 @@ const mockCatalog: Partial<Record<ArchonCulture, LocalizationCatalog>> = {
 }
 
 const loadMockCatalog = async (culture: ArchonCulture): Promise<LocalizationCatalog> => {
-  return mockCatalog[culture] ?? mockCatalog["pt-BR"]
+  return mockCatalog[culture] ?? mockCatalog["pt-BR"]!
 }
 
 function App() {
