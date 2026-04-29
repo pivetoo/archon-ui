@@ -4,9 +4,11 @@ import type { IdentifyResult, LoginResult, LoginCredentials, ContractLoginReques
 
 export class AuthService {
   static async identify(credentials: LoginCredentials): Promise<IdentifyResult | LoginResult | null> {
+    const returnUrl = new URLSearchParams(window.location.search).get("returnUrl")
     const response = await httpClient.post<IdentifyResult | LoginResult>("/auth/Identify", {
       username: credentials.username,
       password: credentials.password,
+      returnUrl: returnUrl ?? undefined,
     })
 
     return response.data ?? null
