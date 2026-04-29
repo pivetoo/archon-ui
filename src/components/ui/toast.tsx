@@ -31,15 +31,15 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full overflow-hidden rounded-lg border shadow-[0_18px_40px_-24px_rgba(15,23,42,0.35)] transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full before:absolute before:inset-x-0 before:top-0 before:h-1.5 before:content-['']",
+  "group pointer-events-auto relative flex w-full overflow-hidden rounded-lg border shadow-[0_18px_40px_-24px_rgba(15,23,42,0.35)] transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
-        default: "border-border bg-white text-foreground before:bg-border",
-        success: "border-emerald-200 bg-white text-emerald-700 before:bg-emerald-400 dark:border-emerald-800 dark:bg-white dark:text-emerald-400",
-        destructive: "border-rose-200 bg-white text-rose-700 before:bg-rose-400 dark:border-rose-800 dark:bg-white dark:text-rose-400",
-        warning: "border-amber-200 bg-white text-amber-700 before:bg-amber-400 dark:border-amber-800 dark:bg-white dark:text-amber-400",
-        info: "border-sky-200 bg-white text-sky-700 before:bg-sky-400 dark:border-sky-800 dark:bg-white dark:text-sky-400",
+        default: "border-border bg-white text-foreground",
+        success: "border-border border-l-4 border-l-emerald-400 bg-white text-emerald-700 dark:border-border dark:border-l-emerald-500 dark:bg-white dark:text-emerald-400",
+        destructive: "border-border border-l-4 border-l-rose-400 bg-white text-rose-700 dark:border-border dark:border-l-rose-500 dark:bg-white dark:text-rose-400",
+        warning: "border-border border-l-4 border-l-amber-400 bg-white text-amber-700 dark:border-border dark:border-l-amber-500 dark:bg-white dark:text-amber-400",
+        info: "border-border border-l-4 border-l-sky-400 bg-white text-sky-700 dark:border-border dark:border-l-sky-500 dark:bg-white dark:text-sky-400",
       },
     },
     defaultVariants: {
