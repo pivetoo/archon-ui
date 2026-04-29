@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Eye, Plus, Edit, Trash2, RefreshCw } from "lucide-react"
 import { cn } from "../../lib/utils"
-import { useOptionalI18n } from "../../i18n"
+import { useI18n } from "../../i18n"
 import { Button } from "./button"
 import { useToast } from "./use-toast"
 
@@ -49,8 +49,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   children,
   className
 }) => {
-  const i18n = useOptionalI18n()
-  const t = i18n?.t ?? ((key: string) => key)
+  const { t } = useI18n()
   const { toast } = useToast()
   const [isRefreshing, setIsRefreshing] = React.useState(false)
 

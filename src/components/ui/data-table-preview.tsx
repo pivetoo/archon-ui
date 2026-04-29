@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useOptionalI18n } from "../../i18n"
+import { useI18n } from "../../i18n"
 import { cn } from "../../lib/utils"
 
 export interface DataTablePreviewColumn<T = any> {
@@ -37,8 +37,7 @@ export function DataTablePreview<T = any>({
   detailClassName,
   gridRatio = [7, 5],
 }: DataTablePreviewProps<T>) {
-  const i18n = useOptionalI18n()
-  const t = i18n?.t ?? ((key: string) => key)
+  const { t } = useI18n()
   const tableSpanClass = gridRatio[0] >= 8 ? "xl:col-span-8" : gridRatio[0] <= 6 ? "xl:col-span-6" : "xl:col-span-7"
   const detailSpanClass = gridRatio[1] >= 6 ? "xl:col-span-6" : gridRatio[1] <= 4 ? "xl:col-span-4" : "xl:col-span-5"
 

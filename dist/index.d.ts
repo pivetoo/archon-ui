@@ -767,20 +767,22 @@ export declare interface RevokeRefreshTokenRequest {
     refreshToken: string;
 }
 
-export declare function SearchableSelect({ value, onValueChange, options, placeholder, searchPlaceholder, disabled, }: SearchableSelectProps): JSX.Element;
+export declare const SearchableSelect: React_2.ForwardRefExoticComponent<SearchableSelectProps & React_2.RefAttributes<HTMLButtonElement>>;
 
 export declare interface SearchableSelectOption {
-    value: string;
     label: string;
+    value: string;
 }
 
-declare interface SearchableSelectProps {
-    value?: string;
-    onValueChange: (value: string) => void;
+export declare interface SearchableSelectProps {
     options: SearchableSelectOption[];
+    value?: string;
+    onValueChange?: (value: string) => void;
     placeholder?: string;
     searchPlaceholder?: string;
     disabled?: boolean;
+    className?: string;
+    emptyMessage?: string;
 }
 
 export declare const Select: React_2.FC<SelectPrimitive.SelectProps>;

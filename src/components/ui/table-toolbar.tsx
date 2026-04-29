@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Search } from "lucide-react"
-import { useOptionalI18n } from "../../i18n"
+import { useI18n } from "../../i18n"
 import { cn } from "../../lib/utils"
 import { Input } from "./input"
 
@@ -23,8 +23,7 @@ export function TableToolbar({
   rightSlot,
   className,
 }: TableToolbarProps) {
-  const i18n = useOptionalI18n()
-  const t = i18n?.t ?? ((key: string) => key)
+  const { t } = useI18n()
 
   return (
     <div

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useOptionalI18n } from "../../i18n"
+import { useI18n } from "../../i18n"
 import { cn } from "../../lib/utils"
 
 export interface ChartContainerProps {
@@ -14,8 +14,7 @@ export interface ChartContainerProps {
 
 export const ChartContainer = React.forwardRef<HTMLDivElement, ChartContainerProps>(
   ({ title, icon, children, emptyMessage, isEmpty = false, height = 400, className }, ref) => {
-    const i18n = useOptionalI18n()
-    const t = i18n?.t ?? ((key: string) => key)
+    const { t } = useI18n()
 
     return (
       <div ref={ref} className={cn("bg-card rounded-lg border shadow-sm", className)}>
