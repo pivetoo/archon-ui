@@ -35,11 +35,11 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-border bg-background text-foreground before:bg-border",
-        success: "border-emerald-100 bg-emerald-50 text-emerald-900 before:bg-emerald-400 dark:border-emerald-900/40 dark:bg-emerald-950 dark:text-emerald-100",
-        destructive: "border-rose-100 bg-rose-50 text-rose-900 before:bg-rose-400 dark:border-rose-900/40 dark:bg-rose-950 dark:text-rose-100",
-        warning: "border-amber-100 bg-amber-50 text-amber-900 before:bg-amber-400 dark:border-amber-900/40 dark:bg-amber-950 dark:text-amber-100",
-        info: "border-sky-100 bg-sky-50 text-sky-900 before:bg-sky-400 dark:border-sky-900/40 dark:bg-sky-950 dark:text-sky-100",
+        default: "border-border bg-white text-foreground before:bg-border",
+        success: "border-emerald-200 bg-white text-emerald-700 before:bg-emerald-400 dark:border-emerald-800 dark:bg-white dark:text-emerald-400",
+        destructive: "border-rose-200 bg-white text-rose-700 before:bg-rose-400 dark:border-rose-800 dark:bg-white dark:text-rose-400",
+        warning: "border-amber-200 bg-white text-amber-700 before:bg-amber-400 dark:border-amber-800 dark:bg-white dark:text-amber-400",
+        info: "border-sky-200 bg-white text-sky-700 before:bg-sky-400 dark:border-sky-800 dark:bg-white dark:text-sky-400",
       },
     },
     defaultVariants: {
@@ -54,10 +54,10 @@ const iconContainerVariants = cva(
     variants: {
       variant: {
         default: "border-border bg-foreground/5 text-foreground",
-        success: "border-emerald-100 bg-emerald-50 text-emerald-600 dark:border-emerald-900/50 dark:bg-emerald-900 dark:text-emerald-200",
-        destructive: "border-rose-100 bg-rose-50 text-rose-600 dark:border-rose-900/50 dark:bg-rose-900 dark:text-rose-200",
-        warning: "border-amber-100 bg-amber-50 text-amber-600 dark:border-amber-900/50 dark:bg-amber-900 dark:text-amber-200",
-        info: "border-sky-100 bg-sky-50 text-sky-600 dark:border-sky-900/50 dark:bg-sky-900 dark:text-sky-200",
+        success: "border-emerald-200 bg-white text-emerald-600 dark:border-emerald-800 dark:bg-white dark:text-emerald-400",
+        destructive: "border-rose-200 bg-white text-rose-600 dark:border-rose-800 dark:bg-white dark:text-rose-400",
+        warning: "border-amber-200 bg-white text-amber-600 dark:border-amber-800 dark:bg-white dark:text-amber-400",
+        info: "border-sky-200 bg-white text-sky-600 dark:border-sky-800 dark:bg-white dark:text-sky-400",
       },
     },
     defaultVariants: {
