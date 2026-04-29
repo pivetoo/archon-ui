@@ -37,7 +37,7 @@ const toastVariants = cva(
       variant: {
         default: "border-border bg-white text-foreground",
         success: "border-border border-l-4 border-l-emerald-400 bg-white text-emerald-700 dark:border-border dark:border-l-emerald-500 dark:bg-white dark:text-emerald-400",
-        destructive: "border-border border-l-4 border-l-rose-400 bg-white text-rose-700 dark:border-border dark:border-l-rose-500 dark:bg-white dark:text-rose-400",
+        destructive: "border-border border-l-4 border-l-red-500 bg-white text-red-700 dark:border-border dark:border-l-red-500 dark:bg-white dark:text-red-400",
         warning: "border-border border-l-4 border-l-amber-400 bg-white text-amber-700 dark:border-border dark:border-l-amber-500 dark:bg-white dark:text-amber-400",
         info: "border-border border-l-4 border-l-sky-400 bg-white text-sky-700 dark:border-border dark:border-l-sky-500 dark:bg-white dark:text-sky-400",
       },
@@ -55,7 +55,7 @@ const iconContainerVariants = cva(
       variant: {
         default: "border-border bg-foreground/5 text-foreground",
         success: "border-emerald-200 bg-white text-emerald-600 dark:border-emerald-800 dark:bg-white dark:text-emerald-400",
-        destructive: "border-rose-200 bg-white text-rose-600 dark:border-rose-800 dark:bg-white dark:text-rose-400",
+        destructive: "border-red-200 bg-white text-red-600 dark:border-red-800 dark:bg-white dark:text-red-400",
         warning: "border-amber-200 bg-white text-amber-600 dark:border-amber-800 dark:bg-white dark:text-amber-400",
         info: "border-sky-200 bg-white text-sky-600 dark:border-sky-800 dark:bg-white dark:text-sky-400",
       },
