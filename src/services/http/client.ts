@@ -9,6 +9,7 @@ let requestLanguage: string = "pt-BR"
 let authFailureHandler: (() => void) | null = null
 const ACCESS_TOKEN_KEY = "@Archon:accessToken"
 const REFRESH_TOKEN_KEY = "@Archon:refreshToken"
+const OIDC_CLIENT_ID_KEY = "@Archon:oidcClientId"
 const USER_KEY = "@Archon:user"
 const CONTRACT_KEY = "@Archon:contract"
 
@@ -98,22 +99,28 @@ class HttpClient {
           originalRequest._retry = true
 
           const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
+          const oidcClientId = localStorage.getItem(OIDC_CLIENT_ID_KEY) || import.meta.env.VITE_OIDC_CLIENT_ID
 
-          if (refreshToken && identityManagementURL) {
+          if (refreshToken && identityManagementURL && oidcClientId) {
             try {
+              const form = new URLSearchParams()
+              form.set("grant_type", "refresh_token")
+              form.set("client_id", oidcClientId)
+              form.set("refresh_token", refreshToken)
+
               const response = await axios.post(
-                `${identityManagementURL}/auth/RefreshToken`,
-                { refreshToken },
+                `${identityManagementURL.replace(/\/+$/, "")}/connect/token`,
+                form,
                 {
                   headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/x-www-form-urlencoded",
                     "Accept-Language": requestLanguage,
                   },
                 }
               )
 
-              const accessToken = response.data?.data?.accessToken ?? response.data?.accessToken
-              const newRefreshToken = response.data?.data?.refreshToken ?? response.data?.refreshToken
+              const accessToken = response.data?.access_token
+              const newRefreshToken = response.data?.refresh_token
 
               localStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
               if (newRefreshToken) {

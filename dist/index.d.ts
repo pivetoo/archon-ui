@@ -149,9 +149,7 @@ declare interface AuthProviderProps {
 }
 
 export declare class AuthService {
-    static identify(credentials: LoginCredentials): Promise<IdentifyResult | LoginResult | null>;
-    static loginWithContract(request: ContractLoginRequest): Promise<LoginResult>;
-    static login(credentials: LoginCredentials): Promise<LoginResult>;
+    static identify(credentials: LoginCredentials): Promise<IdentifyResult | null>;
     static logout(): void;
     static isAuthenticated(): boolean;
     static getCurrentUser(): any | null;
@@ -160,6 +158,7 @@ export declare class AuthService {
     static logoutFromServer(): Promise<void>;
     static logoutAllDevices(): Promise<void>;
     static refreshAccessToken(): Promise<RefreshTokenResponse | null>;
+    static exchangeAuthorizationCode(request: OidcTokenRequest): Promise<OidcTokenResponse>;
     static getActiveSessions(): Promise<ActiveSession[]>;
     static isTokenExpiringSoon(token: string, minutesBeforeExpiry?: number): boolean;
     static ensureValidToken(): Promise<boolean>;
@@ -208,13 +207,14 @@ export declare interface BreadcrumbProps extends React_2.HTMLAttributes<HTMLElem
     separator?: React_2.ReactNode;
 }
 
-export declare const buildCallbackRedirectUrl: (returnUrl: string, accessToken: string, refreshToken: string) => string;
-
-export declare const buildIdentityManagementLoginUrl: ({ identityManagementUrl, callbackPath, currentOrigin, }: {
+export declare const buildIdentityManagementAuthorizeUrl: ({ identityManagementUrl, clientId, callbackPath, currentOrigin, redirectUri, scope, }: {
     identityManagementUrl?: string;
+    clientId: string;
     callbackPath?: string;
     currentOrigin?: string;
-}) => string | undefined;
+    redirectUri?: string;
+    scope?: string;
+}) => Promise<string | undefined>;
 
 export declare function buildPaginationQuery(params?: PagedRequest): string;
 
@@ -238,6 +238,8 @@ export declare const Callback: default_2.FC<CallbackProps>;
 export declare interface CallbackProps {
     redirectTo?: string;
     identityManagementUrl?: string;
+    oidcClientId?: string;
+    oidcRedirectUri?: string;
     onSuccess?: () => void;
     onError?: (error: Error) => void;
 }
@@ -291,17 +293,10 @@ export declare interface ConfirmModalProps {
     loading?: boolean;
 }
 
-export declare interface ContractLoginRequest {
-    userId: number;
-    contractId: number;
-    temporaryToken: string;
-}
-
 export declare interface ContractType {
     contractId: number;
     systemApplicationName: string;
     companyName: string;
-    redirectUris: string;
     roleName?: string;
 }
 
@@ -419,8 +414,6 @@ export declare const getIdentityManagementURL: () => string;
 export declare function getInitials(name: string): string;
 
 export declare const getRequestLanguage: () => string;
-
-export declare const getReturnUrl: (search: string, currentOrigin?: string) => string | undefined;
 
 export declare const GlobalLoader: React_2.FC<GlobalLoaderProps>;
 
@@ -542,8 +535,6 @@ export declare interface LoginResult {
     redirectUrl?: string;
 }
 
-export declare const matchesReturnUrl: (returnUrl?: string, redirectUris?: string) => boolean;
-
 export declare const Modal: React_2.FC<DialogPrimitive.DialogProps>;
 
 export declare const ModalBody: {
@@ -626,8 +617,6 @@ export declare interface NavigationConfig {
     groups?: SidebarGroup[];
 }
 
-export declare const normalizeExternalUrl: (value: string) => string;
-
 export declare interface NotificationItem {
     id: string;
     title: string;
@@ -635,6 +624,31 @@ export declare interface NotificationItem {
     timestamp: Date;
     read: boolean;
     type?: 'info' | 'success' | 'warning' | 'error';
+}
+
+export declare const OIDC_CODE_VERIFIER_KEY = "@Archon:oidc:codeVerifier";
+
+export declare const OIDC_NONCE_KEY = "@Archon:oidc:nonce";
+
+export declare const OIDC_REDIRECT_URI_KEY = "@Archon:oidc:redirectUri";
+
+export declare const OIDC_STATE_KEY = "@Archon:oidc:state";
+
+export declare interface OidcTokenRequest {
+    identityManagementUrl: string;
+    clientId: string;
+    code: string;
+    redirectUri: string;
+    codeVerifier: string;
+}
+
+export declare interface OidcTokenResponse {
+    access_token: string;
+    id_token?: string;
+    refresh_token?: string;
+    token_type: string;
+    expires_in: number;
+    scope?: string;
 }
 
 export declare interface PageAction {
@@ -732,8 +746,10 @@ export declare interface ProtectedRouteProps {
     isAuthenticated: boolean;
     redirectTo?: string;
     externalRedirect?: boolean;
-    preserveExternalReturn?: boolean;
     callbackPath?: string;
+    oidcClientId?: string;
+    oidcScope?: string;
+    oidcRedirectUri?: string;
 }
 
 export declare function queryCollection<T extends object>(items: T[], params?: PaginationParams, searchFields?: string[]): PaginatedResult<T>;

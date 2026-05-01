@@ -1,11 +1,13 @@
 import axios from "axios"
 import { httpClient, getIdentityManagementURL, getRequestLanguage } from "../http/client"
-import type { IdentifyResult, LoginResult, LoginCredentials, ContractLoginRequest, RefreshTokenResponse, ActiveSession } from "../../types/auth"
+import type { IdentifyResult, LoginCredentials, RefreshTokenResponse, ActiveSession, OidcTokenRequest, OidcTokenResponse } from "../../types/auth"
+
+const OIDC_CLIENT_ID_KEY = "@Archon:oidcClientId"
 
 export class AuthService {
-  static async identify(credentials: LoginCredentials): Promise<IdentifyResult | LoginResult | null> {
+  static async identify(credentials: LoginCredentials): Promise<IdentifyResult | null> {
     const returnUrl = new URLSearchParams(window.location.search).get("returnUrl")
-    const response = await httpClient.post<IdentifyResult | LoginResult>("/auth/Identify", {
+    const response = await httpClient.post<IdentifyResult>("/auth/Identify", {
       username: credentials.username,
       password: credentials.password,
       returnUrl: returnUrl ?? undefined,
@@ -14,42 +16,10 @@ export class AuthService {
     return response.data ?? null
   }
 
-  static async loginWithContract(request: ContractLoginRequest): Promise<LoginResult> {
-    const response = await httpClient.post<LoginResult>("/auth/LoginWithContract", request)
-
-    const loginData = response.data
-    if (!loginData) {
-      throw new Error("Login response is empty.")
-    }
-
-    const { accessToken, refreshToken, user, contract } = loginData
-
-    localStorage.setItem("@Archon:accessToken", accessToken)
-    localStorage.setItem("@Archon:refreshToken", refreshToken)
-    localStorage.setItem("@Archon:user", JSON.stringify(user))
-    localStorage.setItem("@Archon:contract", JSON.stringify(contract))
-
-    return loginData
-  }
-
-  static async login(credentials: LoginCredentials) {
-    const result = await this.identify(credentials)
-
-    if (!result || result.authenticationStep !== "completed") {
-      throw new Error("Login requires contract selection.")
-    }
-
-    localStorage.setItem("@Archon:accessToken", result.accessToken)
-    localStorage.setItem("@Archon:refreshToken", result.refreshToken)
-    localStorage.setItem("@Archon:user", JSON.stringify(result.user))
-    localStorage.setItem("@Archon:contract", JSON.stringify(result.contract))
-
-    return result
-  }
-
   static logout(): void {
     localStorage.removeItem("@Archon:accessToken")
     localStorage.removeItem("@Archon:refreshToken")
+    localStorage.removeItem("@Archon:oidcClientId")
     localStorage.removeItem("@Archon:user")
     localStorage.removeItem("@Archon:contract")
   }
@@ -78,14 +48,20 @@ export class AuthService {
     try {
       const refreshToken = this.getRefreshToken()
       const identityManagementUrl = getIdentityManagementURL()
+      const oidcClientId = localStorage.getItem(OIDC_CLIENT_ID_KEY) || import.meta.env.VITE_OIDC_CLIENT_ID
 
-      if (refreshToken && identityManagementUrl) {
+      if (refreshToken && identityManagementUrl && oidcClientId) {
+        const form = new URLSearchParams()
+        form.set("token", refreshToken)
+        form.set("token_type_hint", "refresh_token")
+        form.set("client_id", oidcClientId)
+
         await axios.post(
-          `${identityManagementUrl}/auth/Logout`,
-          { refreshToken },
+          `${identityManagementUrl.replace(/\/+$/, "")}/connect/revocation`,
+          form,
           {
             headers: {
-              "Content-Type": "application/json",
+              "Content-Type": "application/x-www-form-urlencoded",
               "Accept-Language": getRequestLanguage(),
             },
           }
@@ -108,39 +84,74 @@ export class AuthService {
 
     try {
       const identityManagementUrl = getIdentityManagementURL()
+      const oidcClientId = localStorage.getItem(OIDC_CLIENT_ID_KEY) || import.meta.env.VITE_OIDC_CLIENT_ID
       if (!identityManagementUrl) {
         throw new Error("Identity Management URL não configurada")
       }
 
+      if (!oidcClientId) {
+        throw new Error("OIDC client_id não configurado")
+      }
+
+      const form = new URLSearchParams()
+      form.set("grant_type", "refresh_token")
+      form.set("client_id", oidcClientId)
+      form.set("refresh_token", refreshToken)
+
       const response = await axios.post<unknown>(
-        `${identityManagementUrl}/auth/RefreshToken`,
-        { refreshToken },
+        `${identityManagementUrl.replace(/\/+$/, "")}/connect/token`,
+        form,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
             "Accept-Language": getRequestLanguage(),
           },
         }
       )
 
       const rawData = response.data
-      const tokenData: RefreshTokenResponse | null = rawData && typeof rawData === "object" && "data" in rawData
-        ? (((rawData as { data?: RefreshTokenResponse }).data) ?? null)
-        : (rawData as RefreshTokenResponse)
-      if (!tokenData) {
+      const oidcTokenData = rawData as OidcTokenResponse | null
+      if (!oidcTokenData?.access_token || !oidcTokenData.refresh_token) {
         throw new Error("Refresh token response is empty.")
       }
 
-      const { accessToken, refreshToken: newRefreshToken } = tokenData
+      const tokenData: RefreshTokenResponse = {
+        accessToken: oidcTokenData.access_token,
+        refreshToken: oidcTokenData.refresh_token,
+        tokenType: oidcTokenData.token_type,
+        expiresIn: oidcTokenData.expires_in,
+      }
 
-      localStorage.setItem("@Archon:accessToken", accessToken)
-      localStorage.setItem("@Archon:refreshToken", newRefreshToken)
+      localStorage.setItem("@Archon:accessToken", tokenData.accessToken)
+      localStorage.setItem("@Archon:refreshToken", tokenData.refreshToken)
 
       return tokenData
     } catch (error) {
       this.logout()
       throw error
     }
+  }
+
+  static async exchangeAuthorizationCode(request: OidcTokenRequest): Promise<OidcTokenResponse> {
+    const form = new URLSearchParams()
+    form.set("grant_type", "authorization_code")
+    form.set("client_id", request.clientId)
+    form.set("code", request.code)
+    form.set("redirect_uri", request.redirectUri)
+    form.set("code_verifier", request.codeVerifier)
+
+    const response = await axios.post<OidcTokenResponse>(
+      `${request.identityManagementUrl.replace(/\/+$/, "")}/connect/token`,
+      form,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept-Language": getRequestLanguage(),
+        },
+      }
+    )
+
+    return response.data
   }
 
   static async getActiveSessions(): Promise<ActiveSession[]> {

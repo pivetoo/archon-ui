@@ -1,14 +1,16 @@
 import React, { useEffect, useRef } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { buildIdentityManagementLoginUrl } from './return-url'
+import { buildIdentityManagementAuthorizeUrl } from './return-url'
 
 export interface ProtectedRouteProps {
   children: React.ReactElement
   isAuthenticated: boolean
   redirectTo?: string
   externalRedirect?: boolean
-  preserveExternalReturn?: boolean
   callbackPath?: string
+  oidcClientId?: string
+  oidcScope?: string
+  oidcRedirectUri?: string
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
@@ -16,8 +18,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   isAuthenticated,
   redirectTo = '/',
   externalRedirect = false,
-  preserveExternalReturn = false,
   callbackPath = '/callback',
+  oidcClientId,
+  oidcScope,
+  oidcRedirectUri,
 }) => {
   const location = useLocation()
   const hasRedirectedRef = useRef(false)
@@ -32,17 +36,25 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       return
     }
 
-    const targetUrl = preserveExternalReturn
-      ? buildIdentityManagementLoginUrl({
+    const redirect = async () => {
+      const currentOrigin = typeof window === 'undefined' ? undefined : window.location.origin
+      const targetUrl = oidcClientId
+        ? await buildIdentityManagementAuthorizeUrl({
           identityManagementUrl: redirectTo,
+          clientId: oidcClientId,
           callbackPath,
-          currentOrigin: typeof window === 'undefined' ? undefined : window.location.origin,
-        }) ?? redirectTo
-      : redirectTo
+          currentOrigin,
+          redirectUri: oidcRedirectUri,
+          scope: oidcScope,
+        })
+        : redirectTo
 
-    hasRedirectedRef.current = true
-    window.location.href = targetUrl
-  }, [callbackPath, externalRedirect, isAuthenticated, preserveExternalReturn, redirectTo])
+      hasRedirectedRef.current = true
+      window.location.href = targetUrl ?? redirectTo
+    }
+
+    redirect()
+  }, [callbackPath, externalRedirect, isAuthenticated, oidcClientId, oidcRedirectUri, oidcScope, redirectTo])
 
   if (!isAuthenticated) {
     if (externalRedirect && redirectTo) {

@@ -11,7 +11,6 @@ export interface ContractType {
   contractId: number
   systemApplicationName: string
   companyName: string
-  redirectUris: string
   roleName?: string
 }
 
@@ -41,12 +40,6 @@ export interface LoginCredentials {
   password: string
 }
 
-export interface ContractLoginRequest {
-  userId: number
-  contractId: number
-  temporaryToken: string
-}
-
 export interface RefreshTokenRequest {
   refreshToken: string
 }
@@ -56,6 +49,23 @@ export interface RefreshTokenResponse {
   refreshToken: string
   tokenType: string
   expiresIn: number
+}
+
+export interface OidcTokenResponse {
+  access_token: string
+  id_token?: string
+  refresh_token?: string
+  token_type: string
+  expires_in: number
+  scope?: string
+}
+
+export interface OidcTokenRequest {
+  identityManagementUrl: string
+  clientId: string
+  code: string
+  redirectUri: string
+  codeVerifier: string
 }
 
 export interface RevokeRefreshTokenRequest {
