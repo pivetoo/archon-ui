@@ -6,11 +6,10 @@ const OIDC_CLIENT_ID_KEY = "@Archon:oidcClientId"
 
 export class AuthService {
   static async identify(credentials: LoginCredentials): Promise<IdentifyResult | null> {
-    const returnUrl = new URLSearchParams(window.location.search).get("returnUrl")
     const response = await httpClient.post<IdentifyResult>("/auth/Identify", {
       username: credentials.username,
       password: credentials.password,
-      returnUrl: returnUrl ?? undefined,
+      authorizeUrl: credentials.authorizeUrl,
     })
 
     return response.data ?? null

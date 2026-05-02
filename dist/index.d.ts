@@ -473,7 +473,7 @@ export declare interface IdentifyResult {
     userId: number;
     userName: string;
     userEmail: string;
-    temporaryToken: string;
+    authorizationSessionToken: string;
     availableContracts: ContractType[];
 }
 
@@ -522,6 +522,7 @@ export declare interface LocalizationCatalog {
 export declare interface LoginCredentials {
     username: string;
     password: string;
+    authorizeUrl?: string;
 }
 
 export declare interface LoginResult {

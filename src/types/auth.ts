@@ -3,7 +3,7 @@ export interface IdentifyResult {
   userId: number
   userName: string
   userEmail: string
-  temporaryToken: string
+  authorizationSessionToken: string
   availableContracts: ContractType[]
 }
 
@@ -38,6 +38,7 @@ export interface LoginResult {
 export interface LoginCredentials {
   username: string
   password: string
+  authorizeUrl?: string
 }
 
 export interface RefreshTokenRequest {
