@@ -69,3 +69,36 @@ export const buildIdentityManagementAuthorizeUrl = async ({
 
   return authorizeUrl.toString()
 }
+
+export const buildIdentityManagementLoginUrl = async ({
+  identityManagementUrl,
+  clientId,
+  callbackPath = "/callback",
+  currentOrigin,
+  redirectUri,
+  scope,
+}: {
+  identityManagementUrl?: string
+  clientId: string
+  callbackPath?: string
+  currentOrigin?: string
+  redirectUri?: string
+  scope?: string
+}) => {
+  const authorizeUrl = await buildIdentityManagementAuthorizeUrl({
+    identityManagementUrl,
+    clientId,
+    callbackPath,
+    currentOrigin,
+    redirectUri,
+    scope,
+  })
+
+  if (!identityManagementUrl || !authorizeUrl) {
+    return authorizeUrl
+  }
+
+  const loginUrl = new URL("/login", identityManagementUrl)
+  loginUrl.searchParams.set("returnUrl", authorizeUrl)
+  return loginUrl.toString()
+}

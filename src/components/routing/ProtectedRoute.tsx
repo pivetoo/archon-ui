@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { buildIdentityManagementAuthorizeUrl } from './return-url'
+import { buildIdentityManagementLoginUrl } from './return-url'
 
 export interface ProtectedRouteProps {
   children: React.ReactElement
@@ -39,7 +39,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     const redirect = async () => {
       const currentOrigin = typeof window === 'undefined' ? undefined : window.location.origin
       const targetUrl = oidcClientId
-        ? await buildIdentityManagementAuthorizeUrl({
+        ? await buildIdentityManagementLoginUrl({
           identityManagementUrl: redirectTo,
           clientId: oidcClientId,
           callbackPath,
