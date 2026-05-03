@@ -12,6 +12,7 @@ export interface ContractType {
   systemApplicationName: string
   companyName: string
   roleName?: string
+  portalUrl?: string
 }
 
 export interface User {

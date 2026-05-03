@@ -216,6 +216,15 @@ export declare const buildIdentityManagementAuthorizeUrl: ({ identityManagementU
     scope?: string;
 }) => Promise<string | undefined>;
 
+export declare const buildIdentityManagementLoginUrl: ({ identityManagementUrl, clientId, callbackPath, currentOrigin, redirectUri, scope, }: {
+    identityManagementUrl?: string;
+    clientId: string;
+    callbackPath?: string;
+    currentOrigin?: string;
+    redirectUri?: string;
+    scope?: string;
+}) => Promise<string | undefined>;
+
 export declare function buildPaginationQuery(params?: PagedRequest): string;
 
 export declare const Button: React_2.ForwardRefExoticComponent<ButtonProps & React_2.RefAttributes<HTMLButtonElement>>;
@@ -298,6 +307,7 @@ export declare interface ContractType {
     systemApplicationName: string;
     companyName: string;
     roleName?: string;
+    portalUrl?: string;
 }
 
 export declare function DataTable<T = any>({ columns, data, loading, rowKey, selectable, selectedRows, onSelectionChange, onRowClick, onRowDoubleClick, className, emptyText, dragSelect, pageSize: initialPageSize, pageSizeOptions }: DataTableProps<T>): JSX.Element;
