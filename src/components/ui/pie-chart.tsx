@@ -1,5 +1,6 @@
 import * as React from "react"
-import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts"
+import { ResponsivePie } from "@nivo/pie"
+import { cn } from "../../lib/utils"
 
 export interface PieChartDataItem {
   name: string
@@ -17,11 +18,21 @@ export interface PieChartProps {
   showTooltip?: boolean
   innerRadius?: number
   outerRadius?: number
-  labelFormatter?: (props: any) => string
   width?: number | `${number}%`
   height?: number | `${number}%`
   className?: string
 }
+
+const defaultColors = [
+  "#10b981",
+  "#3b82f6",
+  "#f59e0b",
+  "#ef4444",
+  "#8b5cf6",
+  "#06b6d4",
+  "#ec4899",
+  "#6366f1",
+]
 
 export const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
   (
@@ -34,52 +45,83 @@ export const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
       showLegend = true,
       showTooltip = true,
       innerRadius = 0,
-      outerRadius = 120,
-      labelFormatter,
-      width = "100%",
       height = 400,
       className,
     },
     ref
   ) => {
-    const defaultColors = [
-      "hsl(var(--primary))",
-      "hsl(var(--secondary))",
-      "hsl(221.2 83.2% 53.3%)",
-      "hsl(204 94% 94%)",
-      "hsl(142 71% 45%)",
-      "hsl(0 84.2% 60.2%)",
-      "hsl(210 40% 96.1%)",
-      "hsl(220 14.3% 95.9%)"
-    ]
-
     const chartColors = colors || defaultColors
 
-    const defaultLabelFormatter = (props: any) => `${props.value}`
+    const nivoData = data.map((item, index) => ({
+      id: item[nameKey],
+      label: item[nameKey],
+      value: item[dataKey],
+      color: chartColors[index % chartColors.length],
+    }))
 
     return (
-      <div ref={ref} className={className}>
-        <ResponsiveContainer width={width} height={height}>
-          <RechartsPieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              label={showLabels ? (labelFormatter || defaultLabelFormatter) : false}
-              innerRadius={innerRadius}
-              outerRadius={outerRadius}
-              dataKey={dataKey}
-              nameKey={nameKey}
-            >
-              {data.map((_item, index) => (
-                <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
-              ))}
-            </Pie>
-            {showTooltip && <Tooltip />}
-            {showLegend && <Legend />}
-          </RechartsPieChart>
-        </ResponsiveContainer>
+      <div ref={ref} className={cn("h-full w-full", className)} style={{ height: typeof height === "number" ? height : 400 }}>
+        <ResponsivePie
+          data={nivoData}
+          margin={{ top: 10, right: 120, bottom: 10, left: 10 }}
+          innerRadius={innerRadius / 120}
+          padAngle={1.5}
+          cornerRadius={4}
+          colors={chartColors}
+          borderWidth={1}
+          borderColor="#ffffff"
+          enableArcLabels={showLabels}
+          arcLabel={showLabels ? (d) => `${d.value}` : undefined}
+          arcLabelsSkipAngle={12}
+          arcLabelsTextColor="#ffffff"
+          enableArcLinkLabels={false}
+          legends={
+            showLegend
+              ? [
+                  {
+                    anchor: "right",
+                    direction: "column",
+                    justify: false,
+                    translateX: 110,
+                    translateY: 0,
+                    itemsSpacing: 8,
+                    itemWidth: 100,
+                    itemHeight: 20,
+                    itemTextColor: "#6b7280",
+                    itemDirection: "left-to-right",
+                    itemOpacity: 1,
+                    symbolSize: 10,
+                    symbolShape: "circle",
+                  },
+                ]
+              : []
+          }
+          tooltip={
+            showTooltip
+              ? ({ datum }) => (
+                  <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-lg">
+                    <p className="text-xs font-medium text-gray-500">{String(datum.label)}</p>
+                    <p className="text-sm font-bold text-gray-900">
+                      {Number(datum.value).toLocaleString("pt-BR")}
+                    </p>
+                  </div>
+                )
+              : undefined
+          }
+          theme={{
+            text: {
+              fontFamily: "Inter, sans-serif",
+              fontSize: 11,
+            },
+            legends: {
+              text: {
+                fontFamily: "Inter, sans-serif",
+                fontSize: 11,
+                fill: "#6b7280",
+              },
+            },
+          }}
+        />
       </div>
     )
   }

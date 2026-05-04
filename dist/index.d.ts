@@ -523,6 +523,8 @@ export declare interface LineChartProps {
     height?: number | `${number}%`;
     className?: string;
     strokeWidth?: number;
+    enableArea?: boolean;
+    areaOpacity?: number;
 }
 
 export declare interface LocalizationCatalog {
@@ -741,7 +743,6 @@ export declare interface PieChartProps {
     showTooltip?: boolean;
     innerRadius?: number;
     outerRadius?: number;
-    labelFormatter?: (props: any) => string;
     width?: number | `${number}%`;
     height?: number | `${number}%`;
     className?: string;

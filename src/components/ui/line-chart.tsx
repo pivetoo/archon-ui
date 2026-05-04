@@ -1,5 +1,6 @@
 import * as React from "react"
-import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import { ResponsiveLine } from "@nivo/line"
+import { cn } from "../../lib/utils"
 
 export interface LineChartDataItem {
   name: string
@@ -19,7 +20,18 @@ export interface LineChartProps {
   height?: number | `${number}%`
   className?: string
   strokeWidth?: number
+  enableArea?: boolean
+  areaOpacity?: number
 }
+
+const defaultColors = [
+  "#10b981",
+  "#3b82f6",
+  "#f59e0b",
+  "#ef4444",
+  "#8b5cf6",
+  "#06b6d4",
+]
 
 export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
   (
@@ -32,52 +44,125 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
       showLegend = true,
       showTooltip = true,
       showDots = true,
-      width = "100%",
       height = 400,
       className,
-      strokeWidth = 2,
+      strokeWidth = 2.5,
+      enableArea = false,
+      areaOpacity = 0.08,
     },
     ref
   ) => {
-    const defaultColors = [
-      "hsl(var(--primary))",
-      "hsl(var(--secondary))",
-      "hsl(221.2 83.2% 53.3%)",
-      "hsl(204 94% 94%)",
-      "hsl(142 71% 45%)",
-      "hsl(0 84.2% 60.2%)"
-    ]
-
     const chartColors = colors || defaultColors
 
+    const nivoData = dataKeys.map((key, index) => ({
+      id: key,
+      color: chartColors[index % chartColors.length],
+      data: data.map((item) => ({
+        x: item[xAxisKey],
+        y: item[key],
+      })),
+    }))
+
+    void showGrid
+
     return (
-      <div ref={ref} className={className}>
-        <ResponsiveContainer width={width} height={height}>
-          <RechartsLineChart data={data}>
-            {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />}
-            <XAxis
-              dataKey={xAxisKey}
-              stroke="hsl(var(--muted-foreground))"
-              style={{ fontSize: "0.875rem" }}
-            />
-            <YAxis
-              stroke="hsl(var(--muted-foreground))"
-              style={{ fontSize: "0.875rem" }}
-            />
-            {showTooltip && <Tooltip />}
-            {showLegend && <Legend />}
-            {dataKeys.map((key, index) => (
-              <Line
-                key={key}
-                type="monotone"
-                dataKey={key}
-                stroke={chartColors[index % chartColors.length]}
-                strokeWidth={strokeWidth}
-                dot={showDots}
-              />
-            ))}
-          </RechartsLineChart>
-        </ResponsiveContainer>
+      <div ref={ref} className={cn("h-full w-full", className)} style={{ height: typeof height === "number" ? height : 400 }}>
+        <ResponsiveLine
+          data={nivoData}
+          margin={{ top: 10, right: 10, bottom: 40, left: 50 }}
+          xScale={{ type: "point" }}
+          yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
+          curve="monotoneX"
+          axisTop={null}
+          axisRight={null}
+          axisBottom={{
+            tickSize: 0,
+            tickPadding: 12,
+            tickRotation: 0,
+            legend: "",
+            legendPosition: "middle",
+            legendOffset: 32,
+          }}
+          axisLeft={{
+            tickSize: 0,
+            tickPadding: 12,
+            tickRotation: 0,
+            legend: "",
+            legendPosition: "middle",
+            legendOffset: -40,
+          }}
+          enableGridX={false}
+          gridYValues={5}
+          colors={chartColors}
+          lineWidth={strokeWidth}
+          enablePoints={showDots}
+          pointSize={6}
+          pointColor="#ffffff"
+          pointBorderWidth={2}
+          pointBorderColor={{ from: "serieColor" }}
+          enableArea={enableArea}
+          areaOpacity={areaOpacity}
+          useMesh={true}
+          legends={
+            showLegend
+              ? [
+                  {
+                    anchor: "bottom-right",
+                    direction: "row",
+                    justify: false,
+                    translateX: 0,
+                    translateY: 40,
+                    itemsSpacing: 16,
+                    itemDirection: "left-to-right",
+                    itemWidth: 80,
+                    itemHeight: 20,
+                    symbolSize: 10,
+                    symbolShape: "circle",
+                  },
+                ]
+              : []
+          }
+          tooltip={
+            showTooltip
+              ? ({ point }) => (
+                  <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-lg">
+                    <p className="text-xs font-medium text-gray-500">{point.data.x as string}</p>
+                    <p className="text-sm font-bold text-gray-900">
+                      {point.seriesId}: {Number(point.data.y).toLocaleString("pt-BR")}
+                    </p>
+                  </div>
+                )
+              : undefined
+          }
+          theme={{
+            text: {
+              fontFamily: "Inter, sans-serif",
+              fontSize: 11,
+              fill: "#6b7280",
+            },
+            grid: {
+              line: {
+                stroke: "#e5e7eb",
+                strokeWidth: 1,
+                strokeDasharray: "4 4",
+              },
+            },
+            crosshair: {
+              line: {
+                stroke: "#9ca3af",
+                strokeWidth: 1,
+                strokeDasharray: "4 4",
+              },
+            },
+            legends: {
+              text: {
+                fontFamily: "Inter, sans-serif",
+                fontSize: 11,
+                fill: "#6b7280",
+              },
+            },
+          }}
+        />
       </div>
     )
   }
