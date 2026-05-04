@@ -36,28 +36,10 @@ const toastVariants = cva(
     variants: {
       variant: {
         default: "border-border bg-white text-foreground",
-        success: "border-border border-l-4 border-l-emerald-400 bg-white text-emerald-700 dark:border-border dark:border-l-emerald-500 dark:bg-white dark:text-emerald-400",
-        destructive: "border-border border-l-4 border-l-red-500 bg-white text-red-700 dark:border-border dark:border-l-red-500 dark:bg-white dark:text-red-400",
-        warning: "border-border border-l-4 border-l-amber-400 bg-white text-amber-700 dark:border-border dark:border-l-amber-500 dark:bg-white dark:text-amber-400",
-        info: "border-border border-l-4 border-l-sky-400 bg-white text-sky-700 dark:border-border dark:border-l-sky-500 dark:bg-white dark:text-sky-400",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
-
-const iconContainerVariants = cva(
-  "flex h-10 w-10 shrink-0 items-center justify-center rounded-md border",
-  {
-    variants: {
-      variant: {
-        default: "border-border bg-foreground/5 text-foreground",
-        success: "border-transparent bg-emerald-50/80 text-emerald-600 dark:text-emerald-400",
-        destructive: "border-transparent bg-red-50/80 text-red-600 dark:text-red-400",
-        warning: "border-transparent bg-amber-50/80 text-amber-600 dark:text-amber-400",
-        info: "border-transparent bg-sky-50/80 text-sky-600 dark:text-sky-400",
+        success: "border-border border-l-[12px] border-l-emerald-400 bg-white text-emerald-700 dark:border-border dark:border-l-emerald-500 dark:bg-white dark:text-emerald-400",
+        destructive: "border-border border-l-[12px] border-l-red-500 bg-white text-red-700 dark:border-border dark:border-l-red-500 dark:bg-white dark:text-red-400",
+        warning: "border-border border-l-[12px] border-l-amber-400 bg-white text-amber-700 dark:border-border dark:border-l-amber-500 dark:bg-white dark:text-amber-400",
+        info: "border-border border-l-[12px] border-l-sky-400 bg-white text-sky-700 dark:border-border dark:border-l-sky-500 dark:bg-white dark:text-sky-400",
       },
     },
     defaultVariants: {
@@ -81,13 +63,11 @@ const Toast = React.forwardRef<
       className={cn(toastVariants({ variant }), className)}
       {...props}
     >
-      <div className="flex w-full items-start gap-3 p-4 pr-3">
+      <div className="flex w-full items-center gap-3 p-4 pr-3">
         {showIcon && IconComponent && (
-          <div className={cn(iconContainerVariants({ variant }))}>
-            <IconComponent className="h-5 w-5" />
-          </div>
+          <IconComponent className="h-5 w-5 shrink-0" />
         )}
-        <div className="min-w-0 flex-1 pt-0.5">
+        <div className="min-w-0 flex-1">
           {children}
         </div>
         <ToastPrimitives.Close className="shrink-0 rounded-md p-1.5 opacity-50 transition-opacity hover:bg-black/5 hover:opacity-100 focus:outline-none focus:ring-1 focus:ring-ring dark:hover:bg-white/10">
@@ -120,7 +100,7 @@ const ToastTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Title
     ref={ref}
-    className={cn("text-sm font-semibold leading-tight tracking-[-0.01em]", className)}
+    className={cn("text-sm font-bold leading-tight tracking-[-0.01em] text-gray-700", className)}
     {...props}
   />
 ))
@@ -132,7 +112,7 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
-    className={cn("mt-1 whitespace-pre-line text-[13px] leading-5 opacity-90", className)}
+    className={cn("mt-1 whitespace-pre-line text-[13px] font-medium leading-5 text-gray-500", className)}
     {...props}
   />
 ))
