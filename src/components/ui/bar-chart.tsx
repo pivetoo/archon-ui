@@ -56,7 +56,7 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
           keys={dataKeys}
           indexBy={xAxisKey}
           layout={layout === "horizontal" ? "horizontal" : "vertical"}
-          margin={{ top: 10, right: showLegend ? 80 : 10, bottom: 40, left: 50 }}
+          margin={{ top: 10, right: showLegend ? 80 : 10, bottom: 40, left: layout === "horizontal" ? 190 : 50 }}
           padding={0.3}
           innerPadding={2}
           borderRadius={4}
