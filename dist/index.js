@@ -28736,7 +28736,7 @@ class qa {
   }
   static async updateRoleInCurrentContract(t, n) {
     const r = await He.put(
-      Ua(`/users/${t}/role-in-current-contract`),
+      Ua(`/users/UpdateRoleInCurrentContract/${t}`),
       { roleId: n },
       { headers: Fa() }
     );
@@ -28744,13 +28744,13 @@ class qa {
   }
   static async setActive(t, n) {
     await He.put(
-      Ua(`/users/${t}/active`),
+      Ua(`/users/SetActive/${t}`),
       { isActive: n },
       { headers: Fa() }
     );
   }
   static async listRolesByContract(t) {
-    const n = await He.get(Ua(`/roles/${t}`), {
+    const n = await He.get(Ua(`/roles/GetByContract/${t}`), {
       headers: Fa()
     });
     return Ic(n) ?? [];

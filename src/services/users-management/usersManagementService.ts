@@ -75,7 +75,7 @@ export class UsersManagementService {
 
   static async updateRoleInCurrentContract(userId: number, roleId: number): Promise<ContractUser> {
     const response = await axios.put(
-      buildUrl(`/users/${userId}/role-in-current-contract`),
+      buildUrl(`/users/UpdateRoleInCurrentContract/${userId}`),
       { roleId },
       { headers: getHeaders() }
     )
@@ -84,14 +84,14 @@ export class UsersManagementService {
 
   static async setActive(userId: number, isActive: boolean): Promise<void> {
     await axios.put(
-      buildUrl(`/users/${userId}/active`),
+      buildUrl(`/users/SetActive/${userId}`),
       { isActive },
       { headers: getHeaders() }
     )
   }
 
   static async listRolesByContract(contractId: number): Promise<ContractRole[]> {
-    const response = await axios.get(buildUrl(`/roles/${contractId}`), {
+    const response = await axios.get(buildUrl(`/roles/GetByContract/${contractId}`), {
       headers: getHeaders(),
     })
     return unwrap<ContractRole[]>(response) ?? []
