@@ -304,12 +304,43 @@ export declare interface ConfirmModalProps {
     loading?: boolean;
 }
 
+export declare interface ContractRole {
+    id: number;
+    name: string;
+    description: string;
+    contractId: number;
+    isRoot: boolean;
+    isDefault: boolean;
+}
+
 export declare interface ContractType {
     contractId: number;
     systemApplicationName: string;
     companyName: string;
     roleName?: string;
     portalUrl?: string;
+}
+
+export declare interface ContractUser {
+    userId: number;
+    username: string;
+    email: string;
+    name: string;
+    avatarUrl?: string;
+    isActive: boolean;
+    lastLoginAt?: string;
+    roleId: number;
+    roleName: string;
+    isRoot: boolean;
+    assignedAt: string;
+}
+
+export declare interface CreateUserInContractPayload {
+    username: string;
+    email: string;
+    password: string;
+    name: string;
+    roleId: number;
 }
 
 export declare function DataTable<T = any>({ columns, data, loading, rowKey, selectable, selectedRows, onSelectionChange, onRowClick, onRowDoubleClick, className, emptyText, dragSelect, pageSize: initialPageSize, pageSizeOptions }: DataTableProps<T>): JSX.Element;
@@ -1228,6 +1259,22 @@ export declare interface UserProfileUser {
     avatarUrl?: string;
     preferredLanguage?: string;
     lastLoginAt?: string;
+}
+
+export declare function UsersManagementPage({ title, subtitle, className, }: UsersManagementPageProps): JSX.Element;
+
+export declare interface UsersManagementPageProps {
+    title?: string;
+    subtitle?: string;
+    className?: string;
+}
+
+export declare class UsersManagementService {
+    static listInCurrentContract(): Promise<ContractUser[]>;
+    static createInCurrentContract(payload: CreateUserInContractPayload): Promise<ContractUser>;
+    static updateRoleInCurrentContract(userId: number, roleId: number): Promise<ContractUser>;
+    static setActive(userId: number, isActive: boolean): Promise<void>;
+    static listRolesByContract(contractId: number): Promise<ContractRole[]>;
 }
 
 export declare const useTheme: () => ThemeContextType;
