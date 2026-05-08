@@ -28715,17 +28715,20 @@ const tee = () => localStorage.getItem("@Archon:accessToken"), Fa = () => {
     "Accept-Language": Ka(),
     ...e ? { Authorization: `Bearer ${e}` } : {}
   };
-}, Ic = (e) => e.data && typeof e.data == "object" && "data" in e.data ? e.data.data : e.data, Ua = () => Ii();
+}, Ic = (e) => e.data && typeof e.data == "object" && "data" in e.data ? e.data.data : e.data, Ua = (e) => {
+  const t = Ii().replace(/\/+$/, "");
+  return `${/\/api$/i.test(t) ? t : `${t}/api`}${e.startsWith("/") ? e : `/${e}`}`;
+};
 class qa {
   static async listInCurrentContract() {
-    const t = await He.get(`${Ua()}/users/GetByCurrentContract`, {
+    const t = await He.get(Ua("/users/GetByCurrentContract"), {
       headers: Fa()
     });
     return Ic(t) ?? [];
   }
   static async createInCurrentContract(t) {
     const n = await He.post(
-      `${Ua()}/users/CreateInCurrentContract`,
+      Ua("/users/CreateInCurrentContract"),
       t,
       { headers: Fa() }
     );
@@ -28733,7 +28736,7 @@ class qa {
   }
   static async updateRoleInCurrentContract(t, n) {
     const r = await He.put(
-      `${Ua()}/users/${t}/role-in-current-contract`,
+      Ua(`/users/${t}/role-in-current-contract`),
       { roleId: n },
       { headers: Fa() }
     );
@@ -28741,13 +28744,13 @@ class qa {
   }
   static async setActive(t, n) {
     await He.put(
-      `${Ua()}/users/${t}/active`,
+      Ua(`/users/${t}/active`),
       { isActive: n },
       { headers: Fa() }
     );
   }
   static async listRolesByContract(t) {
-    const n = await He.get(`${Ua()}/roles/${t}`, {
+    const n = await He.get(Ua(`/roles/${t}`), {
       headers: Fa()
     });
     return Ic(n) ?? [];

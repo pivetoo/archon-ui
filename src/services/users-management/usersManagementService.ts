@@ -50,11 +50,15 @@ const unwrap = <T,>(response: { data: T | { data?: T } }): T => {
   return response.data as T
 }
 
-const baseUrl = () => getIdentityManagementURL()
+const buildUrl = (path: string): string => {
+  const base = getIdentityManagementURL().replace(/\/+$/, "")
+  const normalizedBase = /\/api$/i.test(base) ? base : `${base}/api`
+  return `${normalizedBase}${path.startsWith("/") ? path : `/${path}`}`
+}
 
 export class UsersManagementService {
   static async listInCurrentContract(): Promise<ContractUser[]> {
-    const response = await axios.get(`${baseUrl()}/users/GetByCurrentContract`, {
+    const response = await axios.get(buildUrl("/users/GetByCurrentContract"), {
       headers: getHeaders(),
     })
     return unwrap<ContractUser[]>(response) ?? []
@@ -62,7 +66,7 @@ export class UsersManagementService {
 
   static async createInCurrentContract(payload: CreateUserInContractPayload): Promise<ContractUser> {
     const response = await axios.post(
-      `${baseUrl()}/users/CreateInCurrentContract`,
+      buildUrl("/users/CreateInCurrentContract"),
       payload,
       { headers: getHeaders() }
     )
@@ -71,7 +75,7 @@ export class UsersManagementService {
 
   static async updateRoleInCurrentContract(userId: number, roleId: number): Promise<ContractUser> {
     const response = await axios.put(
-      `${baseUrl()}/users/${userId}/role-in-current-contract`,
+      buildUrl(`/users/${userId}/role-in-current-contract`),
       { roleId },
       { headers: getHeaders() }
     )
@@ -80,14 +84,14 @@ export class UsersManagementService {
 
   static async setActive(userId: number, isActive: boolean): Promise<void> {
     await axios.put(
-      `${baseUrl()}/users/${userId}/active`,
+      buildUrl(`/users/${userId}/active`),
       { isActive },
       { headers: getHeaders() }
     )
   }
 
   static async listRolesByContract(contractId: number): Promise<ContractRole[]> {
-    const response = await axios.get(`${baseUrl()}/roles/${contractId}`, {
+    const response = await axios.get(buildUrl(`/roles/${contractId}`), {
       headers: getHeaders(),
     })
     return unwrap<ContractRole[]>(response) ?? []
