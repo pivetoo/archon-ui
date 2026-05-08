@@ -1271,10 +1271,10 @@ export declare interface UsersManagementPageProps {
 
 export declare class UsersManagementService {
     static listInCurrentContract(): Promise<ContractUser[]>;
+    static listRoles(): Promise<ContractRole[]>;
     static createInCurrentContract(payload: CreateUserInContractPayload): Promise<ContractUser>;
     static updateRoleInCurrentContract(userId: number, roleId: number): Promise<ContractUser>;
     static setActive(userId: number, isActive: boolean): Promise<void>;
-    static listRolesByContract(contractId: number): Promise<ContractRole[]>;
 }
 
 export declare const useTheme: () => ThemeContextType;

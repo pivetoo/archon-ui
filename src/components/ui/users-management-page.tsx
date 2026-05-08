@@ -1,6 +1,5 @@
 import * as React from "react"
 import { Shield, ShieldOff, UserPlus } from "lucide-react"
-import { useAuth } from "../../contexts/AuthContext"
 import { usePermissions } from "../../hooks/usePermissions"
 import {
   UsersManagementService,
@@ -66,7 +65,6 @@ export function UsersManagementPage({
   subtitle = "Gerencie quem tem acesso ao contrato ativo",
   className,
 }: UsersManagementPageProps) {
-  const { contract } = useAuth()
   const { isRoot } = usePermissions()
   const { toast } = useToast()
 
@@ -79,15 +77,12 @@ export function UsersManagementPage({
   const [editingRoleUser, setEditingRoleUser] = React.useState<ContractUser | null>(null)
   const [pendingRoleId, setPendingRoleId] = React.useState<string>("")
 
-  const contractId = contract?.contractId ?? null
-
   const loadData = React.useCallback(async () => {
-    if (!contractId) return
     setLoading(true)
     try {
       const [list, contractRoles] = await Promise.all([
         UsersManagementService.listInCurrentContract(),
-        UsersManagementService.listRolesByContract(contractId),
+        UsersManagementService.listRoles(),
       ])
       setUsers(list)
       setRoles(contractRoles)
@@ -100,7 +95,7 @@ export function UsersManagementPage({
     } finally {
       setLoading(false)
     }
-  }, [contractId, toast])
+  }, [toast])
 
   React.useEffect(() => {
     if (isRoot) {
