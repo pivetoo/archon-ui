@@ -197,7 +197,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           )}
 
           {modules && modules.length > 0 && onModuleChange && (
-            <div className="relative">
+            <div className="relative" data-tour="module-switcher">
               <button
                 onClick={() => setIsModuleSwitcherOpen(!isModuleSwitcherOpen)}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-accent dark:hover:bg-accent/80 transition-colors"
@@ -263,7 +263,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           )}
 
           {notifications && notifications.length >= 0 && (
-            <div className="relative">
+            <div className="relative" data-tour="notifications-bell">
               <button
                 onClick={() => setIsNotificationMenuOpen(!isNotificationMenuOpen)}
                 className="relative p-2 rounded-sm transition-all hover:bg-accent dark:hover:bg-accent/80 text-muted-foreground hover:text-foreground active:scale-95"
