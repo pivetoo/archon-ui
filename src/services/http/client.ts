@@ -47,6 +47,56 @@ export const setAuthFailureHandler = (handler: (() => void) | null) => {
   authFailureHandler = handler
 }
 
+let pendingRefresh: Promise<string> | null = null
+
+const performTokenRefresh = async (): Promise<string> => {
+  const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
+  const oidcClientId = localStorage.getItem(OIDC_CLIENT_ID_KEY) || import.meta.env.VITE_OIDC_CLIENT_ID
+
+  if (!refreshToken || !identityManagementURL || !oidcClientId) {
+    throw new Error("missing_refresh_prerequisites")
+  }
+
+  const form = new URLSearchParams()
+  form.set("grant_type", "refresh_token")
+  form.set("client_id", oidcClientId)
+  form.set("refresh_token", refreshToken)
+
+  const response = await axios.post(
+    `${identityManagementURL.replace(/\/+$/, "")}/connect/token`,
+    form,
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept-Language": requestLanguage,
+      },
+    }
+  )
+
+  const accessToken = response.data?.access_token
+  const newRefreshToken = response.data?.refresh_token
+
+  if (!accessToken) {
+    throw new Error("missing_access_token")
+  }
+
+  localStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
+  if (newRefreshToken) {
+    localStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken)
+  }
+
+  return accessToken
+}
+
+const refreshAccessToken = (): Promise<string> => {
+  if (!pendingRefresh) {
+    pendingRefresh = performTokenRefresh().finally(() => {
+      pendingRefresh = null
+    })
+  }
+  return pendingRefresh
+}
+
 class HttpClient {
   private instance
 
@@ -103,30 +153,7 @@ class HttpClient {
 
           if (refreshToken && identityManagementURL && oidcClientId) {
             try {
-              const form = new URLSearchParams()
-              form.set("grant_type", "refresh_token")
-              form.set("client_id", oidcClientId)
-              form.set("refresh_token", refreshToken)
-
-              const response = await axios.post(
-                `${identityManagementURL.replace(/\/+$/, "")}/connect/token`,
-                form,
-                {
-                  headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "Accept-Language": requestLanguage,
-                  },
-                }
-              )
-
-              const accessToken = response.data?.access_token
-              const newRefreshToken = response.data?.refresh_token
-
-              localStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
-              if (newRefreshToken) {
-                localStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken)
-              }
-
+              const accessToken = await refreshAccessToken()
               originalRequest.headers.Authorization = `Bearer ${accessToken}`
               return this.instance(originalRequest)
             } catch (refreshError) {
