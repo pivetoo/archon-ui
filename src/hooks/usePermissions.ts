@@ -42,9 +42,14 @@ export function usePermissions(): UsePermissionsReturn {
         : [payload.permission as string];
     }
 
+    const rootClaim = payload.root;
+    const isRoot = Array.isArray(rootClaim)
+      ? rootClaim.includes('true')
+      : rootClaim === 'true';
+
     return {
       permissions: perms,
-      isRoot: payload.root === 'true'
+      isRoot
     };
   }, [accessToken]);
 

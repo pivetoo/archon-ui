@@ -28695,9 +28695,11 @@ function JQ() {
       return { permissions: [], isRoot: !1 };
     const a = ZQ(e);
     let s = [];
-    return a.permission && (s = Array.isArray(a.permission) ? a.permission : [a.permission]), {
+    a.permission && (s = Array.isArray(a.permission) ? a.permission : [a.permission]);
+    const c = a.root, l = Array.isArray(c) ? c.includes("true") : c === "true";
+    return {
       permissions: s,
-      isRoot: a.root === "true"
+      isRoot: l
     };
   }, [e]);
   return {
