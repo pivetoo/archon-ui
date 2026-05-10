@@ -2,6 +2,15 @@ import axios, { type AxiosRequestConfig } from "axios"
 import { translate } from "../../i18n/store"
 import type { ApiResponse, ApiError } from "./types"
 
+declare module "axios" {
+  export interface AxiosRequestConfig {
+    silent?: boolean
+  }
+  export interface InternalAxiosRequestConfig {
+    silent?: boolean
+  }
+}
+
 let globalLoaderContext: any = null
 let apiBaseURL: string = ""
 let identityManagementURL: string = ""
@@ -125,7 +134,7 @@ class HttpClient {
 
       config.headers["Accept-Language"] = requestLanguage
 
-      if (globalLoaderContext) {
+      if (globalLoaderContext && !config.silent) {
         globalLoaderContext.showLoader()
       }
 
@@ -134,13 +143,13 @@ class HttpClient {
 
     this.instance.interceptors.response.use(
       (response) => {
-        if (globalLoaderContext) {
+        if (globalLoaderContext && !response.config?.silent) {
           globalLoaderContext.hideLoader()
         }
         return response
       },
       async (error) => {
-        if (globalLoaderContext) {
+        if (globalLoaderContext && !error.config?.silent) {
           globalLoaderContext.hideLoader()
         }
         const originalRequest = error.config
