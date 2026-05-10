@@ -981,6 +981,7 @@ export declare interface SidebarProps extends React_2.HTMLAttributes<HTMLDivElem
     title?: string;
     titleStyle?: React_2.CSSProperties;
     titleClassName?: string;
+    subtitle?: string;
     logo?: React_2.ReactNode;
     items?: SidebarItemData[];
     groups?: SidebarGroup[];
