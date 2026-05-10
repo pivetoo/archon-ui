@@ -112,6 +112,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         title={title}
         titleStyle={titleStyle}
         titleClassName={titleClassName}
+        subtitle={subtitle}
         logo={logo}
         items={menuItems}
         groups={menuGroups}
