@@ -456,7 +456,51 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                       </button>
                     </div>
 
-                    <div className="border-t border-border my-1" />
+                    {i18n && (
+                      <div className="relative py-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsLanguageMenuOpen((current) => !current)
+                          }}
+                          className="w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
+                        >
+                          <div className="flex items-center gap-3">
+                            <LanguageFlag culture={i18n.culture} />
+                            <span>{translate("nav.language")}</span>
+                          </div>
+                          <ChevronLeft className={cn("h-4 w-4 text-muted-foreground transition-transform", isLanguageMenuOpen && "-rotate-90")} />
+                        </button>
+
+                        {isLanguageMenuOpen && (
+                          <div className="absolute right-full top-0 mr-2 w-56 rounded-md border border-border bg-popover py-1 shadow-lg">
+                            {supportedCultures.map((culture) => (
+                              <button
+                                key={culture.value}
+                                type="button"
+                                onClick={() => {
+                                  void i18n.setCulture(culture.value)
+                                  setIsLanguageMenuOpen(false)
+                                  setIsUserMenuOpen(false)
+                                }}
+                                className={cn(
+                                  "w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80",
+                                  i18n.culture === culture.value && "text-primary"
+                                )}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <LanguageFlag culture={culture.value} />
+                                  <span>{culture.label}</span>
+                                </div>
+                                {i18n.culture === culture.value && (
+                                  <Check className="h-4 w-4" />
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     <button
                       onClick={() => {
@@ -478,56 +522,6 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                         )} />
                       </div>
                     </button>
-
-                    {i18n && (
-                      <>
-                        <div className="border-t border-border my-1" />
-
-                        <div className="relative py-1">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setIsLanguageMenuOpen((current) => !current)
-                            }}
-                            className="w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
-                          >
-                            <div className="flex items-center gap-3">
-                              <LanguageFlag culture={i18n.culture} />
-                              <span>{translate("nav.language")}</span>
-                            </div>
-                            <ChevronLeft className={cn("h-4 w-4 text-muted-foreground transition-transform", isLanguageMenuOpen && "-rotate-90")} />
-                          </button>
-
-                          {isLanguageMenuOpen && (
-                            <div className="absolute right-full top-0 mr-2 w-56 rounded-md border border-border bg-popover py-1 shadow-lg">
-                              {supportedCultures.map((culture) => (
-                                <button
-                                  key={culture.value}
-                                  type="button"
-                                  onClick={() => {
-                                    void i18n.setCulture(culture.value)
-                                    setIsLanguageMenuOpen(false)
-                                    setIsUserMenuOpen(false)
-                                  }}
-                                  className={cn(
-                                    "w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80",
-                                    i18n.culture === culture.value && "text-primary"
-                                  )}
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <LanguageFlag culture={culture.value} />
-                                    <span>{culture.label}</span>
-                                  </div>
-                                  {i18n.culture === culture.value && (
-                                    <Check className="h-4 w-4" />
-                                  )}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </>
-                    )}
 
                     <div className="border-t border-border my-1" />
 
