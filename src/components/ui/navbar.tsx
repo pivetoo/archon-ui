@@ -7,6 +7,7 @@ import type { BreadcrumbItem } from "./breadcrumb"
 import { useTheme } from "./use-theme"
 import { useOptionalI18n, type ArchonCulture } from "../../i18n"
 import { LanguageFlag } from "./language-flag"
+import { UserProfileModal } from "./user-profile-modal"
 
 export interface NotificationItem {
   id: string
@@ -51,6 +52,7 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   profilePath?: string
   onProfileNavigate?: (path: string) => void
   onLogout?: () => void
+  onAvatarUpload?: (file: File) => Promise<string>
 }
 
 export type { BreadcrumbItem }
@@ -78,6 +80,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       profilePath,
       onProfileNavigate,
       onLogout,
+      onAvatarUpload,
       ...props
     },
     ref
@@ -89,6 +92,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = React.useState(false)
     const [isNotificationMenuOpen, setIsNotificationMenuOpen] = React.useState(false)
     const [isModuleSwitcherOpen, setIsModuleSwitcherOpen] = React.useState(false)
+    const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false)
     const supportedCultures: Array<{ value: ArchonCulture; label: string }> = [
       { value: "pt-BR", label: "Português" },
       { value: "en-US", label: "English" },
@@ -173,6 +177,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
     }
     return (
+      <>
       <nav
         ref={ref}
         className={cn(
@@ -433,25 +438,25 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                       <p className="text-xs text-muted-foreground">{user.email}</p>
                     </div>
 
-                    {profilePath && onProfileNavigate && (
-                      <>
-                        <div className="py-1">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              onProfileNavigate(profilePath)
-                              setIsUserMenuOpen(false)
-                            }}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
-                          >
-                            <UserRound className="h-4 w-4" />
-                            {translate("nav.profile")}
-                          </button>
-                        </div>
+                    <div className="py-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserMenuOpen(false)
+                          if (profilePath && onProfileNavigate) {
+                            onProfileNavigate(profilePath)
+                          } else {
+                            setIsProfileModalOpen(true)
+                          }
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
+                      >
+                        <UserRound className="h-4 w-4" />
+                        {translate("nav.profile")}
+                      </button>
+                    </div>
 
-                        <div className="border-t border-border my-1" />
-                      </>
-                    )}
+                    <div className="border-t border-border my-1" />
 
                     <button
                       onClick={() => {
@@ -546,8 +551,15 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           )}
         </div>
       </nav>
-    )
-  }
+
+      <UserProfileModal
+        open={isProfileModalOpen}
+        onOpenChange={setIsProfileModalOpen}
+        onAvatarUpload={onAvatarUpload}
+      />
+    </>
+  )
+}
 )
 Navbar.displayName = "Navbar"
 
