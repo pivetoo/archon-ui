@@ -12,6 +12,7 @@ export interface AppLayoutProps {
   titleStyle?: React.CSSProperties
   titleClassName?: string
   subtitle?: string
+  navbarCompanyName?: string
   logo?: React.ReactNode
   user: {
     name: string
@@ -48,6 +49,7 @@ export interface AppLayoutProps {
 export const AppLayout: React.FC<AppLayoutProps> = ({
   title,
   subtitle,
+  navbarCompanyName,
   logo,
   user,
   menuItems = [],
@@ -143,7 +145,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           preferredLanguage: user.preferredLanguage,
           lastLoginAt: user.lastLoginAt,
         }}
-        companyName={subtitle}
+        companyName={navbarCompanyName ?? subtitle}
         notifications={notifications}
         onNotificationRead={onNotificationRead}
         onMarkAllAsRead={onMarkAllAsRead}

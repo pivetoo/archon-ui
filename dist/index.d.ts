@@ -70,6 +70,7 @@ export declare interface AppLayoutProps {
     titleStyle?: React_2.CSSProperties;
     titleClassName?: string;
     subtitle?: string;
+    navbarCompanyName?: string;
     logo?: React_2.ReactNode;
     user: {
         name: string;
