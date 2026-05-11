@@ -76,8 +76,13 @@ export function DataTable<T = any>({
   const [pageSize, setPageSize] = React.useState(initialPageSize)
   const resolvedEmptyText = emptyText || t("common.state.noRecordsFound")
 
+  const hiddenBelowMap: Record<string, string> = {
+    sm: 'hidden sm:table-cell',
+    md: 'hidden md:table-cell',
+    lg: 'hidden lg:table-cell',
+  }
   const getHiddenClass = (col: DataTableColumn<T>) =>
-    col.hiddenBelow ? `hidden ${col.hiddenBelow}:table-cell` : undefined
+    col.hiddenBelow ? hiddenBelowMap[col.hiddenBelow] : undefined
 
   const totalPages = Math.ceil(data.length / pageSize)
   const startIndex = (currentPage - 1) * pageSize
