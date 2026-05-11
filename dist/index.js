@@ -5012,8 +5012,8 @@ tk.displayName = Vl.displayName;
 const Y8 = Os(
   [
     "fixed z-[201] flex flex-col bg-background shadow-lg duration-200 overflow-y-auto",
-    // mobile: tela cheia, sem bordas arredondadas
-    "inset-0 rounded-none p-4 gap-3",
+    // mobile: tela cheia — !w-full sobrescreve inline style width:95vw dos modais
+    "inset-0 !w-full rounded-none p-4 gap-3",
     // sm+: dialog centralizado flutuante
     "sm:inset-auto sm:left-[50%] sm:top-[50%] sm:w-full sm:min-h-0 sm:max-h-[90vh]",
     "sm:translate-x-[-50%] sm:translate-y-[-50%] sm:rounded-lg sm:border sm:p-6 sm:gap-4",
@@ -12506,7 +12506,7 @@ const o3 = w.forwardRef(
     "nav",
     {
       ref: o,
-      className: J("flex items-center gap-2 text-sm", e),
+      className: J("flex items-center gap-2 text-sm min-w-0 overflow-hidden", e),
       "aria-label": "Breadcrumb",
       ...r,
       children: t.map((i, a) => /* @__PURE__ */ z(w.Fragment, { children: [
@@ -12514,7 +12514,8 @@ const o3 = w.forwardRef(
           "span",
           {
             className: J(
-              "font-medium transition-colors",
+              "font-medium transition-colors truncate",
+              a === t.length - 1 ? "max-w-[200px] md:max-w-none" : "max-w-[120px] md:max-w-none",
               a === 0 && "text-primary",
               a === 1 && "text-secondary",
               a === t.length - 1 ? "text-foreground font-semibold" : "text-muted-foreground",
@@ -12645,7 +12646,7 @@ const i3 = w.createContext(null), T9 = () => {
         },
         ..._,
         children: [
-          /* @__PURE__ */ z("div", { className: "flex items-center gap-4", children: [
+          /* @__PURE__ */ z("div", { className: "flex items-center gap-4 min-w-0 flex-1", children: [
             n && /* @__PURE__ */ p(
               "button",
               {
@@ -12700,9 +12701,9 @@ const i3 = w.createContext(null), T9 = () => {
                 ] })
               ] })
             ] }),
-            o && o.length > 0 && /* @__PURE__ */ p(o3, { items: o })
+            o && o.length > 0 && /* @__PURE__ */ p("div", { className: "hidden sm:block min-w-0 overflow-hidden", children: /* @__PURE__ */ p(o3, { items: o }) })
           ] }),
-          /* @__PURE__ */ z("div", { className: "flex items-center gap-4", children: [
+          /* @__PURE__ */ z("div", { className: "flex items-center gap-4 flex-shrink-0 ml-2", children: [
             m,
             a && /* @__PURE__ */ p("span", { className: "text-sm font-medium text-muted-foreground hidden md:block", children: a }),
             s && s.length >= 0 && /* @__PURE__ */ z("div", { className: "relative", "data-tour": "notifications-bell", children: [

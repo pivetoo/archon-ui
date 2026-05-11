@@ -19,7 +19,7 @@ const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
     return (
       <nav
         ref={ref}
-        className={cn("flex items-center gap-2 text-sm", className)}
+        className={cn("flex items-center gap-2 text-sm min-w-0 overflow-hidden", className)}
         aria-label="Breadcrumb"
         {...props}
       >
@@ -27,7 +27,8 @@ const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
           <React.Fragment key={index}>
             <span
               className={cn(
-                "font-medium transition-colors",
+                "font-medium transition-colors truncate",
+                index === items.length - 1 ? "max-w-[200px] md:max-w-none" : "max-w-[120px] md:max-w-none",
                 index === 0 && "text-primary",
                 index === 1 && "text-secondary",
                 index === items.length - 1

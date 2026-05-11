@@ -31,8 +31,8 @@ ModalOverlay.displayName = DialogPrimitive.Overlay.displayName
 const modalContentVariants = cva(
   [
     "fixed z-[201] flex flex-col bg-background shadow-lg duration-200 overflow-y-auto",
-    // mobile: tela cheia, sem bordas arredondadas
-    "inset-0 rounded-none p-4 gap-3",
+    // mobile: tela cheia — !w-full sobrescreve inline style width:95vw dos modais
+    "inset-0 !w-full rounded-none p-4 gap-3",
     // sm+: dialog centralizado flutuante
     "sm:inset-auto sm:left-[50%] sm:top-[50%] sm:w-full sm:min-h-0 sm:max-h-[90vh]",
     "sm:translate-x-[-50%] sm:translate-y-[-50%] sm:rounded-lg sm:border sm:p-6 sm:gap-4",

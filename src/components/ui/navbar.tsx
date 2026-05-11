@@ -184,7 +184,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
         }}
         {...props}
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 min-w-0 flex-1">
           {isMobile && (
             <button
               type="button"
@@ -249,11 +249,13 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           )}
 
           {breadcrumbs && breadcrumbs.length > 0 && (
-            <Breadcrumb items={breadcrumbs} />
+            <div className="hidden sm:block min-w-0 overflow-hidden">
+              <Breadcrumb items={breadcrumbs} />
+            </div>
           )}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-shrink-0 ml-2">
           {actions}
 
           {companyName && (
