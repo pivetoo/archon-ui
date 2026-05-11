@@ -29,20 +29,33 @@ const ModalOverlay = React.forwardRef<
 ModalOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const modalContentVariants = cva(
-  "fixed left-[50%] top-[50%] z-[201] flex w-full min-h-0 max-h-[90vh] flex-col translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-lg",
+  [
+    "fixed z-[201] flex flex-col bg-background shadow-lg duration-200 overflow-y-auto",
+    // mobile: tela cheia, sem bordas arredondadas
+    "inset-0 rounded-none p-4 gap-3",
+    // sm+: dialog centralizado flutuante
+    "sm:inset-auto sm:left-[50%] sm:top-[50%] sm:w-full sm:min-h-0 sm:max-h-[90vh]",
+    "sm:translate-x-[-50%] sm:translate-y-[-50%] sm:rounded-lg sm:border sm:p-6 sm:gap-4",
+    // animações
+    "data-[state=open]:animate-in data-[state=closed]:animate-out",
+    "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+    "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+    "sm:data-[state=closed]:slide-out-to-left-1/2 sm:data-[state=closed]:slide-out-to-top-[48%]",
+    "sm:data-[state=open]:slide-in-from-left-1/2 sm:data-[state=open]:slide-in-from-top-[48%]",
+  ].join(" "),
   {
     variants: {
       size: {
-        sm: "max-w-sm",
-        md: "max-w-md",
-        lg: "max-w-lg",
-        xl: "max-w-xl",
-        "2xl": "max-w-2xl",
-        "3xl": "max-w-3xl",
-        "4xl": "max-w-4xl",
-        "5xl": "max-w-5xl",
-        form: "max-w-3xl",
-        full: "max-w-[95vw]",
+        sm:    "sm:max-w-sm",
+        md:    "sm:max-w-md",
+        lg:    "sm:max-w-lg",
+        xl:    "sm:max-w-xl",
+        "2xl": "sm:max-w-2xl",
+        "3xl": "sm:max-w-3xl",
+        "4xl": "sm:max-w-4xl",
+        "5xl": "sm:max-w-5xl",
+        form:  "sm:max-w-3xl",
+        full:  "sm:max-w-[95vw]",
       },
     },
     defaultVariants: {
