@@ -12312,7 +12312,7 @@ const r3 = w.forwardRef(
         F[O.label] = O.defaultExpanded !== !1;
       }), D(F);
     }, [s]);
-    const I = l ? c : P, R = l || (() => L(!P)), $ = (F) => {
+    const I = x ? !1 : l ? c : P, R = l || (() => L(!P)), $ = (F) => {
       D((O) => ({
         ...O,
         [F]: !O[F]

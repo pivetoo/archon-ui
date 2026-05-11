@@ -86,7 +86,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       setExpandedGroups(initial)
     }, [groups])
 
-    const collapsed = onToggleCollapse ? isCollapsed : internalCollapsed
+    const collapsed = isMobile ? false : (onToggleCollapse ? isCollapsed : internalCollapsed)
     const handleToggle = onToggleCollapse || (() => setInternalCollapsed(!internalCollapsed))
 
     const toggleGroup = (groupLabel: string) => {
