@@ -721,6 +721,7 @@ export declare interface PageLayoutProps {
     titleClassName?: string;
     density?: "default" | "compact";
     filtersSlot?: React_2.ReactNode;
+    actionsSlot?: React_2.ReactNode;
     actions?: PageAction[];
     showDefaultActions?: boolean;
     onAdd?: () => void;

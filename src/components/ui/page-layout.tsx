@@ -20,6 +20,7 @@ export interface PageLayoutProps {
   titleClassName?: string
   density?: "default" | "compact"
   filtersSlot?: React.ReactNode
+  actionsSlot?: React.ReactNode
   actions?: PageAction[]
   showDefaultActions?: boolean
   onAdd?: () => void
@@ -38,6 +39,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   titleClassName,
   density = "default",
   filtersSlot,
+  actionsSlot,
   actions = [],
   showDefaultActions = true,
   onAdd,
@@ -211,8 +213,9 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
               )}
             </div>
 
-            {allActions.length > 0 && (
+            {(allActions.length > 0 || actionsSlot) && (
               <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto xl:justify-end">
+                {actionsSlot}
                 {allActions.map((action) => (
                   <Button
                     key={action.key}
