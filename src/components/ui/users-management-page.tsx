@@ -222,12 +222,7 @@ export function UsersManagementPage({
       key: "roleName",
       title: "Perfil",
       dataIndex: "roleName",
-      render: (value: string, record: ContractUser) => (
-        <div className="flex items-center gap-2">
-          <span>{value}</span>
-          {record.isRoot ? <Badge variant="warning">root</Badge> : null}
-        </div>
-      ),
+      render: (value: string) => <span>{value}</span>,
     },
     {
       key: "isActive",
