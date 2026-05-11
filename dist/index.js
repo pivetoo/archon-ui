@@ -11221,7 +11221,7 @@ const Vee = wD, _D = w.forwardRef(({ className: e, ...t }, n) => /* @__PURE__ */
   {
     ref: n,
     className: J(
-      "inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground data-[orientation=vertical]:h-auto data-[orientation=vertical]:w-full data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch data-[orientation=vertical]:justify-start",
+      "inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground overflow-x-auto scrollbar-hide data-[orientation=vertical]:h-auto data-[orientation=vertical]:w-full data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch data-[orientation=vertical]:justify-start",
       e
     ),
     ...t
