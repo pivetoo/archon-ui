@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Camera, Trash2, Eye, EyeOff, User } from "lucide-react"
+import { Camera, Trash2, Eye, EyeOff, User, Lock } from "lucide-react"
 import { useAuth } from "../../contexts/AuthContext"
 import { ProfileService } from "../../services/profile/profileService"
 import { getInitials } from "../../lib/utils"
@@ -144,9 +144,21 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserPro
 
         <ModalBody>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="w-full">
-              <TabsTrigger value="profile" className="flex-1">Dados pessoais</TabsTrigger>
-              <TabsTrigger value="security" className="flex-1">Segurança</TabsTrigger>
+            <TabsList className="h-auto w-full justify-start gap-6 rounded-none border-b border-border bg-transparent p-0">
+              <TabsTrigger
+                value="profile"
+                className="gap-2 rounded-none border-b-2 border-transparent bg-transparent px-1 pb-3 pt-0 text-sm font-medium text-muted-foreground shadow-none hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none"
+              >
+                <User className="h-4 w-4" />
+                Dados pessoais
+              </TabsTrigger>
+              <TabsTrigger
+                value="security"
+                className="gap-2 rounded-none border-b-2 border-transparent bg-transparent px-1 pb-3 pt-0 text-sm font-medium text-muted-foreground shadow-none hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none"
+              >
+                <Lock className="h-4 w-4" />
+                Segurança
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="profile" className="mt-5 space-y-5">
@@ -204,7 +216,7 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserPro
               </div>
             </TabsContent>
 
-            <TabsContent value="security" className="mt-5">
+            <TabsContent value="security" className="mt-5 space-y-0">
               <div className="grid gap-3">
                 <div className="grid gap-1.5">
                   <label className="text-sm font-medium">Senha atual</label>
