@@ -456,6 +456,27 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                       </button>
                     </div>
 
+                    <button
+                      onClick={() => {
+                        toggleDark()
+                      }}
+                      className="w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
+                    >
+                      <div className="flex items-center gap-3">
+                        {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                        <span>{translate(isDark ? "nav.theme.dark" : "nav.theme.light")}</span>
+                      </div>
+                      <div className={cn(
+                        "relative w-9 h-5 rounded-full transition-colors",
+                        isDark ? "bg-primary" : "bg-muted"
+                      )}>
+                        <div className={cn(
+                          "absolute top-0.5 w-4 h-4 rounded-full bg-background transition-transform",
+                          isDark ? "left-[18px]" : "left-0.5"
+                        )} />
+                      </div>
+                    </button>
+
                     {i18n && (
                       <div className="relative py-1">
                         <button
@@ -501,27 +522,6 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                         )}
                       </div>
                     )}
-
-                    <button
-                      onClick={() => {
-                        toggleDark()
-                      }}
-                      className="w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
-                    >
-                      <div className="flex items-center gap-3">
-                        {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-                        <span>{translate(isDark ? "nav.theme.dark" : "nav.theme.light")}</span>
-                      </div>
-                      <div className={cn(
-                        "relative w-9 h-5 rounded-full transition-colors",
-                        isDark ? "bg-primary" : "bg-muted"
-                      )}>
-                        <div className={cn(
-                          "absolute top-0.5 w-4 h-4 rounded-full bg-background transition-transform",
-                          isDark ? "left-[18px]" : "left-0.5"
-                        )} />
-                      </div>
-                    </button>
 
                     <div className="border-t border-border my-1" />
 
