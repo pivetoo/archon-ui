@@ -19,6 +19,7 @@ export interface DataTableColumn<T = any> {
   render?: (value: any, record: T, index: number) => React.ReactNode
   sortable?: boolean
   width?: string | number
+  hiddenBelow?: 'sm' | 'md' | 'lg'
 }
 
 export interface DataTableProps<T = any> {
@@ -74,6 +75,9 @@ export function DataTable<T = any>({
   const [currentPage, setCurrentPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(initialPageSize)
   const resolvedEmptyText = emptyText || t("common.state.noRecordsFound")
+
+  const getHiddenClass = (col: DataTableColumn<T>) =>
+    col.hiddenBelow ? `hidden ${col.hiddenBelow}:table-cell` : undefined
 
   const totalPages = Math.ceil(data.length / pageSize)
   const startIndex = (currentPage - 1) * pageSize
@@ -267,6 +271,7 @@ export function DataTable<T = any>({
               {columns.map((column) => (
                 <TableHead
                   key={column.key}
+                  className={getHiddenClass(column)}
                   style={column.width ? { width: column.width } : undefined}
                 >
                   {column.title}
@@ -279,7 +284,7 @@ export function DataTable<T = any>({
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={`skeleton-${i}`}>
                   {columns.map((column) => (
-                    <TableCell key={column.key}>
+                    <TableCell key={column.key} className={getHiddenClass(column)}>
                       <div className="h-4 animate-pulse rounded-full bg-muted" />
                     </TableCell>
                   ))}
@@ -337,7 +342,7 @@ export function DataTable<T = any>({
                         : undefined
 
                       return (
-                        <TableCell key={column.key}>
+                        <TableCell key={column.key} className={getHiddenClass(column)}>
                           {column.render
                             ? column.render(value, record, index)
                             : (value as React.ReactNode) || "-"}
@@ -353,13 +358,13 @@ export function DataTable<T = any>({
       </div>
 
       {data.length > 0 && (
-        <div className="flex flex-col gap-3 border-t border-border/70 bg-muted/20 px-4 py-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border/70 bg-muted/20 px-4 py-3">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <label htmlFor={pageSizeSelectId}>Linhas por página:</label>
+            <label htmlFor={pageSizeSelectId}>{t("common.table.rowsPerPage")}</label>
             <select
               id={pageSizeSelectId}
               name="pageSize"
-              aria-label="Linhas por página"
+              aria-label={t("common.table.rowsPerPage")}
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
               className="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-sm"

@@ -352,6 +352,7 @@ export declare interface DataTableColumn<T = any> {
     render?: (value: any, record: T, index: number) => React_2.ReactNode;
     sortable?: boolean;
     width?: string | number;
+    hiddenBelow?: 'sm' | 'md' | 'lg';
 }
 
 export declare function DataTablePreview<T = any>({ columns, data, rowKey, selectedRow, onRowSelect, renderDetail, renderPagination, className, tableClassName, detailClassName, gridRatio, }: DataTablePreviewProps<T>): JSX.Element;
