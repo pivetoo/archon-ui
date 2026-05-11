@@ -12884,14 +12884,13 @@ function F9({ open: e, onOpenChange: t, onAvatarUpload: n }) {
         const H = await ll.updateProfile({
           id: r.id,
           username: f,
-          email: d,
+          email: r.email,
           name: c,
           avatarUrl: K,
           isActive: r.isActive ?? !0
         });
         o({
           name: H.name,
-          email: H.email,
           username: H.username,
           avatarUrl: H.avatarUrl
         }), xr({ variant: "success", title: "Perfil atualizado", description: "Suas informações foram salvas com sucesso." }), t(!1);
@@ -12926,7 +12925,7 @@ function F9({ open: e, onOpenChange: t, onAvatarUpload: n }) {
   return /* @__PURE__ */ h(is, { open: e, onOpenChange: t, children: /* @__PURE__ */ B(Ii, { size: "md", children: [
     /* @__PURE__ */ h(Oi, { children: /* @__PURE__ */ h($i, { children: "Meu perfil" }) }),
     /* @__PURE__ */ h(as, { children: /* @__PURE__ */ B(ID, { value: a, onValueChange: s, children: [
-      /* @__PURE__ */ B(EA, { className: "h-auto w-full justify-start gap-6 rounded-none border-b border-border bg-transparent p-0", children: [
+      /* @__PURE__ */ B(EA, { className: "h-auto w-full justify-center gap-6 rounded-none border-b border-border bg-transparent p-0", children: [
         /* @__PURE__ */ B(
           o0,
           {
@@ -12993,8 +12992,8 @@ function F9({ open: e, onOpenChange: t, onAvatarUpload: n }) {
             /* @__PURE__ */ h(Bt, { value: c, onChange: (K) => l(K.target.value), placeholder: "Seu nome completo" })
           ] }),
           /* @__PURE__ */ B("div", { className: "grid gap-1.5", children: [
-            /* @__PURE__ */ h("label", { className: "text-sm font-medium", children: "E-mail" }),
-            /* @__PURE__ */ h(Bt, { type: "email", value: d, onChange: (K) => u(K.target.value), placeholder: "seu@email.com" })
+            /* @__PURE__ */ h("label", { className: "text-sm font-medium text-muted-foreground", children: "E-mail" }),
+            /* @__PURE__ */ h(Bt, { type: "email", value: d, readOnly: !0, disabled: !0, className: "cursor-not-allowed opacity-60" })
           ] }),
           /* @__PURE__ */ B("div", { className: "grid gap-1.5", children: [
             /* @__PURE__ */ h("label", { className: "text-sm font-medium", children: "Usuário" }),

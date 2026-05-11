@@ -83,7 +83,7 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserPro
       const updated = await ProfileService.updateProfile({
         id: user.id,
         username,
-        email,
+        email: user.email,
         name,
         avatarUrl: finalAvatarUrl,
         isActive: user.isActive ?? true,
@@ -91,7 +91,6 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserPro
 
       updateUser({
         name: updated.name,
-        email: updated.email,
         username: updated.username,
         avatarUrl: updated.avatarUrl,
       })
@@ -144,7 +143,7 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserPro
 
         <ModalBody>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="h-auto w-full justify-start gap-6 rounded-none border-b border-border bg-transparent p-0">
+            <TabsList className="h-auto w-full justify-center gap-6 rounded-none border-b border-border bg-transparent p-0">
               <TabsTrigger
                 value="profile"
                 className="gap-2 rounded-none border-b-2 border-transparent bg-transparent px-1 pb-3 pt-0 text-sm font-medium text-muted-foreground shadow-none hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none"
@@ -206,8 +205,8 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserPro
                   <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" />
                 </div>
                 <div className="grid gap-1.5">
-                  <label className="text-sm font-medium">E-mail</label>
-                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" />
+                  <label className="text-sm font-medium text-muted-foreground">E-mail</label>
+                  <Input type="email" value={email} readOnly disabled className="cursor-not-allowed opacity-60" />
                 </div>
                 <div className="grid gap-1.5">
                   <label className="text-sm font-medium">Usuário</label>
