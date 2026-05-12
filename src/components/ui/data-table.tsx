@@ -37,6 +37,10 @@ export interface DataTableProps<T = any> {
   dragSelect?: boolean
   pageSize?: number
   pageSizeOptions?: number[]
+  totalCount?: number
+  page?: number
+  onPageChange?: (page: number) => void
+  onPageSizeChange?: (pageSize: number) => void
 }
 
 interface SelectionBox {
@@ -60,7 +64,11 @@ export function DataTable<T = any>({
   emptyText,
   dragSelect = true,
   pageSize: initialPageSize = 10,
-  pageSizeOptions = [5, 10, 20, 50]
+  pageSizeOptions = [5, 10, 20, 50],
+  totalCount,
+  page: controlledPage,
+  onPageChange,
+  onPageSizeChange,
 }: DataTableProps<T>) {
   const { t } = useI18n()
   const isSelectable = selectable !== undefined ? selectable : !!onSelectionChange
@@ -72,8 +80,14 @@ export function DataTable<T = any>({
   const dragStartRef = React.useRef<{ x: number; y: number; clientX: number; clientY: number } | null>(null)
   const isDraggingRef = React.useRef(false)
 
-  const [currentPage, setCurrentPage] = React.useState(1)
-  const [pageSize, setPageSize] = React.useState(initialPageSize)
+  const isServerSide = !!onPageChange
+
+  const [internalPage, setInternalPage] = React.useState(1)
+  const [internalPageSize, setInternalPageSize] = React.useState(initialPageSize)
+
+  const currentPage = isServerSide ? (controlledPage ?? 1) : internalPage
+  const pageSize = isServerSide ? initialPageSize : internalPageSize
+  const effectiveTotalCount = isServerSide ? (totalCount ?? 0) : data.length
   const resolvedEmptyText = emptyText || t("common.state.noRecordsFound")
 
   const hiddenBelowMap: Record<string, string> = {
@@ -84,13 +98,36 @@ export function DataTable<T = any>({
   const getHiddenClass = (col: DataTableColumn<T>) =>
     col.hiddenBelow ? hiddenBelowMap[col.hiddenBelow] : undefined
 
-  const totalPages = Math.ceil(data.length / pageSize)
+  const totalPages = Math.ceil(effectiveTotalCount / pageSize) || 1
   const startIndex = (currentPage - 1) * pageSize
-  const endIndex = startIndex + pageSize
-  const paginatedData = data.slice(startIndex, endIndex)
+  const endIndex = isServerSide
+    ? startIndex + data.length
+    : Math.min(startIndex + pageSize, data.length)
+  const paginatedData = isServerSide ? data : data.slice(startIndex, startIndex + pageSize)
+
   React.useEffect(() => {
-    setCurrentPage(1)
-  }, [data.length, pageSize])
+    if (!isServerSide) {
+      setInternalPage(1)
+    }
+  }, [data.length, internalPageSize, isServerSide])
+
+  const setCurrentPage = (p: number | ((prev: number) => number)) => {
+    const newPage = typeof p === 'function' ? p(currentPage) : p
+    if (isServerSide) {
+      onPageChange!(newPage)
+    } else {
+      setInternalPage(newPage)
+    }
+  }
+
+  const changePageSize = (newSize: number) => {
+    if (isServerSide) {
+      onPageSizeChange?.(newSize)
+    } else {
+      setInternalPageSize(newSize)
+      setInternalPage(1)
+    }
+  }
 
   const getRowKey = (record: T): string | number => {
     if (typeof rowKey === "function") {
@@ -371,7 +408,7 @@ export function DataTable<T = any>({
               name="pageSize"
               aria-label={t("common.table.rowsPerPage")}
               value={pageSize}
-              onChange={(e) => setPageSize(Number(e.target.value))}
+              onChange={(e) => changePageSize(Number(e.target.value))}
               className="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-sm"
             >
               {pageSizeOptions.map((size) => (
@@ -384,7 +421,7 @@ export function DataTable<T = any>({
 
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <span>
-              {startIndex + 1}-{Math.min(endIndex, data.length)} de {data.length}
+              {startIndex + 1}-{endIndex} de {effectiveTotalCount}
             </span>
           </div>
 
@@ -408,13 +445,13 @@ export function DataTable<T = any>({
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="px-3 text-sm font-medium text-foreground">
-              {currentPage} / {totalPages || 1}
+              {currentPage} / {totalPages}
             </span>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages || totalPages === 0}
+              disabled={currentPage === totalPages}
               className="h-9 w-9 rounded-md p-0"
             >
               <ChevronRight className="h-4 w-4" />
@@ -423,7 +460,7 @@ export function DataTable<T = any>({
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage(totalPages)}
-              disabled={currentPage === totalPages || totalPages === 0}
+              disabled={currentPage === totalPages}
               className="h-9 w-9 rounded-md p-0"
             >
               <ChevronsRight className="h-4 w-4" />
