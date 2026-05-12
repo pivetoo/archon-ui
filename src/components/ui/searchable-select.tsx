@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
 import { Input } from './input'
 
@@ -14,6 +14,7 @@ interface SearchableSelectProps {
   placeholder?: string
   searchPlaceholder?: string
   disabled?: boolean
+  onSearch?: (term: string) => Promise<SearchableSelectOption[]>
 }
 
 const EMPTY_SENTINEL = '__searchable_select_empty__'
@@ -25,14 +26,45 @@ export function SearchableSelect({
   placeholder = 'Selecione...',
   searchPlaceholder = 'Buscar...',
   disabled,
+  onSearch,
 }: SearchableSelectProps) {
   const [search, setSearch] = useState('')
+  const [asyncOptions, setAsyncOptions] = useState<SearchableSelectOption[] | null>(null)
+  const [searching, setSearching] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   const safeValue = value ? value : EMPTY_SENTINEL
-  const filteredOptions = options.filter((opt) => opt.label.toLowerCase().includes(search.toLowerCase()))
-  const selectedLabel = options.find((opt) => opt.value === (value ?? ''))?.label ?? placeholder
+
+  const activeOptions = asyncOptions ?? options
+  const filteredOptions = onSearch
+    ? activeOptions
+    : activeOptions.filter((opt) => opt.label.toLowerCase().includes(search.toLowerCase()))
+
+  const selectedLabel = activeOptions.find((opt) => opt.value === (value ?? ''))?.label
+    ?? options.find((opt) => opt.value === (value ?? ''))?.label
+    ?? placeholder
+
+  useEffect(() => {
+    if (!onSearch) return
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (!search) {
+      setAsyncOptions(null)
+      return
+    }
+    setSearching(true)
+    debounceRef.current = setTimeout(() => {
+      void onSearch(search).then((results) => {
+        setAsyncOptions(results)
+        setSearching(false)
+      }).catch(() => setSearching(false))
+    }, 300)
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [search, onSearch])
 
   return (
-    <Select value={safeValue} onValueChange={(v) => { setSearch(''); onValueChange(v === EMPTY_SENTINEL ? '' : v) }} disabled={disabled}>
+    <Select value={safeValue} onValueChange={(v) => { setSearch(''); setAsyncOptions(null); onValueChange(v === EMPTY_SENTINEL ? '' : v) }} disabled={disabled}>
       <SelectTrigger>
         <SelectValue placeholder={placeholder}>{selectedLabel}</SelectValue>
       </SelectTrigger>
@@ -47,7 +79,9 @@ export function SearchableSelect({
           />
         </div>
         <div className="max-h-[200px] overflow-y-auto">
-          {filteredOptions.length === 0 ? (
+          {searching ? (
+            <div className="px-2 py-3 text-sm text-muted-foreground text-center">Buscando...</div>
+          ) : filteredOptions.length === 0 ? (
             <div className="px-2 py-3 text-sm text-muted-foreground text-center">Nenhum resultado</div>
           ) : (
             filteredOptions.map((opt) => (

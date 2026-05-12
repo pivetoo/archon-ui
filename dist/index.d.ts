@@ -345,7 +345,7 @@ export declare interface CreateUserInContractPayload {
     roleId: number;
 }
 
-export declare function DataTable<T = any>({ columns, data, loading, rowKey, selectable, selectedRows, onSelectionChange, onRowClick, onRowDoubleClick, className, emptyText, dragSelect, pageSize: initialPageSize, pageSizeOptions }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T = any>({ columns, data, loading, rowKey, selectable, selectedRows, onSelectionChange, onRowClick, onRowDoubleClick, className, emptyText, dragSelect, pageSize: initialPageSize, pageSizeOptions, totalCount, page: controlledPage, onPageChange, onPageSizeChange, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T = any> {
     key: string;
@@ -396,6 +396,10 @@ export declare interface DataTableProps<T = any> {
     dragSelect?: boolean;
     pageSize?: number;
     pageSizeOptions?: number[];
+    totalCount?: number;
+    page?: number;
+    onPageChange?: (page: number) => void;
+    onPageSizeChange?: (pageSize: number) => void;
 }
 
 export declare const Dropdown: React_2.FC<DropdownMenuPrimitive.DropdownMenuProps>;
@@ -833,7 +837,7 @@ export declare interface RevokeRefreshTokenRequest {
     refreshToken: string;
 }
 
-export declare function SearchableSelect({ value, onValueChange, options, placeholder, searchPlaceholder, disabled, }: SearchableSelectProps): JSX.Element;
+export declare function SearchableSelect({ value, onValueChange, options, placeholder, searchPlaceholder, disabled, onSearch, }: SearchableSelectProps): JSX.Element;
 
 export declare interface SearchableSelectOption {
     value: string;
@@ -847,6 +851,7 @@ declare interface SearchableSelectProps {
     placeholder?: string;
     searchPlaceholder?: string;
     disabled?: boolean;
+    onSearch?: (term: string) => Promise<SearchableSelectOption[]>;
 }
 
 export declare const Select: React_2.FC<SelectPrimitive.SelectProps>;
