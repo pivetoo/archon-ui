@@ -7,6 +7,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { JSX } from 'react/jsx-runtime';
 import { LucideProps } from 'lucide-react';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
 import * as React_2 from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
@@ -457,6 +458,47 @@ export declare interface FilterDropdownProps {
     allValue?: string;
 }
 
+export declare interface FilterOption {
+    value: string;
+    label: string;
+}
+
+/**
+ * Botao de filtros com popover agrupando varias dimensoes em uma so UI.
+ * - Mostra badge com a contagem de filtros ativos.
+ * - Suporta multiplas secoes (single-select por secao).
+ * - Botao "Limpar tudo" reseta todas as secoes.
+ */
+export declare function FilterPanel({ sections, onClearAll, className, title, clearLabel, }: FilterPanelProps): JSX.Element;
+
+export declare interface FilterPanelProps {
+    /** Secoes de filtro (uma por dimensao). */
+    sections: FilterSection[];
+    /** Callback opcional para limpar tudo de uma vez. */
+    onClearAll?: () => void;
+    /** Classe extra no botao trigger. */
+    className?: string;
+    /** Texto opcional para o titulo do popover (default: "Filtros"). */
+    title?: string;
+    /** Texto do botao "Limpar". */
+    clearLabel?: string;
+}
+
+export declare interface FilterSection {
+    /** Identificador unico da secao (usado como key e nada mais). */
+    key: string;
+    /** Titulo exibido acima das opcoes (ex: "Status"). */
+    label: string;
+    /** Valor atual selecionado. Vazio (`""`) significa "todos". */
+    value: string;
+    /** Lista de opcoes. */
+    options: FilterOption[];
+    /** Callback chamado quando o usuario muda. */
+    onChange: (value: string) => void;
+    /** Texto do placeholder/all option. Default: "Todos". */
+    allLabel?: string;
+}
+
 export declare const getApiBaseURL: () => string;
 
 export declare const getIdentityManagementURL: () => string;
@@ -788,6 +830,14 @@ export declare interface PieChartProps {
     height?: number | `${number}%`;
     className?: string;
 }
+
+export declare const Popover: React_2.FC<PopoverPrimitive.PopoverProps>;
+
+export declare const PopoverAnchor: React_2.ForwardRefExoticComponent<PopoverPrimitive.PopoverAnchorProps & React_2.RefAttributes<HTMLDivElement>>;
+
+export declare const PopoverContent: React_2.ForwardRefExoticComponent<Omit<PopoverPrimitive.PopoverContentProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+
+export declare const PopoverTrigger: React_2.ForwardRefExoticComponent<PopoverPrimitive.PopoverTriggerProps & React_2.RefAttributes<HTMLButtonElement>>;
 
 export declare class ProfileService {
     static updateProfile(request: UpdateProfileRequest): Promise<User>;
