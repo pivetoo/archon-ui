@@ -466,7 +466,8 @@ export declare interface FilterOption {
 /**
  * Botao de filtros com popover agrupando varias dimensoes em uma so UI.
  * - Mostra badge com a contagem de filtros ativos.
- * - Suporta multiplas secoes (single-select por secao).
+ * - Secoes com <=4 opcoes curtas renderizam como chips inline; demais como lista.
+ * - Popover ganha um pouco mais de largura quando ha labels longas (~22+ chars).
  * - Botao "Limpar tudo" reseta todas as secoes.
  */
 export declare function FilterPanel({ sections, onClearAll, className, title, clearLabel, }: FilterPanelProps): JSX.Element;

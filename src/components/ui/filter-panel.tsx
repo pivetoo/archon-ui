@@ -36,10 +36,37 @@ export interface FilterPanelProps {
   clearLabel?: string
 }
 
+// Quando uma secao tem poucas opcoes e labels curtas, renderiza como chips inline.
+// Quando tem muitas opcoes ou labels longas, renderiza como lista vertical com Check.
+const CHIPS_MAX_OPTIONS = 4
+const CHIPS_MAX_LABEL_LENGTH = 18
+const POPOVER_WIDE_THRESHOLD = 22
+
+function isChipsSection(section: FilterSection): boolean {
+  if (section.options.length === 0) {
+    return false
+  }
+  if (section.options.length > CHIPS_MAX_OPTIONS) {
+    return false
+  }
+  const longestLabel = section.options.reduce(
+    (max, option) => Math.max(max, option.label.length),
+    section.allLabel?.length ?? 5,
+  )
+  return longestLabel <= CHIPS_MAX_LABEL_LENGTH
+}
+
+function hasLongLabels(sections: FilterSection[]): boolean {
+  return sections.some((section) =>
+    section.options.some((option) => option.label.length > POPOVER_WIDE_THRESHOLD),
+  )
+}
+
 /**
  * Botao de filtros com popover agrupando varias dimensoes em uma so UI.
  * - Mostra badge com a contagem de filtros ativos.
- * - Suporta multiplas secoes (single-select por secao).
+ * - Secoes com <=4 opcoes curtas renderizam como chips inline; demais como lista.
+ * - Popover ganha um pouco mais de largura quando ha labels longas (~22+ chars).
  * - Botao "Limpar tudo" reseta todas as secoes.
  */
 export function FilterPanel({
@@ -54,6 +81,7 @@ export function FilterPanel({
     0,
   )
   const hasActive = activeCount > 0
+  const needsWidePopover = hasLongLabels(sections)
 
   const handleClear = () => {
     if (onClearAll) {
@@ -80,7 +108,7 @@ export function FilterPanel({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-80 p-0">
+      <PopoverContent align="end" className={cn("p-0", needsWidePopover ? "w-[380px]" : "w-80")}>
         <div className="flex items-center justify-between border-b px-3 py-2">
           <span className="text-sm font-semibold">{title}</span>
           {hasActive && (
@@ -110,27 +138,46 @@ interface FilterPanelSectionProps {
 function FilterPanelSection({ section }: FilterPanelSectionProps) {
   const allLabel = section.allLabel ?? "Todos"
   const selectedValue = section.value || ""
+  const useChips = isChipsSection(section)
 
   return (
     <div className="space-y-1.5">
       <p className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {section.label}
       </p>
-      <div className="flex flex-col">
-        <FilterOptionRow
-          label={allLabel}
-          selected={selectedValue === ""}
-          onClick={() => section.onChange("")}
-        />
-        {section.options.map((option) => (
-          <FilterOptionRow
-            key={option.value}
-            label={option.label}
-            selected={selectedValue === option.value}
-            onClick={() => section.onChange(option.value)}
+      {useChips ? (
+        <div className="flex flex-wrap gap-1.5">
+          <FilterChip
+            label={allLabel}
+            selected={selectedValue === ""}
+            onClick={() => section.onChange("")}
           />
-        ))}
-      </div>
+          {section.options.map((option) => (
+            <FilterChip
+              key={option.value}
+              label={option.label}
+              selected={selectedValue === option.value}
+              onClick={() => section.onChange(option.value)}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col">
+          <FilterOptionRow
+            label={allLabel}
+            selected={selectedValue === ""}
+            onClick={() => section.onChange("")}
+          />
+          {section.options.map((option) => (
+            <FilterOptionRow
+              key={option.value}
+              label={option.label}
+              selected={selectedValue === option.value}
+              onClick={() => section.onChange(option.value)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -155,6 +202,24 @@ function FilterOptionRow({ label, selected, onClick }: FilterOptionRowProps) {
     >
       <span className="truncate">{label}</span>
       {selected && <Check className="h-3.5 w-3.5 shrink-0" />}
+    </button>
+  )
+}
+
+function FilterChip({ label, selected, onClick }: FilterOptionRowProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+        selected
+          ? "border-primary bg-primary/10 text-primary"
+          : "border-border bg-background text-foreground hover:bg-muted",
+      )}
+    >
+      {selected && <Check className="h-3 w-3" />}
+      {label}
     </button>
   )
 }
