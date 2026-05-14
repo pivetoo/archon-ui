@@ -12,6 +12,7 @@ export interface PageAction {
   variant?: "primary" | "secondary" | "outline" | "outline-primary" | "outline-secondary" | "outline-success" | "outline-warning" | "outline-danger" | "ghost" | "danger"
   onClick: () => void
   disabled?: boolean
+  testId?: string
 }
 
 export interface PageLayoutProps {
@@ -126,7 +127,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         label: t("pageLayout.action.add"),
         icon: <Plus className="h-4 w-4" />,
         variant: "secondary",
-        onClick: onAdd
+        onClick: onAdd,
+        testId: "crud-add-button"
       })
     }
 
@@ -136,7 +138,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         label: t("pageLayout.action.view"),
         icon: <Eye className="h-4 w-4" />,
         variant: "outline",
-        onClick: handleView
+        onClick: handleView,
+        testId: "crud-view-button"
       })
     }
 
@@ -146,7 +149,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         label: t("pageLayout.action.edit"),
         icon: <Edit className="h-4 w-4" />,
         variant: "outline",
-        onClick: handleEdit
+        onClick: handleEdit,
+        testId: "crud-edit-button"
       })
     }
 
@@ -156,7 +160,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         label: t("pageLayout.action.delete"),
         icon: <Trash2 className="h-4 w-4" />,
         variant: "outline",
-        onClick: handleDelete
+        onClick: handleDelete,
+        testId: "crud-delete-button"
       })
     }
   }
@@ -177,6 +182,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
             <div className="min-w-0 space-y-2">
               <div className="flex items-center gap-2">
                 <h1
+                  data-testid="page-title"
                   className={cn(
                     "truncate font-semibold tracking-tight text-primary drop-shadow-[0_1px_0_hsl(var(--primary)/0.15)]",
                     isCompact ? "text-2xl" : "text-3xl",
@@ -219,6 +225,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                 {allActions.map((action) => (
                   <Button
                     key={action.key}
+                    data-testid={action.testId}
                     variant={action.variant || "outline"}
                     size="sm"
                     onClick={action.onClick}

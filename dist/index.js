@@ -7178,14 +7178,14 @@ const Pn = new qO(), $k = "@Archon:language", v1 = "pt-BR", mv = w.createContext
     }, m = () => {
       s?.(), t?.(!1);
     };
-    return /* @__PURE__ */ h(is, { open: e, onOpenChange: t, children: /* @__PURE__ */ W(Ii, { ref: d, children: [
+    return /* @__PURE__ */ h(is, { open: e, onOpenChange: t, children: /* @__PURE__ */ W(Ii, { ref: d, "data-testid": "dialog-confirm", children: [
       /* @__PURE__ */ W(Oi, { children: [
         /* @__PURE__ */ h($i, { children: n ?? u("confirmModal.title") }),
         (r ?? u("confirmModal.description")) && /* @__PURE__ */ h(ss, { children: r ?? u("confirmModal.description") })
       ] }),
       /* @__PURE__ */ W(Li, { children: [
-        /* @__PURE__ */ h(Ot, { variant: "outline", onClick: m, disabled: l, children: i ?? u("common.action.cancel") }),
-        /* @__PURE__ */ h(Ot, { variant: c, onClick: f, loading: l, children: o ?? u("common.action.confirm") })
+        /* @__PURE__ */ h(Ot, { "data-testid": "dialog-cancel-button", variant: "outline", onClick: m, disabled: l, children: i ?? u("common.action.cancel") }),
+        /* @__PURE__ */ h(Ot, { "data-testid": "dialog-confirm-button", variant: c, onClick: f, loading: l, children: o ?? u("common.action.confirm") })
       ] })
     ] }) });
   }
@@ -28014,25 +28014,29 @@ const hte = ({
     label: v("pageLayout.action.add"),
     icon: /* @__PURE__ */ h(k6, { className: "h-4 w-4" }),
     variant: "secondary",
-    onClick: c
+    onClick: c,
+    testId: "crud-add-button"
   }), l && A.push({
     key: "view",
     label: v("pageLayout.action.view"),
     icon: /* @__PURE__ */ h($c, { className: "h-4 w-4" }),
     variant: "outline",
-    onClick: S
+    onClick: S,
+    testId: "crud-view-button"
   }), d && A.push({
     key: "edit",
     label: v("pageLayout.action.edit"),
     icon: /* @__PURE__ */ h(L6, { className: "h-4 w-4" }),
     variant: "outline",
-    onClick: C
+    onClick: C,
+    testId: "crud-edit-button"
   }), u && A.push({
     key: "delete",
     label: v("pageLayout.action.delete"),
     icon: /* @__PURE__ */ h(hT, { className: "h-4 w-4" }),
     variant: "outline",
-    onClick: M
+    onClick: M,
+    testId: "crud-delete-button"
   }));
   const I = [...A, ...a], L = r === "compact";
   return /* @__PURE__ */ W("div", { className: ee("flex flex-col h-full w-full", p), children: [
@@ -28050,6 +28054,7 @@ const hte = ({
                 /* @__PURE__ */ h(
                   "h1",
                   {
+                    "data-testid": "page-title",
                     className: ee(
                       "truncate font-semibold tracking-tight text-primary drop-shadow-[0_1px_0_hsl(var(--primary)/0.15)]",
                       L ? "text-2xl" : "text-3xl",
@@ -28088,6 +28093,7 @@ const hte = ({
               I.map((k) => /* @__PURE__ */ W(
                 Ot,
                 {
+                  "data-testid": k.testId,
                   variant: k.variant || "outline",
                   size: "sm",
                   onClick: k.onClick,

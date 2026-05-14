@@ -45,7 +45,7 @@ const ConfirmModal = React.forwardRef<HTMLDivElement, ConfirmModalProps>(
 
     return (
       <Modal open={open} onOpenChange={onOpenChange}>
-        <ModalContent ref={ref}>
+        <ModalContent ref={ref} data-testid="dialog-confirm">
           <ModalHeader>
             <ModalTitle>{title ?? t("confirmModal.title")}</ModalTitle>
             {(description ?? t("confirmModal.description")) && (
@@ -53,10 +53,10 @@ const ConfirmModal = React.forwardRef<HTMLDivElement, ConfirmModalProps>(
             )}
           </ModalHeader>
           <ModalFooter>
-            <Button variant="outline" onClick={handleCancel} disabled={loading}>
+            <Button data-testid="dialog-cancel-button" variant="outline" onClick={handleCancel} disabled={loading}>
               {cancelText ?? t("common.action.cancel")}
             </Button>
-            <Button variant={variant} onClick={handleConfirm} loading={loading}>
+            <Button data-testid="dialog-confirm-button" variant={variant} onClick={handleConfirm} loading={loading}>
               {confirmText ?? t("common.action.confirm")}
             </Button>
           </ModalFooter>

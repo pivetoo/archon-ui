@@ -712,6 +712,7 @@ export declare interface PageAction {
     variant?: "primary" | "secondary" | "outline" | "outline-primary" | "outline-secondary" | "outline-success" | "outline-warning" | "outline-danger" | "ghost" | "danger";
     onClick: () => void;
     disabled?: boolean;
+    testId?: string;
 }
 
 export declare interface PagedRequest {
