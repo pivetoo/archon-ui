@@ -32,11 +32,16 @@ export function SearchableSelect({
   const [asyncOptions, setAsyncOptions] = useState<SearchableSelectOption[] | null>(null)
   const [searching, setSearching] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Mantem referencia mutavel pro callback para que closures inline no pai
+  // (recriadas a cada render) nao reiniciem o effect e quebrem o debounce.
+  const onSearchRef = useRef(onSearch)
+  useEffect(() => { onSearchRef.current = onSearch }, [onSearch])
+  const hasAsyncSearch = Boolean(onSearch)
 
   const safeValue = value ? value : EMPTY_SENTINEL
 
   const activeOptions = asyncOptions ?? options
-  const filteredOptions = onSearch
+  const filteredOptions = hasAsyncSearch
     ? activeOptions
     : activeOptions.filter((opt) => opt.label.toLowerCase().includes(search.toLowerCase()))
 
@@ -45,15 +50,21 @@ export function SearchableSelect({
     ?? placeholder
 
   useEffect(() => {
-    if (!onSearch) return
+    if (!hasAsyncSearch) return
     if (debounceRef.current) clearTimeout(debounceRef.current)
     if (!search) {
       setAsyncOptions(null)
+      setSearching(false)
       return
     }
     setSearching(true)
     debounceRef.current = setTimeout(() => {
-      void onSearch(search).then((results) => {
+      const fn = onSearchRef.current
+      if (!fn) {
+        setSearching(false)
+        return
+      }
+      void fn(search).then((results) => {
         setAsyncOptions(results)
         setSearching(false)
       }).catch(() => setSearching(false))
@@ -61,7 +72,7 @@ export function SearchableSelect({
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [search, onSearch])
+  }, [search, hasAsyncSearch])
 
   return (
     <Select value={safeValue} onValueChange={(v) => { setSearch(''); setAsyncOptions(null); onValueChange(v === EMPTY_SENTINEL ? '' : v) }} disabled={disabled}>

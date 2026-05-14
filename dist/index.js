@@ -1,6 +1,6 @@
 import { jsx as h, Fragment as ze, jsxs as W } from "react/jsx-runtime";
 import * as w from "react";
-import ro, { forwardRef as Gt, createElement as ht, useState as $t, useLayoutEffect as tT, useRef as Ke, useEffect as Yt, useCallback as le, useMemo as ue, useContext as Zi, createContext as Ls, memo as gt, Component as T5, cloneElement as k5, isValidElement as M5, Fragment as Ni } from "react";
+import ro, { forwardRef as Gt, createElement as ht, useState as $t, useLayoutEffect as tT, useRef as Ye, useEffect as Vt, useCallback as le, useMemo as ue, useContext as Zi, createContext as Ls, memo as gt, Component as T5, cloneElement as k5, isValidElement as M5, Fragment as Ni } from "react";
 import * as $s from "react-dom";
 import R5, { unstable_batchedUpdates as A5 } from "react-dom";
 import { useLocation as nT, Navigate as E5, useNavigate as rT, useSearchParams as N5 } from "react-router-dom";
@@ -10738,37 +10738,46 @@ function P1({
   disabled: i,
   onSearch: a
 }) {
-  const [s, c] = $t(""), [l, d] = $t(null), [u, f] = $t(!1), m = Ke(null), g = e || af, p = l ?? n, v = a ? p : p.filter((b) => b.label.toLowerCase().includes(s.toLowerCase())), y = p.find((b) => b.value === (e ?? ""))?.label ?? n.find((b) => b.value === (e ?? ""))?.label ?? r;
-  return Yt(() => {
-    if (a) {
+  const [s, c] = $t(""), [l, d] = $t(null), [u, f] = $t(!1), m = Ye(null), g = Ye(a);
+  Vt(() => {
+    g.current = a;
+  }, [a]);
+  const p = !!a, v = e || af, y = l ?? n, b = p ? y : y.filter((_) => _.label.toLowerCase().includes(s.toLowerCase())), x = y.find((_) => _.value === (e ?? ""))?.label ?? n.find((_) => _.value === (e ?? ""))?.label ?? r;
+  return Vt(() => {
+    if (p) {
       if (m.current && clearTimeout(m.current), !s) {
-        d(null);
+        d(null), f(!1);
         return;
       }
       return f(!0), m.current = setTimeout(() => {
-        a(s).then((b) => {
-          d(b), f(!1);
+        const _ = g.current;
+        if (!_) {
+          f(!1);
+          return;
+        }
+        _(s).then((C) => {
+          d(C), f(!1);
         }).catch(() => f(!1));
       }, 300), () => {
         m.current && clearTimeout(m.current);
       };
     }
-  }, [s, a]), /* @__PURE__ */ W(YR, { value: g, onValueChange: (b) => {
-    c(""), d(null), t(b === af ? "" : b);
+  }, [s, p]), /* @__PURE__ */ W(YR, { value: v, onValueChange: (_) => {
+    c(""), d(null), t(_ === af ? "" : _);
   }, disabled: i, children: [
-    /* @__PURE__ */ h(Uv, { children: /* @__PURE__ */ h(GR, { placeholder: r, children: y }) }),
+    /* @__PURE__ */ h(Uv, { children: /* @__PURE__ */ h(GR, { placeholder: r, children: x }) }),
     /* @__PURE__ */ W(qv, { className: "w-[var(--radix-select-trigger-width)]", children: [
       /* @__PURE__ */ h("div", { className: "px-2 pt-2 pb-1", children: /* @__PURE__ */ h(
         Bt,
         {
           placeholder: o,
           value: s,
-          onChange: (b) => c(b.target.value),
-          onKeyDown: (b) => b.stopPropagation(),
+          onChange: (_) => c(_.target.value),
+          onKeyDown: (_) => _.stopPropagation(),
           className: "h-8 text-sm"
         }
       ) }),
-      /* @__PURE__ */ h("div", { className: "max-h-[200px] overflow-y-auto", children: u ? /* @__PURE__ */ h("div", { className: "px-2 py-3 text-sm text-muted-foreground text-center", children: "Buscando..." }) : v.length === 0 ? /* @__PURE__ */ h("div", { className: "px-2 py-3 text-sm text-muted-foreground text-center", children: "Nenhum resultado" }) : v.map((b) => /* @__PURE__ */ h(Wv, { value: b.value ? b.value : af, children: b.label }, b.value)) })
+      /* @__PURE__ */ h("div", { className: "max-h-[200px] overflow-y-auto", children: u ? /* @__PURE__ */ h("div", { className: "px-2 py-3 text-sm text-muted-foreground text-center", children: "Buscando..." }) : b.length === 0 ? /* @__PURE__ */ h("div", { className: "px-2 py-3 text-sm text-muted-foreground text-center", children: "Nenhum resultado" }) : b.map((_) => /* @__PURE__ */ h(Wv, { value: _.value ? _.value : af, children: _.label }, _.value)) })
     ] })
   ] });
 }
@@ -14120,8 +14129,8 @@ function Nu(e) {
   return ae.str(e) && (e[0] == "#" || /\d/.test(e) || // Do not identify a CSS variable as an AnimatedString if its SSR
   !tb() && Eu.test(e) || e in (Hr || {}));
 }
-var fo = tb() ? Yt : tT, gF = () => {
-  const e = Ke(!1);
+var fo = tb() ? Vt : tT, gF = () => {
+  const e = Ye(!1);
   return fo(() => (e.current = !0, () => {
     e.current = !1;
   }), []), e;
@@ -14132,10 +14141,10 @@ function ib() {
     t.current && e(Math.random());
   };
 }
-var ab = (e) => Yt(e, vF), vF = [];
+var ab = (e) => Vt(e, vF), vF = [];
 function p0(e) {
-  const t = Ke(void 0);
-  return Yt(() => {
+  const t = Ye(void 0);
+  return Vt(() => {
     t.current = e;
   }), t.current;
 }
@@ -14258,7 +14267,7 @@ var z1 = (e, t) => {
     !ae.fun(e) || e.prototype && e.prototype.isReactComponent
   );
   return Gt((r, o) => {
-    const i = Ke(null), a = n && // eslint-disable-next-line react-hooks/rules-of-hooks
+    const i = Ye(null), a = n && // eslint-disable-next-line react-hooks/rules-of-hooks
     le(
       (g) => {
         i.current = CF(o, g);
@@ -14269,13 +14278,13 @@ var z1 = (e, t) => {
       if (n && !g)
         return;
       (g ? t.applyAnimatedValues(g, s.getValue(!0)) : !1) === !1 && l();
-    }, u = new wF(d, c), f = Ke(void 0);
+    }, u = new wF(d, c), f = Ye(void 0);
     fo(() => (f.current = u, Me(c, (g) => ca(g, u)), () => {
       f.current && (Me(
         f.current.deps,
         (g) => bs(g, f.current)
       ), Re.cancel(f.current.update));
-    })), Yt(d, []), ab(() => () => {
+    })), Vt(d, []), ab(() => () => {
       const g = f.current;
       Me(g.deps, (p) => bs(p, g));
     });
@@ -15271,7 +15280,7 @@ function FF(e, t, n) {
   const o = ue(
     () => r || arguments.length == 3 ? J4() : void 0,
     []
-  ), i = Ke(0), a = ib(), s = ue(
+  ), i = Ye(0), a = ib(), s = ue(
     () => ({
       ctrls: [],
       queue: [],
@@ -15285,7 +15294,7 @@ function FF(e, t, n) {
       }
     }),
     []
-  ), c = Ke([...s.ctrls]), l = Ke([]), d = p0(e) || 0;
+  ), c = Ye([...s.ctrls]), l = Ye([]), d = p0(e) || 0;
   ue(() => {
     Me(c.current.slice(e, d), (y) => {
       v0(y, o), y.stop(!0);
@@ -15337,7 +15346,7 @@ function Ho(e, t, n) {
   } = r ? r() : t, f = ue(
     () => r || arguments.length == 3 ? J4() : void 0,
     []
-  ), m = hn(e), g = [], p = Ke(null), v = o ? null : p.current;
+  ), m = hn(e), g = [], p = Ye(null), v = o ? null : p.current;
   fo(() => {
     p.current = g;
   }), ab(() => (Me(g, (R) => {
@@ -15373,7 +15382,7 @@ function Ho(e, t, n) {
   }
   ae.fun(i) && g.sort((R, D) => i(R.item, D.item));
   let _ = -a;
-  const C = ib(), S = Lu(t), M = /* @__PURE__ */ new Map(), A = Ke(/* @__PURE__ */ new Map()), I = Ke(!1);
+  const C = ib(), S = Lu(t), M = /* @__PURE__ */ new Map(), A = Ye(/* @__PURE__ */ new Map()), I = Ye(!1);
   Me(g, (R, D) => {
     const E = R.key, F = R.phase, O = r ? r() : t;
     let U, Y;
@@ -17188,7 +17197,7 @@ function Po() {
 var lq = ["basic", "chip", "container", "table", "tableCell", "tableCellValue"], uq = { pointerEvents: "none", position: "absolute", zIndex: 10, top: 0, left: 0 }, o2 = function(e, t) {
   return "translate(" + e + "px, " + t + "px)";
 }, S3 = gt((function(e) {
-  var t, n = e.position, r = e.anchor, o = e.children, i = pt(), a = gn(), s = a.animate, c = a.config, l = KV(), d = l[0], u = l[1], f = Ke(!1), m = void 0, g = !1, p = u.width > 0 && u.height > 0, v = Math.round(n[0]), y = Math.round(n[1]);
+  var t, n = e.position, r = e.anchor, o = e.children, i = pt(), a = gn(), s = a.animate, c = a.config, l = KV(), d = l[0], u = l[1], f = Ye(!1), m = void 0, g = !1, p = u.width > 0 && u.height > 0, v = Math.round(n[0]), y = Math.round(n[1]);
   p && (r === "top" ? (v -= u.width / 2, y -= u.height + 14) : r === "right" ? (v += 14, y -= u.height / 2) : r === "bottom" ? (v -= u.width / 2, y += 14) : r === "left" ? (v -= u.width + 14, y -= u.height / 2) : r === "center" && (v -= u.width / 2, y -= u.height / 2), m = { transform: o2(v, y) }, f.current || (g = !0), f.current = [v, y]);
   var b = hr({ to: m, config: c, immediate: !s || g }), x = i.tooltip;
   x.basic, x.chip, x.container, x.table, x.tableCell, x.tableCellValue;
@@ -17454,7 +17463,7 @@ class wq extends T5 {
   }
 }
 function _q(e, t, n, r) {
-  var o = this, i = Ke(null), a = Ke(0), s = Ke(0), c = Ke(null), l = Ke([]), d = Ke(), u = Ke(), f = Ke(e), m = Ke(!0), g = Ke(), p = Ke();
+  var o = this, i = Ye(null), a = Ye(0), s = Ye(0), c = Ye(null), l = Ye([]), d = Ye(), u = Ye(), f = Ye(e), m = Ye(!0), g = Ye(), p = Ye();
   f.current = e;
   var v = typeof window < "u", y = !t && t !== 0 && v;
   if (typeof e != "function") throw new TypeError("Expected a function");
@@ -17502,7 +17511,7 @@ function _q(e, t, n, r) {
       return c.current ? $(Date.now()) : u.current;
     }, D;
   }, [b, C, t, M, x, _, y, v, S, r]);
-  return p.current = A, Yt(function() {
+  return p.current = A, Vt(function() {
     return m.current = !0, function() {
       var I;
       _ && p.current.flush(), g.current && ((I = globalThis.document) == null || I.removeEventListener == null || I.removeEventListener("visibilitychange", g.current), g.current = null), m.current = !1;
@@ -17513,9 +17522,9 @@ function Cq(e, t) {
   return e === t;
 }
 function Sq(e, t, n) {
-  var r = n && n.equalityFn || Cq, o = Ke(e), i = $t({})[1], a = _q(le(function(c) {
+  var r = n && n.equalityFn || Cq, o = Ye(e), i = $t({})[1], a = _q(le(function(c) {
     o.current = c, i({});
-  }, [i]), t, n, i), s = Ke(e);
+  }, [i]), t, n, i), s = Ye(e);
   return r(s.current, e) || (a(e), s.current = e), [o.current, a];
 }
 function Ku(e, t, n) {
@@ -19776,7 +19785,7 @@ function aE() {
   }, Vo.apply(e, arguments);
 }
 const Lp = /* @__PURE__ */ new Date(), $p = /* @__PURE__ */ new Date();
-function Vt(e, t, n, r) {
+function Yt(e, t, n, r) {
   function o(i) {
     return e(i = arguments.length === 0 ? /* @__PURE__ */ new Date() : /* @__PURE__ */ new Date(+i)), i;
   }
@@ -19791,7 +19800,7 @@ function Vt(e, t, n, r) {
       c.push(l = /* @__PURE__ */ new Date(+i)), t(i, s), e(i);
     while (l < i && i < a);
     return c;
-  }, o.filter = (i) => Vt((a) => {
+  }, o.filter = (i) => Yt((a) => {
     if (a >= a) for (; e(a), !i(a); ) a.setTime(a - 1);
   }, (a, s) => {
     if (a >= a)
@@ -19803,67 +19812,67 @@ function Vt(e, t, n, r) {
           ;
   }), n && (o.count = (i, a) => (Lp.setTime(+i), $p.setTime(+a), e(Lp), e($p), Math.floor(n(Lp, $p))), o.every = (i) => (i = Math.floor(i), !isFinite(i) || !(i > 0) ? null : i > 1 ? o.filter(r ? (a) => r(a) % i === 0 : (a) => o.count(0, a) % i === 0) : o)), o;
 }
-const _l = Vt(() => {
+const _l = Yt(() => {
 }, (e, t) => {
   e.setTime(+e + t);
 }, (e, t) => t - e);
-_l.every = (e) => (e = Math.floor(e), !isFinite(e) || !(e > 0) ? null : e > 1 ? Vt((t) => {
+_l.every = (e) => (e = Math.floor(e), !isFinite(e) || !(e > 0) ? null : e > 1 ? Yt((t) => {
   t.setTime(Math.floor(t / e) * e);
 }, (t, n) => {
   t.setTime(+t + n * e);
 }, (t, n) => (n - t) / e) : _l);
 _l.range;
-const wr = 1e3, Ln = wr * 60, _r = Ln * 60, Mr = _r * 24, zb = Mr * 7, t_ = Mr * 30, Dp = Mr * 365, mo = Vt((e) => {
+const wr = 1e3, Ln = wr * 60, _r = Ln * 60, Mr = _r * 24, zb = Mr * 7, t_ = Mr * 30, Dp = Mr * 365, mo = Yt((e) => {
   e.setTime(e - e.getMilliseconds());
 }, (e, t) => {
   e.setTime(+e + t * wr);
 }, (e, t) => (t - e) / wr, (e) => e.getUTCSeconds());
 mo.range;
-const Hb = Vt((e) => {
+const Hb = Yt((e) => {
   e.setTime(e - e.getMilliseconds() - e.getSeconds() * wr);
 }, (e, t) => {
   e.setTime(+e + t * Ln);
 }, (e, t) => (t - e) / Ln, (e) => e.getMinutes());
 Hb.range;
-const jb = Vt((e) => {
+const jb = Yt((e) => {
   e.setUTCSeconds(0, 0);
 }, (e, t) => {
   e.setTime(+e + t * Ln);
 }, (e, t) => (t - e) / Ln, (e) => e.getUTCMinutes());
 jb.range;
-const Vb = Vt((e) => {
+const Vb = Yt((e) => {
   e.setTime(e - e.getMilliseconds() - e.getSeconds() * wr - e.getMinutes() * Ln);
 }, (e, t) => {
   e.setTime(+e + t * _r);
 }, (e, t) => (t - e) / _r, (e) => e.getHours());
 Vb.range;
-const Yb = Vt((e) => {
+const Yb = Yt((e) => {
   e.setUTCMinutes(0, 0, 0);
 }, (e, t) => {
   e.setTime(+e + t * _r);
 }, (e, t) => (t - e) / _r, (e) => e.getUTCHours());
 Yb.range;
-const tc = Vt(
+const tc = Yt(
   (e) => e.setHours(0, 0, 0, 0),
   (e, t) => e.setDate(e.getDate() + t),
   (e, t) => (t - e - (t.getTimezoneOffset() - e.getTimezoneOffset()) * Ln) / Mr,
   (e) => e.getDate() - 1
 );
 tc.range;
-const nd = Vt((e) => {
+const nd = Yt((e) => {
   e.setUTCHours(0, 0, 0, 0);
 }, (e, t) => {
   e.setUTCDate(e.getUTCDate() + t);
 }, (e, t) => (t - e) / Mr, (e) => e.getUTCDate() - 1);
 nd.range;
-const sE = Vt((e) => {
+const sE = Yt((e) => {
   e.setUTCHours(0, 0, 0, 0);
 }, (e, t) => {
   e.setUTCDate(e.getUTCDate() + t);
 }, (e, t) => (t - e) / Mr, (e) => Math.floor(e / Mr));
 sE.range;
 function Yo(e) {
-  return Vt((t) => {
+  return Yt((t) => {
     t.setDate(t.getDate() - (t.getDay() + 7 - e) % 7), t.setHours(0, 0, 0, 0);
   }, (t, n) => {
     t.setDate(t.getDate() + n * 7);
@@ -19878,7 +19887,7 @@ Hi.range;
 EB.range;
 NB.range;
 function Go(e) {
-  return Vt((t) => {
+  return Yt((t) => {
     t.setUTCDate(t.getUTCDate() - (t.getUTCDay() + 7 - e) % 7), t.setUTCHours(0, 0, 0, 0);
   }, (t, n) => {
     t.setUTCDate(t.getUTCDate() + n * 7);
@@ -19892,35 +19901,35 @@ IB.range;
 ji.range;
 OB.range;
 LB.range;
-const Gb = Vt((e) => {
+const Gb = Yt((e) => {
   e.setDate(1), e.setHours(0, 0, 0, 0);
 }, (e, t) => {
   e.setMonth(e.getMonth() + t);
 }, (e, t) => t.getMonth() - e.getMonth() + (t.getFullYear() - e.getFullYear()) * 12, (e) => e.getMonth());
 Gb.range;
-const Kb = Vt((e) => {
+const Kb = Yt((e) => {
   e.setUTCDate(1), e.setUTCHours(0, 0, 0, 0);
 }, (e, t) => {
   e.setUTCMonth(e.getUTCMonth() + t);
 }, (e, t) => t.getUTCMonth() - e.getUTCMonth() + (t.getUTCFullYear() - e.getUTCFullYear()) * 12, (e) => e.getUTCMonth());
 Kb.range;
-const Rr = Vt((e) => {
+const Rr = Yt((e) => {
   e.setMonth(0, 1), e.setHours(0, 0, 0, 0);
 }, (e, t) => {
   e.setFullYear(e.getFullYear() + t);
 }, (e, t) => t.getFullYear() - e.getFullYear(), (e) => e.getFullYear());
-Rr.every = (e) => !isFinite(e = Math.floor(e)) || !(e > 0) ? null : Vt((t) => {
+Rr.every = (e) => !isFinite(e = Math.floor(e)) || !(e > 0) ? null : Yt((t) => {
   t.setFullYear(Math.floor(t.getFullYear() / e) * e), t.setMonth(0, 1), t.setHours(0, 0, 0, 0);
 }, (t, n) => {
   t.setFullYear(t.getFullYear() + n * e);
 });
 Rr.range;
-const Ar = Vt((e) => {
+const Ar = Yt((e) => {
   e.setUTCMonth(0, 1), e.setUTCHours(0, 0, 0, 0);
 }, (e, t) => {
   e.setUTCFullYear(e.getUTCFullYear() + t);
 }, (e, t) => t.getUTCFullYear() - e.getUTCFullYear(), (e) => e.getUTCFullYear());
-Ar.every = (e) => !isFinite(e = Math.floor(e)) || !(e > 0) ? null : Vt((t) => {
+Ar.every = (e) => !isFinite(e = Math.floor(e)) || !(e > 0) ? null : Yt((t) => {
   t.setUTCFullYear(Math.floor(t.getUTCFullYear() / e) * e), t.setUTCMonth(0, 1), t.setUTCHours(0, 0, 0, 0);
 }, (t, n) => {
   t.setUTCFullYear(t.getUTCFullYear() + n * e);
@@ -22103,13 +22112,13 @@ var $E = Ls(), NV = function(e) {
   var t = e.children, n = e.condition, r = e.wrapper;
   return n ? k5(r, {}, t) : t;
 }, IV = { position: "relative" }, Zo = function(e) {
-  var t = e.children, n = e.theme, r = e.renderWrapper, o = r === void 0 || r, i = e.isInteractive, a = i === void 0 || i, s = e.animate, c = e.motionConfig, l = Ke(null);
+  var t = e.children, n = e.theme, r = e.renderWrapper, o = r === void 0 || r, i = e.isInteractive, a = i === void 0 || i, s = e.animate, c = e.motionConfig, l = Ye(null);
   return h(cq, { theme: n, children: h(NV, { animate: s, config: c, children: h(gq, { container: l, children: W(PV, { condition: o, wrapper: h("div", { style: IV, ref: l }), children: [t, a && h(mq, {})] }) }) }) });
 }, OV = function(e, t) {
   return e.width === t.width && e.height === t.height;
 }, LV = function(e) {
   var t = e.children, n = e.width, r = e.height, o = e.onResize, i = e.debounceResize, a = Sq({ width: n, height: r }, i, { equalityFn: OV })[0];
-  return Yt((function() {
+  return Vt((function() {
     o?.(a);
   }), [a, o]), h(ze, { children: t(a) });
 }, Jo = function(e) {
@@ -22289,8 +22298,8 @@ var DV = ["id", "colors"], FV = function(e) {
   })) : null;
 })), cy = function(e) {
   var t = gn(), n = t.animate, r = t.config, o = (function(s) {
-    var c = Ke();
-    return Yt((function() {
+    var c = Ye();
+    return Vt((function() {
       c.current = s;
     }), [s]), c.current;
   })(e), i = ue((function() {
@@ -22318,13 +22327,13 @@ var zE = { top: 0, right: 0, bottom: 0, left: 0 }, Qo = function(e, t, n) {
     return { margin: r, innerWidth: e - r.left - r.right, innerHeight: t - r.top - r.bottom, outerWidth: e, outerHeight: t };
   }), [e, t, n]);
 }, KV = function() {
-  var e = Ke(null), t = $t({ left: 0, top: 0, width: 0, height: 0 }), n = t[0], r = t[1], o = $t((function() {
+  var e = Ye(null), t = $t({ left: 0, top: 0, width: 0, height: 0 }), n = t[0], r = t[1], o = $t((function() {
     return typeof ResizeObserver > "u" ? null : new ResizeObserver((function(i) {
       var a = i[0];
       return r(a.contentRect);
     }));
   }))[0];
-  return Yt((function() {
+  return Vt((function() {
     return e.current && o !== null && o.observe(e.current), function() {
       o !== null && o.disconnect();
     };
@@ -25626,22 +25635,22 @@ var FZ = ["layout", "width", "height", "padding", "innerPadding", "valueScale", 
       if (me.length === 0) return Tt;
       var je = /* @__PURE__ */ new Map(), st = me[0].width, xt = me[0].height;
       if (Qe === "stacked") {
-        var Ye = /* @__PURE__ */ new Map();
+        var Ge = /* @__PURE__ */ new Map();
         me.forEach((function(ut) {
-          var Ge = ut.data, ke = Ge.indexValue, Ve = Ge.value;
-          WS(je, ke, Number(Ve)), GZ(Ye, ke, Number(Ve));
-        })), Ye.forEach((function(ut, Ge) {
-          var ke, Ve, kt, ct = je.get(Ge) || 0;
-          Ie === "vertical" ? (ke = Te(Ge), Ve = it(ut), kt = it(ut / 2)) : (ke = Te(ut), Ve = it(Ge), kt = Te(ut / 2)), ke += Ie === "vertical" ? st / 2 : at, Ve += Ie === "vertical" ? -at : xt / 2, Tt.push({ key: "total_" + Ge, x: ke, y: Ve, value: ct, formattedValue: Mt(ct), animationOffset: kt });
+          var Ke = ut.data, ke = Ke.indexValue, Ve = Ke.value;
+          WS(je, ke, Number(Ve)), GZ(Ge, ke, Number(Ve));
+        })), Ge.forEach((function(ut, Ke) {
+          var ke, Ve, kt, ct = je.get(Ke) || 0;
+          Ie === "vertical" ? (ke = Te(Ke), Ve = it(ut), kt = it(ut / 2)) : (ke = Te(ut), Ve = it(Ke), kt = Te(ut / 2)), ke += Ie === "vertical" ? st / 2 : at, Ve += Ie === "vertical" ? -at : xt / 2, Tt.push({ key: "total_" + Ke, x: ke, y: Ve, value: ct, formattedValue: Mt(ct), animationOffset: kt });
         }));
       } else if (Qe === "grouped") {
         var Et = /* @__PURE__ */ new Map(), Dt = /* @__PURE__ */ new Map();
         me.forEach((function(ut) {
-          var Ge = ut.data, ke = Ge.indexValue, Ve = Ge.value;
+          var Ke = ut.data, ke = Ke.indexValue, Ve = Ke.value;
           WS(je, ke, Number(Ve)), KZ(Et, ke, Number(Ve)), XZ(Dt, ke);
-        })), Et.forEach((function(ut, Ge) {
-          var ke, Ve, kt, ct = je.get(Ge) || 0, Rt = Dt.get(Ge);
-          Ie === "vertical" ? (ke = Te(Ge), Ve = it(ut), kt = it(ut / 2)) : (ke = Te(ut), Ve = it(Ge), kt = Te(ut / 2)), ke += Ie === "vertical" ? Rt * st / 2 : at, Ve += Ie === "vertical" ? -at : Rt * xt / 2, Tt.push({ key: "total_" + Ge, x: ke, y: Ve, value: ct, formattedValue: Mt(ct), animationOffset: kt });
+        })), Et.forEach((function(ut, Ke) {
+          var ke, Ve, kt, ct = je.get(Ke) || 0, Rt = Dt.get(Ke);
+          Ie === "vertical" ? (ke = Te(Ke), Ve = it(ut), kt = it(ut / 2)) : (ke = Te(ut), Ve = it(Ke), kt = Te(ut / 2)), ke += Ie === "vertical" ? Rt * st / 2 : at, Ve += Ie === "vertical" ? -at : Rt * xt / 2, Tt.push({ key: "total_" + Ke, x: ke, y: Ve, value: ct, formattedValue: Mt(ct), animationOffset: kt });
         }));
       }
       return Tt;
@@ -25664,7 +25673,7 @@ var FZ = ["layout", "width", "height", "padding", "innerPadding", "valueScale", 
     return h(Ct.text, { x: s.x, y: s.y, fillOpacity: s.labelOpacity, style: et({}, a.labels.text, { pointerEvents: "none" }), fontWeight: "bold", fontSize: a.labels.text.fontSize, fontFamily: a.labels.text.fontFamily, textAnchor: i === "vertical" ? "middle" : "start", alignmentBaseline: i === "vertical" ? "alphabetic" : "middle", children: c.formattedValue }, c.key);
   }));
 }, JZ = ["isInteractive", "animate", "motionConfig", "theme", "renderWrapper"], QZ = function(e) {
-  var t, n = e.data, r = e.indexBy, o = e.keys, i = e.margin, a = e.width, s = e.height, c = e.groupMode, l = e.layout, d = e.valueScale, u = e.indexScale, f = e.padding, m = e.innerPadding, g = e.axisTop, p = e.axisRight, v = e.axisBottom, y = v === void 0 ? wt.axisBottom : v, b = e.axisLeft, x = b === void 0 ? wt.axisLeft : b, _ = e.enableGridX, C = _ === void 0 ? wt.enableGridX : _, S = e.enableGridY, M = S === void 0 ? wt.enableGridY : S, A = e.gridXValues, I = e.gridYValues, L = e.layers, k = L === void 0 ? wt.layers : L, $ = e.barComponent, N = $ === void 0 ? wt.barComponent : $, R = e.enableLabel, D = R === void 0 ? wt.enableLabel : R, E = e.label, F = e.labelSkipWidth, O = F === void 0 ? wt.labelSkipWidth : F, U = e.labelSkipHeight, Y = U === void 0 ? wt.labelSkipHeight : U, te = e.labelTextColor, Q = e.labelPosition, Z = Q === void 0 ? wt.labelPosition : Q, X = e.labelOffset, ne = X === void 0 ? wt.labelOffset : X, K = e.markers, H = K === void 0 ? wt.markers : K, V = e.colorBy, P = e.colors, q = e.defs, B = q === void 0 ? wt.defs : q, T = e.fill, re = T === void 0 ? wt.fill : T, z = e.borderRadius, j = z === void 0 ? wt.borderRadius : z, ie = e.borderWidth, oe = ie === void 0 ? wt.borderWidth : ie, ye = e.borderColor, J = e.annotations, ge = J === void 0 ? wt.annotations : J, _e = e.legendLabel, xe = e.tooltipLabel, de = e.valueFormat, Le = e.isInteractive, De = Le === void 0 ? wt.isInteractive : Le, vt = e.tooltip, Xe = vt === void 0 ? wt.tooltip : vt, qe = e.onClick, bt = e.onMouseEnter, We = e.onMouseLeave, Ze = e.legends, Je = e.role, yt = Je === void 0 ? wt.role : Je, me = e.ariaLabel, Te = e.ariaLabelledBy, it = e.ariaDescribedBy, Ie = e.isFocusable, Qe = Ie === void 0 ? wt.isFocusable : Ie, at = e.barAriaLabel, Mt = e.barAriaLabelledBy, Tt = e.barAriaDescribedBy, je = e.barAriaHidden, st = e.barAriaDisabled, xt = e.initialHiddenIds, Ye = e.enableTotals, Et = Ye === void 0 ? wt.enableTotals : Ye, Dt = e.totalsOffset, ut = Dt === void 0 ? wt.totalsOffset : Dt, Ge = e.forwardedRef, ke = gn(), Ve = ke.animate, kt = ke.config, ct = Qo(a, s, i), Rt = ct.outerWidth, vn = ct.outerHeight, en = ct.margin, At = ct.innerWidth, tn = ct.innerHeight, Nt = n5({ indexBy: r, label: E, tooltipLabel: xe, valueFormat: de, colors: P, colorBy: V, borderColor: ye, labelTextColor: te, groupMode: c, layout: l, data: n, keys: o, margin: en, width: At, height: tn, padding: f, innerPadding: m, valueScale: d, indexScale: u, enableLabel: D, labelSkipWidth: O, labelSkipHeight: Y, legends: Ze, legendLabel: _e, initialHiddenIds: xt, totalsOffset: ut }), fe = Nt.bars, Ae = Nt.barsWithValue, Ft = Nt.xScale, qt = Nt.yScale, Pt = Nt.getLabel, Ce = Nt.getTooltipLabel, Se = Nt.getBorderColor, Fe = Nt.getLabelColor, Ut = Nt.shouldRenderBarLabel, dt = Nt.toggleSerie, Ee = Nt.legendsWithData, ft = Nt.barTotals, gr = Nt.getColor, Ht = JN(l, (t = d?.reverse) != null && t, Z, ne), rn = Ho(Ae, { keys: function(ve) {
+  var t, n = e.data, r = e.indexBy, o = e.keys, i = e.margin, a = e.width, s = e.height, c = e.groupMode, l = e.layout, d = e.valueScale, u = e.indexScale, f = e.padding, m = e.innerPadding, g = e.axisTop, p = e.axisRight, v = e.axisBottom, y = v === void 0 ? wt.axisBottom : v, b = e.axisLeft, x = b === void 0 ? wt.axisLeft : b, _ = e.enableGridX, C = _ === void 0 ? wt.enableGridX : _, S = e.enableGridY, M = S === void 0 ? wt.enableGridY : S, A = e.gridXValues, I = e.gridYValues, L = e.layers, k = L === void 0 ? wt.layers : L, $ = e.barComponent, N = $ === void 0 ? wt.barComponent : $, R = e.enableLabel, D = R === void 0 ? wt.enableLabel : R, E = e.label, F = e.labelSkipWidth, O = F === void 0 ? wt.labelSkipWidth : F, U = e.labelSkipHeight, Y = U === void 0 ? wt.labelSkipHeight : U, te = e.labelTextColor, Q = e.labelPosition, Z = Q === void 0 ? wt.labelPosition : Q, X = e.labelOffset, ne = X === void 0 ? wt.labelOffset : X, K = e.markers, H = K === void 0 ? wt.markers : K, V = e.colorBy, P = e.colors, q = e.defs, B = q === void 0 ? wt.defs : q, T = e.fill, re = T === void 0 ? wt.fill : T, z = e.borderRadius, j = z === void 0 ? wt.borderRadius : z, ie = e.borderWidth, oe = ie === void 0 ? wt.borderWidth : ie, ye = e.borderColor, J = e.annotations, ge = J === void 0 ? wt.annotations : J, _e = e.legendLabel, xe = e.tooltipLabel, de = e.valueFormat, Le = e.isInteractive, De = Le === void 0 ? wt.isInteractive : Le, vt = e.tooltip, Xe = vt === void 0 ? wt.tooltip : vt, qe = e.onClick, bt = e.onMouseEnter, We = e.onMouseLeave, Ze = e.legends, Je = e.role, yt = Je === void 0 ? wt.role : Je, me = e.ariaLabel, Te = e.ariaLabelledBy, it = e.ariaDescribedBy, Ie = e.isFocusable, Qe = Ie === void 0 ? wt.isFocusable : Ie, at = e.barAriaLabel, Mt = e.barAriaLabelledBy, Tt = e.barAriaDescribedBy, je = e.barAriaHidden, st = e.barAriaDisabled, xt = e.initialHiddenIds, Ge = e.enableTotals, Et = Ge === void 0 ? wt.enableTotals : Ge, Dt = e.totalsOffset, ut = Dt === void 0 ? wt.totalsOffset : Dt, Ke = e.forwardedRef, ke = gn(), Ve = ke.animate, kt = ke.config, ct = Qo(a, s, i), Rt = ct.outerWidth, vn = ct.outerHeight, en = ct.margin, At = ct.innerWidth, tn = ct.innerHeight, Nt = n5({ indexBy: r, label: E, tooltipLabel: xe, valueFormat: de, colors: P, colorBy: V, borderColor: ye, labelTextColor: te, groupMode: c, layout: l, data: n, keys: o, margin: en, width: At, height: tn, padding: f, innerPadding: m, valueScale: d, indexScale: u, enableLabel: D, labelSkipWidth: O, labelSkipHeight: Y, legends: Ze, legendLabel: _e, initialHiddenIds: xt, totalsOffset: ut }), fe = Nt.bars, Ae = Nt.barsWithValue, Ft = Nt.xScale, qt = Nt.yScale, Pt = Nt.getLabel, Ce = Nt.getTooltipLabel, Se = Nt.getBorderColor, Fe = Nt.getLabelColor, Ut = Nt.shouldRenderBarLabel, dt = Nt.toggleSerie, Ee = Nt.legendsWithData, ft = Nt.barTotals, gr = Nt.getColor, Ht = JN(l, (t = d?.reverse) != null && t, Z, ne), rn = Ho(Ae, { keys: function(ve) {
     return ve.key;
   }, from: function(ve) {
     return et({ borderColor: Se(ve), color: ve.color, height: 0, labelColor: Fe(ve), labelOpacity: 0 }, Ht(ve.width, ve.height), { transform: "translate(" + ve.x + ", " + (ve.y + ve.height) + ")", width: ve.width }, l === "vertical" ? {} : { height: ve.height, transform: "translate(" + ve.x + ", " + ve.y + ")", width: 0 });
@@ -25681,7 +25690,7 @@ var FZ = ["layout", "width", "height", "padding", "innerPadding", "valueScale", 
     return ht(N, et({}, Sn, { bar: Or, style: ve, shouldRenderLabel: Ut(Or), label: Pt(Or.data) }));
   })) }, "bars")), k.includes("grid") && (It.grid = h(FN, { width: At, height: tn, xScale: C ? Ft : null, yScale: M ? qt : null, xValues: A, yValues: I }, "grid")), k.includes("legends") && (It.legends = h(IZ, { width: At, height: tn, legends: Ee, toggleSerie: dt }, "legends")), k.includes("markers") && (It.markers = h(WE, { markers: H, width: At, height: tn, xScale: Ft, yScale: qt }, "markers")), k.includes("totals") && Et && (It.totals = h(ZZ, { data: ft, springConfig: kt, animate: Ve, layout: l }, "totals"));
   var ba = et({}, Sn, { margin: en, width: a, height: s, innerWidth: At, innerHeight: tn, bars: fe, legendData: Ee, enableLabel: D, xScale: Ft, yScale: qt, tooltip: Xe, getTooltipLabel: Ce, onClick: qe, onMouseEnter: bt, onMouseLeave: We, getColor: gr });
-  return h(Od, { width: Rt, height: vn, margin: en, defs: va, role: yt, ariaLabel: me, ariaLabelledBy: Te, ariaDescribedBy: it, isFocusable: Qe, ref: Ge, children: k.map((function(ve, Or) {
+  return h(Od, { width: Rt, height: vn, margin: en, defs: va, role: yt, ariaLabel: me, ariaLabelledBy: Te, ariaDescribedBy: it, isFocusable: Qe, ref: Ke, children: k.map((function(ve, Or) {
     var ya;
     return typeof ve == "function" ? h(Ni, { children: ht(ve, ba) }, Or) : (ya = It?.[ve]) != null ? ya : null;
   })) });
@@ -25693,21 +25702,21 @@ var FZ = ["layout", "width", "height", "padding", "innerPadding", "valueScale", 
     return VE(o.x + t.left, o.y + t.top, o.width, o.height, n, r);
   }));
 }, nJ = function(e) {
-  var t, n = e.data, r = e.indexBy, o = e.keys, i = e.margin, a = e.width, s = e.height, c = e.groupMode, l = e.layout, d = e.valueScale, u = e.indexScale, f = e.padding, m = e.innerPadding, g = e.axisTop, p = e.axisRight, v = e.axisBottom, y = v === void 0 ? Wt.axisBottom : v, b = e.axisLeft, x = b === void 0 ? Wt.axisLeft : b, _ = e.enableGridX, C = _ === void 0 ? Wt.enableGridX : _, S = e.enableGridY, M = S === void 0 ? Wt.enableGridY : S, A = e.gridXValues, I = e.gridYValues, L = e.labelPosition, k = L === void 0 ? Wt.labelPosition : L, $ = e.labelOffset, N = $ === void 0 ? Wt.labelOffset : $, R = e.layers, D = R === void 0 ? Wt.layers : R, E = e.renderBar, F = E === void 0 ? Wt.renderBar : E, O = e.enableLabel, U = O === void 0 ? Wt.enableLabel : O, Y = e.label, te = e.labelSkipWidth, Q = te === void 0 ? Wt.labelSkipWidth : te, Z = e.labelSkipHeight, X = Z === void 0 ? Wt.labelSkipHeight : Z, ne = e.labelTextColor, K = e.colorBy, H = e.colors, V = e.borderRadius, P = V === void 0 ? Wt.borderRadius : V, q = e.borderWidth, B = q === void 0 ? Wt.borderWidth : q, T = e.borderColor, re = e.annotations, z = re === void 0 ? Wt.annotations : re, j = e.legendLabel, ie = e.tooltipLabel, oe = e.valueFormat, ye = e.isInteractive, J = ye === void 0 ? Wt.isInteractive : ye, ge = e.tooltip, _e = ge === void 0 ? Wt.tooltip : ge, xe = e.onClick, de = e.onMouseEnter, Le = e.onMouseLeave, De = e.legends, vt = e.pixelRatio, Xe = vt === void 0 ? Wt.pixelRatio : vt, qe = e.role, bt = e.forwardedRef, We = e.enableTotals, Ze = We === void 0 ? Wt.enableTotals : We, Je = e.totalsOffset, yt = Je === void 0 ? Wt.totalsOffset : Je, me = Ke(null), Te = pt(), it = Qo(a, s, i), Ie = it.margin, Qe = it.innerWidth, at = it.innerHeight, Mt = it.outerWidth, Tt = it.outerHeight, je = n5({ indexBy: r, label: Y, tooltipLabel: ie, valueFormat: oe, colors: H, colorBy: K, borderColor: T, labelTextColor: ne, groupMode: c, layout: l, data: n, keys: o, margin: Ie, width: Qe, height: at, padding: f, innerPadding: m, valueScale: d, indexScale: u, enableLabel: U, labelSkipWidth: Q, labelSkipHeight: X, legends: De, legendLabel: j, totalsOffset: yt }), st = je.bars, xt = je.barsWithValue, Ye = je.xScale, Et = je.yScale, Dt = je.getLabel, ut = je.getTooltipLabel, Ge = je.getBorderColor, ke = je.getLabelColor, Ve = je.shouldRenderBarLabel, kt = je.legendsWithData, ct = je.barTotals, Rt = je.getColor, vn = Nr(), en = vn.showTooltipFromEvent, At = vn.hideTooltip, tn = eZ({ annotations: HN({ data: st, annotations: z, getPosition: function(Ce) {
+  var t, n = e.data, r = e.indexBy, o = e.keys, i = e.margin, a = e.width, s = e.height, c = e.groupMode, l = e.layout, d = e.valueScale, u = e.indexScale, f = e.padding, m = e.innerPadding, g = e.axisTop, p = e.axisRight, v = e.axisBottom, y = v === void 0 ? Wt.axisBottom : v, b = e.axisLeft, x = b === void 0 ? Wt.axisLeft : b, _ = e.enableGridX, C = _ === void 0 ? Wt.enableGridX : _, S = e.enableGridY, M = S === void 0 ? Wt.enableGridY : S, A = e.gridXValues, I = e.gridYValues, L = e.labelPosition, k = L === void 0 ? Wt.labelPosition : L, $ = e.labelOffset, N = $ === void 0 ? Wt.labelOffset : $, R = e.layers, D = R === void 0 ? Wt.layers : R, E = e.renderBar, F = E === void 0 ? Wt.renderBar : E, O = e.enableLabel, U = O === void 0 ? Wt.enableLabel : O, Y = e.label, te = e.labelSkipWidth, Q = te === void 0 ? Wt.labelSkipWidth : te, Z = e.labelSkipHeight, X = Z === void 0 ? Wt.labelSkipHeight : Z, ne = e.labelTextColor, K = e.colorBy, H = e.colors, V = e.borderRadius, P = V === void 0 ? Wt.borderRadius : V, q = e.borderWidth, B = q === void 0 ? Wt.borderWidth : q, T = e.borderColor, re = e.annotations, z = re === void 0 ? Wt.annotations : re, j = e.legendLabel, ie = e.tooltipLabel, oe = e.valueFormat, ye = e.isInteractive, J = ye === void 0 ? Wt.isInteractive : ye, ge = e.tooltip, _e = ge === void 0 ? Wt.tooltip : ge, xe = e.onClick, de = e.onMouseEnter, Le = e.onMouseLeave, De = e.legends, vt = e.pixelRatio, Xe = vt === void 0 ? Wt.pixelRatio : vt, qe = e.role, bt = e.forwardedRef, We = e.enableTotals, Ze = We === void 0 ? Wt.enableTotals : We, Je = e.totalsOffset, yt = Je === void 0 ? Wt.totalsOffset : Je, me = Ye(null), Te = pt(), it = Qo(a, s, i), Ie = it.margin, Qe = it.innerWidth, at = it.innerHeight, Mt = it.outerWidth, Tt = it.outerHeight, je = n5({ indexBy: r, label: Y, tooltipLabel: ie, valueFormat: oe, colors: H, colorBy: K, borderColor: T, labelTextColor: ne, groupMode: c, layout: l, data: n, keys: o, margin: Ie, width: Qe, height: at, padding: f, innerPadding: m, valueScale: d, indexScale: u, enableLabel: U, labelSkipWidth: Q, labelSkipHeight: X, legends: De, legendLabel: j, totalsOffset: yt }), st = je.bars, xt = je.barsWithValue, Ge = je.xScale, Et = je.yScale, Dt = je.getLabel, ut = je.getTooltipLabel, Ke = je.getBorderColor, ke = je.getLabelColor, Ve = je.shouldRenderBarLabel, kt = je.legendsWithData, ct = je.barTotals, Rt = je.getColor, vn = Nr(), en = vn.showTooltipFromEvent, At = vn.hideTooltip, tn = eZ({ annotations: HN({ data: st, annotations: z, getPosition: function(Ce) {
     return { x: Ce.x, y: Ce.y };
   }, getDimensions: function(Ce) {
     var Se = Ce.width, Fe = Ce.height;
     return { width: Se, height: Fe, size: Math.max(Se, Fe) };
   } }) }), Nt = ue((function() {
-    return { borderRadius: P, borderWidth: B, isInteractive: J, isFocusable: !1, labelSkipWidth: Q, labelSkipHeight: X, margin: Ie, width: a, height: s, innerWidth: Qe, innerHeight: at, bars: st, legendData: kt, enableLabel: U, xScale: Ye, yScale: Et, tooltip: _e, getTooltipLabel: ut, onClick: xe, onMouseEnter: de, onMouseLeave: Le, getColor: Rt };
-  }), [P, B, J, Q, X, Ie, a, s, Qe, at, st, kt, U, Ye, Et, _e, ut, xe, de, Le, Rt]), fe = Gi(oe), Ae = JN(l, (t = d?.reverse) != null && t, k, N);
-  Yt((function() {
+    return { borderRadius: P, borderWidth: B, isInteractive: J, isFocusable: !1, labelSkipWidth: Q, labelSkipHeight: X, margin: Ie, width: a, height: s, innerWidth: Qe, innerHeight: at, bars: st, legendData: kt, enableLabel: U, xScale: Ge, yScale: Et, tooltip: _e, getTooltipLabel: ut, onClick: xe, onMouseEnter: de, onMouseLeave: Le, getColor: Rt };
+  }), [P, B, J, Q, X, Ie, a, s, Qe, at, st, kt, U, Ge, Et, _e, ut, xe, de, Le, Rt]), fe = Gi(oe), Ae = JN(l, (t = d?.reverse) != null && t, k, N);
+  Vt((function() {
     if (me.current) {
       me.current.width = Mt * Xe, me.current.height = Tt * Xe;
       var Ce = me.current.getContext("2d");
       Ce.scale(Xe, Xe), Ce.fillStyle = Te.background, Ce.fillRect(0, 0, Mt, Tt), Ce.translate(Ie.left, Ie.top), D.forEach((function(Se) {
-        Se === "grid" ? typeof Te.grid.line.strokeWidth == "number" && Te.grid.line.strokeWidth > 0 && (Ce.lineWidth = Te.grid.line.strokeWidth, Ce.strokeStyle = Te.grid.line.stroke, C && Ll(Ce, { width: Qe, height: at, scale: Ye, axis: "x", values: A }), M && Ll(Ce, { width: Qe, height: at, scale: Et, axis: "y", values: I })) : Se === "axes" ? UN(Ce, { xScale: Ye, yScale: Et, width: Qe, height: at, top: g, right: p, bottom: y, left: x, theme: Te }) : Se === "bars" ? ($o(Ce, Te.text), xt.forEach((function(Fe) {
-          F(Ce, et({ bar: Fe, borderColor: Ge(Fe), borderRadius: P, borderWidth: B, label: Dt(Fe.data), shouldRenderLabel: Ve(Fe), labelStyle: et({}, Te.labels.text, { fill: ke(Fe) }) }, Ae(Fe.width, Fe.height)));
+        Se === "grid" ? typeof Te.grid.line.strokeWidth == "number" && Te.grid.line.strokeWidth > 0 && (Ce.lineWidth = Te.grid.line.strokeWidth, Ce.strokeStyle = Te.grid.line.stroke, C && Ll(Ce, { width: Qe, height: at, scale: Ge, axis: "x", values: A }), M && Ll(Ce, { width: Qe, height: at, scale: Et, axis: "y", values: I })) : Se === "axes" ? UN(Ce, { xScale: Ge, yScale: Et, width: Qe, height: at, top: g, right: p, bottom: y, left: x, theme: Te }) : Se === "bars" ? ($o(Ce, Te.text), xt.forEach((function(Fe) {
+          F(Ce, et({ bar: Fe, borderColor: Ke(Fe), borderRadius: P, borderWidth: B, label: Dt(Fe.data), shouldRenderLabel: Ve(Fe), labelStyle: et({}, Te.labels.text, { fill: ke(Fe) }) }, Ae(Fe.width, Fe.height)));
         }))) : Se === "legends" ? kt.forEach((function(Fe) {
           var Ut = Fe[0], dt = Fe[1];
           Cy(Ce, et({}, Ut, { data: dt, containerWidth: Qe, containerHeight: at, theme: Te }));
@@ -25718,7 +25727,7 @@ var FZ = ["layout", "width", "height", "padding", "innerPadding", "valueScale", 
         })(Ce, ct, Te, l) : typeof Se == "function" && Se(Ce, Nt);
       })), Ce.save();
     }
-  }), [y, x, p, g, xt, P, B, tn, C, M, Ge, Dt, ke, A, I, c, s, at, Qe, Nt, D, l, kt, Ie.left, Ie.top, Tt, Mt, Xe, F, Ye, Et, Ve, Te, a, ct, Ze, fe, Ae]);
+  }), [y, x, p, g, xt, P, B, tn, C, M, Ke, Dt, ke, A, I, c, s, at, Qe, Nt, D, l, kt, Ie.left, Ie.top, Tt, Mt, Xe, F, Ge, Et, Ve, Te, a, ct, Ze, fe, Ae]);
   var Ft = le((function(Ce) {
     if (st && me.current) {
       var Se = Ei(me.current, Ce), Fe = Se[0], Ut = Se[1], dt = Eg(st, Ie, Fe, Ut);
@@ -26653,8 +26662,8 @@ var Tn = { xDomain: [0, 1], yDomain: [0, 1], layers: ["links", "cells", "points"
     return { points: t, delaunay: n, voronoi: r };
   }), [t, n, r]);
 }, $J = function(e) {
-  var t = e.elementRef, n = e.nodes, r = e.getNodePosition, o = r === void 0 ? Ty : r, i = e.delaunay, a = e.setCurrent, s = e.margin, c = s === void 0 ? ic : s, l = e.detectionRadius, d = l === void 0 ? 1 / 0 : l, u = e.isInteractive, f = u === void 0 || u, m = e.onMouseEnter, g = e.onMouseMove, p = e.onMouseLeave, v = e.onMouseDown, y = e.onMouseUp, b = e.onClick, x = e.onDoubleClick, _ = e.onTouchStart, C = e.onTouchMove, S = e.onTouchEnd, M = e.enableTouchCrosshair, A = M !== void 0 && M, I = e.tooltip, L = e.tooltipPosition, k = L === void 0 ? o5 : L, $ = e.tooltipAnchor, N = $ === void 0 ? i5 : $, R = $t(null), D = R[0], E = R[1], F = Ke(null);
-  Yt((function() {
+  var t = e.elementRef, n = e.nodes, r = e.getNodePosition, o = r === void 0 ? Ty : r, i = e.delaunay, a = e.setCurrent, s = e.margin, c = s === void 0 ? ic : s, l = e.detectionRadius, d = l === void 0 ? 1 / 0 : l, u = e.isInteractive, f = u === void 0 || u, m = e.onMouseEnter, g = e.onMouseMove, p = e.onMouseLeave, v = e.onMouseDown, y = e.onMouseUp, b = e.onClick, x = e.onDoubleClick, _ = e.onTouchStart, C = e.onTouchMove, S = e.onTouchEnd, M = e.enableTouchCrosshair, A = M !== void 0 && M, I = e.tooltip, L = e.tooltipPosition, k = L === void 0 ? o5 : L, $ = e.tooltipAnchor, N = $ === void 0 ? i5 : $, R = $t(null), D = R[0], E = R[1], F = Ye(null);
+  Vt((function() {
     F.current = D;
   }), [F, D]);
   var O = le((function(z) {
@@ -26730,7 +26739,7 @@ Gt((function(e, t) {
   } });
 }));
 var WJ = function(e) {
-  var t = e.nodes, n = e.width, r = e.height, o = e.margin, i = o === void 0 ? ic : o, a = e.getNodePosition, s = e.setCurrent, c = e.onMouseEnter, l = e.onMouseMove, d = e.onMouseLeave, u = e.onMouseDown, f = e.onMouseUp, m = e.onClick, g = e.onDoubleClick, p = e.onTouchStart, v = e.onTouchMove, y = e.onTouchEnd, b = e.enableTouchCrosshair, x = b !== void 0 && b, _ = e.detectionRadius, C = _ === void 0 ? 1 / 0 : _, S = e.tooltip, M = e.tooltipPosition, A = M === void 0 ? o5 : M, I = e.tooltipAnchor, L = I === void 0 ? i5 : I, k = e.debug, $ = Ke(null), N = a5({ points: t, getNodePosition: a, width: n, height: r, margin: i, debug: k }), R = N.delaunay, D = N.voronoi, E = $J({ elementRef: $, nodes: t, delaunay: R, margin: i, detectionRadius: C, setCurrent: s, onMouseEnter: c, onMouseMove: l, onMouseLeave: d, onMouseDown: u, onMouseUp: f, onClick: m, onDoubleClick: g, onTouchStart: p, onTouchMove: v, onTouchEnd: y, enableTouchCrosshair: x, tooltip: S, tooltipPosition: A, tooltipAnchor: L }), F = E.current, O = E.handleMouseEnter, U = E.handleMouseMove, Y = E.handleMouseLeave, te = E.handleMouseDown, Q = E.handleMouseUp, Z = E.handleClick, X = E.handleDoubleClick, ne = E.handleTouchStart, K = E.handleTouchMove, H = E.handleTouchEnd, V = ue((function() {
+  var t = e.nodes, n = e.width, r = e.height, o = e.margin, i = o === void 0 ? ic : o, a = e.getNodePosition, s = e.setCurrent, c = e.onMouseEnter, l = e.onMouseMove, d = e.onMouseLeave, u = e.onMouseDown, f = e.onMouseUp, m = e.onClick, g = e.onDoubleClick, p = e.onTouchStart, v = e.onTouchMove, y = e.onTouchEnd, b = e.enableTouchCrosshair, x = b !== void 0 && b, _ = e.detectionRadius, C = _ === void 0 ? 1 / 0 : _, S = e.tooltip, M = e.tooltipPosition, A = M === void 0 ? o5 : M, I = e.tooltipAnchor, L = I === void 0 ? i5 : I, k = e.debug, $ = Ye(null), N = a5({ points: t, getNodePosition: a, width: n, height: r, margin: i, debug: k }), R = N.delaunay, D = N.voronoi, E = $J({ elementRef: $, nodes: t, delaunay: R, margin: i, detectionRadius: C, setCurrent: s, onMouseEnter: c, onMouseMove: l, onMouseLeave: d, onMouseDown: u, onMouseUp: f, onClick: m, onDoubleClick: g, onTouchStart: p, onTouchMove: v, onTouchEnd: y, enableTouchCrosshair: x, tooltip: S, tooltipPosition: A, tooltipAnchor: L }), F = E.current, O = E.handleMouseEnter, U = E.handleMouseMove, Y = E.handleMouseLeave, te = E.handleMouseDown, Q = E.handleMouseUp, Z = E.handleClick, X = E.handleDoubleClick, ne = E.handleTouchStart, K = E.handleTouchMove, H = E.handleTouchEnd, V = ue((function() {
     if (k && D) return D.render();
   }), [k, D]);
   return W("g", { ref: $, transform: "translate(" + -i.left + "," + -i.top + ")", children: [k && D && W(ze, { children: [h("path", { d: V, stroke: "red", strokeWidth: 1, opacity: 0.75 }), C < 1 / 0 && h("path", { stroke: "red", strokeWidth: 0.35, fill: "none", d: R.renderPoints(void 0, C) }), F && h("path", { fill: "pink", opacity: 0.35, d: D.renderCell(F[0]) })] }), h("rect", { "data-ref": "mesh-interceptor", width: i.left + n + i.right, height: i.top + r + i.bottom, fill: "red", opacity: 0, style: { cursor: "auto" }, onMouseEnter: O, onMouseMove: U, onMouseLeave: Y, onMouseDown: te, onMouseUp: Q, onTouchStart: ne, onTouchMove: K, onTouchEnd: H, onClick: Z, onDoubleClick: X })] });
@@ -26954,12 +26963,12 @@ var VJ = function(e) {
   return h(WJ, { nodes: t, width: n, height: r, setCurrent: i, onMouseEnter: S, onMouseMove: M, onMouseLeave: A, onMouseDown: I, onMouseUp: L, onClick: k, onDoubleClick: $, onTouchStart: N, onTouchMove: R, onTouchEnd: D, enableTouchCrosshair: b, debug: y });
 })), nQ = ["isInteractive", "animate", "motionConfig", "theme", "renderWrapper"];
 function rQ(e) {
-  var t = e.data, n = e.xScale, r = n === void 0 ? Ne.xScale : n, o = e.xFormat, i = e.yScale, a = i === void 0 ? Ne.yScale : i, s = e.yFormat, c = e.curve, l = c === void 0 ? Ne.curve : c, d = e.margin, u = e.width, f = e.height, m = e.colors, g = m === void 0 ? Ne.colors : m, p = e.lineWidth, v = p === void 0 ? Ne.lineWidth : p, y = e.layers, b = y === void 0 ? Ne.layers : y, x = e.enableArea, _ = x === void 0 ? Ne.enableArea : x, C = e.areaBaselineValue, S = C === void 0 ? Ne.areaBaselineValue : C, M = e.areaOpacity, A = M === void 0 ? Ne.areaOpacity : M, I = e.areaBlendMode, L = I === void 0 ? Ne.areaBlendMode : I, k = e.enablePoints, $ = k === void 0 ? Ne.enablePoints : k, N = e.pointSymbol, R = e.pointSize, D = R === void 0 ? Ne.pointSize : R, E = e.pointColor, F = E === void 0 ? Ne.pointColor : E, O = e.pointBorderWidth, U = O === void 0 ? Ne.pointBorderWidth : O, Y = e.pointBorderColor, te = Y === void 0 ? Ne.pointBorderColor : Y, Q = e.enablePointLabel, Z = Q === void 0 ? Ne.enablePointLabel : Q, X = e.pointLabel, ne = X === void 0 ? Ne.pointLabel : X, K = e.pointLabelYOffset, H = e.enableGridX, V = H === void 0 ? Ne.enableGridX : H, P = e.gridXValues, q = e.enableGridY, B = q === void 0 ? Ne.enableGridY : q, T = e.gridYValues, re = e.axisTop, z = e.axisRight, j = e.axisBottom, ie = j === void 0 ? Ne.axisBottom : j, oe = e.axisLeft, ye = oe === void 0 ? Ne.axisLeft : oe, J = e.defs, ge = J === void 0 ? Ne.defs : J, _e = e.fill, xe = _e === void 0 ? Ne.fill : _e, de = e.markers, Le = e.legends, De = Le === void 0 ? Ne.legends : Le, vt = e.isInteractive, Xe = vt === void 0 ? Ne.isInteractive : vt, qe = e.useMesh, bt = qe === void 0 ? Ne.useMesh : qe, We = e.debugMesh, Ze = We === void 0 ? Ne.debugMesh : We, Je = e.onMouseEnter, yt = e.onMouseMove, me = e.onMouseLeave, Te = e.onMouseDown, it = e.onMouseUp, Ie = e.onClick, Qe = e.onDoubleClick, at = e.onTouchStart, Mt = e.onTouchMove, Tt = e.onTouchEnd, je = e.tooltip, st = je === void 0 ? Ne.tooltip : je, xt = e.enableSlices, Ye = xt === void 0 ? Ne.enableSlices : xt, Et = e.debugSlices, Dt = Et === void 0 ? Ne.debugSlices : Et, ut = e.sliceTooltip, Ge = ut === void 0 ? Ne.sliceTooltip : ut, ke = e.enableCrosshair, Ve = ke === void 0 ? Ne.enableCrosshair : ke, kt = e.crosshairType, ct = kt === void 0 ? Ne.crosshairType : kt, Rt = e.enableTouchCrosshair, vn = Rt === void 0 ? Ne.enableTouchCrosshair : Rt, en = e.role, At = en === void 0 ? Ne.role : en, tn = e.ariaLabel, Nt = e.ariaLabelledBy, fe = e.ariaDescribedBy, Ae = e.isFocusable, Ft = Ae === void 0 ? Ne.isFocusable : Ae, qt = e.pointAriaLabel, Pt = e.pointAriaLabelledBy, Ce = e.pointAriaDescribedBy, Se = e.pointAriaHidden, Fe = e.pointAriaDisabled, Ut = e.initialHiddenIds, dt = Ut === void 0 ? Ne.initialHiddenIds : Ut, Ee = e.forwardedRef, ft = Qo(u, f, d), gr = ft.margin, Ht = ft.innerWidth, rn = ft.innerHeight, Sn = ft.outerWidth, va = ft.outerHeight, It = s5({ data: t, xScale: r, xFormat: o, yScale: a, yFormat: s, width: Ht, height: rn, colors: g, curve: l, areaBaselineValue: S, pointColor: F, pointBorderColor: te, enableSlices: Ye, initialHiddenIds: dt }), ba = It.legendData, ve = It.toggleSeries, Or = It.lineGenerator, ya = It.areaGenerator, sc = It.series, cc = It.xScale, lc = It.yScale, My = It.slices, Ud = It.points, Ry = $t(null), uc = Ry[0], qd = Ry[1], Ay = $t(null), xa = Ay[0], Ey = Ay[1], En = { grid: null, markers: null, axes: null, areas: null, crosshair: null, lines: null, points: null, slices: null, mesh: null, legends: null };
+  var t = e.data, n = e.xScale, r = n === void 0 ? Ne.xScale : n, o = e.xFormat, i = e.yScale, a = i === void 0 ? Ne.yScale : i, s = e.yFormat, c = e.curve, l = c === void 0 ? Ne.curve : c, d = e.margin, u = e.width, f = e.height, m = e.colors, g = m === void 0 ? Ne.colors : m, p = e.lineWidth, v = p === void 0 ? Ne.lineWidth : p, y = e.layers, b = y === void 0 ? Ne.layers : y, x = e.enableArea, _ = x === void 0 ? Ne.enableArea : x, C = e.areaBaselineValue, S = C === void 0 ? Ne.areaBaselineValue : C, M = e.areaOpacity, A = M === void 0 ? Ne.areaOpacity : M, I = e.areaBlendMode, L = I === void 0 ? Ne.areaBlendMode : I, k = e.enablePoints, $ = k === void 0 ? Ne.enablePoints : k, N = e.pointSymbol, R = e.pointSize, D = R === void 0 ? Ne.pointSize : R, E = e.pointColor, F = E === void 0 ? Ne.pointColor : E, O = e.pointBorderWidth, U = O === void 0 ? Ne.pointBorderWidth : O, Y = e.pointBorderColor, te = Y === void 0 ? Ne.pointBorderColor : Y, Q = e.enablePointLabel, Z = Q === void 0 ? Ne.enablePointLabel : Q, X = e.pointLabel, ne = X === void 0 ? Ne.pointLabel : X, K = e.pointLabelYOffset, H = e.enableGridX, V = H === void 0 ? Ne.enableGridX : H, P = e.gridXValues, q = e.enableGridY, B = q === void 0 ? Ne.enableGridY : q, T = e.gridYValues, re = e.axisTop, z = e.axisRight, j = e.axisBottom, ie = j === void 0 ? Ne.axisBottom : j, oe = e.axisLeft, ye = oe === void 0 ? Ne.axisLeft : oe, J = e.defs, ge = J === void 0 ? Ne.defs : J, _e = e.fill, xe = _e === void 0 ? Ne.fill : _e, de = e.markers, Le = e.legends, De = Le === void 0 ? Ne.legends : Le, vt = e.isInteractive, Xe = vt === void 0 ? Ne.isInteractive : vt, qe = e.useMesh, bt = qe === void 0 ? Ne.useMesh : qe, We = e.debugMesh, Ze = We === void 0 ? Ne.debugMesh : We, Je = e.onMouseEnter, yt = e.onMouseMove, me = e.onMouseLeave, Te = e.onMouseDown, it = e.onMouseUp, Ie = e.onClick, Qe = e.onDoubleClick, at = e.onTouchStart, Mt = e.onTouchMove, Tt = e.onTouchEnd, je = e.tooltip, st = je === void 0 ? Ne.tooltip : je, xt = e.enableSlices, Ge = xt === void 0 ? Ne.enableSlices : xt, Et = e.debugSlices, Dt = Et === void 0 ? Ne.debugSlices : Et, ut = e.sliceTooltip, Ke = ut === void 0 ? Ne.sliceTooltip : ut, ke = e.enableCrosshair, Ve = ke === void 0 ? Ne.enableCrosshair : ke, kt = e.crosshairType, ct = kt === void 0 ? Ne.crosshairType : kt, Rt = e.enableTouchCrosshair, vn = Rt === void 0 ? Ne.enableTouchCrosshair : Rt, en = e.role, At = en === void 0 ? Ne.role : en, tn = e.ariaLabel, Nt = e.ariaLabelledBy, fe = e.ariaDescribedBy, Ae = e.isFocusable, Ft = Ae === void 0 ? Ne.isFocusable : Ae, qt = e.pointAriaLabel, Pt = e.pointAriaLabelledBy, Ce = e.pointAriaDescribedBy, Se = e.pointAriaHidden, Fe = e.pointAriaDisabled, Ut = e.initialHiddenIds, dt = Ut === void 0 ? Ne.initialHiddenIds : Ut, Ee = e.forwardedRef, ft = Qo(u, f, d), gr = ft.margin, Ht = ft.innerWidth, rn = ft.innerHeight, Sn = ft.outerWidth, va = ft.outerHeight, It = s5({ data: t, xScale: r, xFormat: o, yScale: a, yFormat: s, width: Ht, height: rn, colors: g, curve: l, areaBaselineValue: S, pointColor: F, pointBorderColor: te, enableSlices: Ge, initialHiddenIds: dt }), ba = It.legendData, ve = It.toggleSeries, Or = It.lineGenerator, ya = It.areaGenerator, sc = It.series, cc = It.xScale, lc = It.yScale, My = It.slices, Ud = It.points, Ry = $t(null), uc = Ry[0], qd = Ry[1], Ay = $t(null), xa = Ay[0], Ey = Ay[1], En = { grid: null, markers: null, axes: null, areas: null, crosshair: null, lines: null, points: null, slices: null, mesh: null, legends: null };
   b.includes("grid") && (V || B) && (En.grid = h(FN, { width: Ht, height: rn, xScale: V ? cc : null, yScale: B ? lc : null, xValues: P, yValues: T }, "grid")), b.includes("markers") && Array.isArray(de) && de.length > 0 && (En.markers = h(WE, { markers: de, width: Ht, height: rn, xScale: cc, yScale: lc }, "markers")), b.includes("axes") && (En.axes = h(DN, { xScale: cc, yScale: lc, width: Ht, height: rn, top: re, right: z, bottom: ie, left: ye }, "axes")), b.includes("lines") && (En.lines = h(ZJ, { series: sc, lineGenerator: Or, lineWidth: v }, "lines")), b.includes("legends") && De.length > 0 && (En.legends = h(Ni, { children: De.map((function(no, Wd) {
     return h(_y, un({}, no, { containerWidth: Ht, containerHeight: rn, data: no.data || ba, toggleSerie: no.toggleSerie ? ve : void 0 }), Wd);
   })) }, "legends"));
   var C5 = uy(ge, sc, xe);
-  _ && (En.areas = h(KJ, { areaGenerator: ya, areaOpacity: A, areaBlendMode: L, series: sc }, "areas")), Xe && Ye !== !1 && (En.slices = h(QJ, { slices: My, axis: Ye, debug: Dt, tooltip: Ge, current: xa, setCurrent: Ey, onMouseEnter: Je, onMouseMove: yt, onMouseLeave: me, onMouseDown: Te, onMouseUp: it, onClick: Ie, onDoubleClick: Qe, onTouchStart: at, onTouchMove: Mt, onTouchEnd: Tt }, "slices")), $ && (En.points = h(eQ, { points: Ud, symbol: N, size: D, borderWidth: U, enableLabel: Z, label: ne, labelYOffset: K, isFocusable: Ft, setCurrentPoint: qd, tooltip: st, margin: gr, ariaLabel: qt, ariaLabelledBy: Pt, ariaDescribedBy: Ce, ariaHidden: Se, ariaDisabled: Fe }, "points")), Xe && Ve && (uc !== null && (En.crosshair = h(k0, { width: Ht, height: rn, x: uc.x, y: uc.y, type: ct }, "crosshair")), xa !== null && Ye && (En.crosshair = h(k0, { width: Ht, height: rn, x: xa.x, y: xa.y, type: Ye }, "crosshair"))), Xe && bt && Ye === !1 && (En.mesh = h(tQ, { points: Ud, width: Ht, height: rn, margin: gr, setCurrent: qd, onMouseEnter: Je, onMouseMove: yt, onMouseLeave: me, onMouseDown: Te, onMouseUp: it, onClick: Ie, onDoubleClick: Qe, onTouchStart: at, onTouchMove: Mt, onTouchEnd: Tt, tooltip: st, enableTouchCrosshair: vn, debug: Ze }, "mesh"));
+  _ && (En.areas = h(KJ, { areaGenerator: ya, areaOpacity: A, areaBlendMode: L, series: sc }, "areas")), Xe && Ge !== !1 && (En.slices = h(QJ, { slices: My, axis: Ge, debug: Dt, tooltip: Ke, current: xa, setCurrent: Ey, onMouseEnter: Je, onMouseMove: yt, onMouseLeave: me, onMouseDown: Te, onMouseUp: it, onClick: Ie, onDoubleClick: Qe, onTouchStart: at, onTouchMove: Mt, onTouchEnd: Tt }, "slices")), $ && (En.points = h(eQ, { points: Ud, symbol: N, size: D, borderWidth: U, enableLabel: Z, label: ne, labelYOffset: K, isFocusable: Ft, setCurrentPoint: qd, tooltip: st, margin: gr, ariaLabel: qt, ariaLabelledBy: Pt, ariaDescribedBy: Ce, ariaHidden: Se, ariaDisabled: Fe }, "points")), Xe && Ve && (uc !== null && (En.crosshair = h(k0, { width: Ht, height: rn, x: uc.x, y: uc.y, type: ct }, "crosshair")), xa !== null && Ge && (En.crosshair = h(k0, { width: Ht, height: rn, x: xa.x, y: xa.y, type: Ge }, "crosshair"))), Xe && bt && Ge === !1 && (En.mesh = h(tQ, { points: Ud, width: Ht, height: rn, margin: gr, setCurrent: qd, onMouseEnter: Je, onMouseMove: yt, onMouseLeave: me, onMouseDown: Te, onMouseUp: it, onClick: Ie, onDoubleClick: Qe, onTouchStart: at, onTouchMove: Mt, onTouchEnd: Tt, tooltip: st, enableTouchCrosshair: vn, debug: Ze }, "mesh"));
   var S5 = un({}, e, { innerWidth: Ht, innerHeight: rn, series: sc, slices: My, points: Ud, xScale: cc, yScale: lc, lineGenerator: Or, areaGenerator: ya, currentPoint: uc, setCurrentPoint: qd, currentSlice: xa, setCurrentSlice: Ey });
   return h(Od, { defs: C5, width: Sn, height: va, margin: gr, role: At, ariaLabel: tn, ariaLabelledBy: Nt, ariaDescribedBy: fe, isFocusable: Ft, ref: Ee, children: b.map((function(no, Wd) {
     return typeof no == "function" ? h(Ni, { children: no(S5) }, Wd) : En[no];
@@ -26975,10 +26984,10 @@ var oQ = Gt((function(e, t) {
     return h(oQ, un({ width: c, height: l }, a, { ref: t }));
   } });
 })), aQ = ["isInteractive", "renderWrapper", "theme"], sQ = function(e) {
-  var t = e.width, n = e.height, r = e.margin, o = e.pixelRatio, i = o === void 0 ? Lt.pixelRatio : o, a = e.data, s = e.xScale, c = s === void 0 ? Lt.xScale : s, l = e.xFormat, d = e.yScale, u = d === void 0 ? Lt.yScale : d, f = e.yFormat, m = e.curve, g = m === void 0 ? Lt.curve : m, p = e.layers, v = p === void 0 ? Lt.layers : p, y = e.colors, b = y === void 0 ? Lt.colors : y, x = e.lineWidth, _ = x === void 0 ? Lt.lineWidth : x, C = e.enableArea, S = C === void 0 ? Lt.enableArea : C, M = e.areaBaselineValue, A = M === void 0 ? Lt.areaBaselineValue : M, I = e.areaOpacity, L = I === void 0 ? Lt.areaOpacity : I, k = e.enablePoints, $ = k === void 0 ? Lt.enablePoints : k, N = e.pointSize, R = N === void 0 ? Lt.pointSize : N, D = e.pointColor, E = D === void 0 ? Lt.pointColor : D, F = e.pointBorderWidth, O = F === void 0 ? Lt.pointBorderWidth : F, U = e.pointBorderColor, Y = U === void 0 ? Lt.pointBorderColor : U, te = e.enableGridX, Q = te === void 0 ? Lt.enableGridX : te, Z = e.gridXValues, X = e.enableGridY, ne = X === void 0 ? Lt.enableGridY : X, K = e.gridYValues, H = e.axisTop, V = e.axisRight, P = e.axisBottom, q = P === void 0 ? Lt.axisBottom : P, B = e.axisLeft, T = B === void 0 ? Lt.axisLeft : B, re = e.legends, z = re === void 0 ? Lt.legends : re, j = e.isInteractive, ie = j === void 0 ? Lt.isInteractive : j, oe = e.debugMesh, ye = oe === void 0 ? Lt.debugMesh : oe, J = e.onMouseLeave, ge = e.onMouseDown, _e = e.onMouseUp, xe = e.onClick, de = e.onDoubleClick, Le = e.tooltip, De = Le === void 0 ? Lt.tooltip : Le, vt = e.role, Xe = e.forwardedRef, qe = Ke(null), bt = Qo(t, n, r), We = bt.margin, Ze = bt.innerWidth, Je = bt.innerHeight, yt = bt.outerWidth, me = bt.outerHeight, Te = pt(), it = $t(null), Ie = it[0], Qe = it[1], at = s5({ data: a, xScale: c, xFormat: l, yScale: u, yFormat: f, width: Ze, height: Je, colors: b, curve: g, areaBaselineValue: A, pointColor: E, pointBorderColor: Y }), Mt = at.lineGenerator, Tt = at.areaGenerator, je = at.series, st = at.xScale, xt = at.yScale, Ye = at.points, Et = ue((function() {
-    return { innerWidth: Ze, innerHeight: Je, series: je, points: Ye, xScale: st, yScale: xt, lineWidth: _, lineGenerator: Mt, areaGenerator: Tt, currentPoint: Ie, setCurrentPoint: Qe };
-  }), [Ze, Je, je, Ye, st, xt, _, Mt, Tt, Ie, Qe]), Dt = a5({ points: Ye, width: Ze, height: Je, debug: ye }), ut = Dt.delaunay, Ge = Dt.voronoi;
-  Yt((function() {
+  var t = e.width, n = e.height, r = e.margin, o = e.pixelRatio, i = o === void 0 ? Lt.pixelRatio : o, a = e.data, s = e.xScale, c = s === void 0 ? Lt.xScale : s, l = e.xFormat, d = e.yScale, u = d === void 0 ? Lt.yScale : d, f = e.yFormat, m = e.curve, g = m === void 0 ? Lt.curve : m, p = e.layers, v = p === void 0 ? Lt.layers : p, y = e.colors, b = y === void 0 ? Lt.colors : y, x = e.lineWidth, _ = x === void 0 ? Lt.lineWidth : x, C = e.enableArea, S = C === void 0 ? Lt.enableArea : C, M = e.areaBaselineValue, A = M === void 0 ? Lt.areaBaselineValue : M, I = e.areaOpacity, L = I === void 0 ? Lt.areaOpacity : I, k = e.enablePoints, $ = k === void 0 ? Lt.enablePoints : k, N = e.pointSize, R = N === void 0 ? Lt.pointSize : N, D = e.pointColor, E = D === void 0 ? Lt.pointColor : D, F = e.pointBorderWidth, O = F === void 0 ? Lt.pointBorderWidth : F, U = e.pointBorderColor, Y = U === void 0 ? Lt.pointBorderColor : U, te = e.enableGridX, Q = te === void 0 ? Lt.enableGridX : te, Z = e.gridXValues, X = e.enableGridY, ne = X === void 0 ? Lt.enableGridY : X, K = e.gridYValues, H = e.axisTop, V = e.axisRight, P = e.axisBottom, q = P === void 0 ? Lt.axisBottom : P, B = e.axisLeft, T = B === void 0 ? Lt.axisLeft : B, re = e.legends, z = re === void 0 ? Lt.legends : re, j = e.isInteractive, ie = j === void 0 ? Lt.isInteractive : j, oe = e.debugMesh, ye = oe === void 0 ? Lt.debugMesh : oe, J = e.onMouseLeave, ge = e.onMouseDown, _e = e.onMouseUp, xe = e.onClick, de = e.onDoubleClick, Le = e.tooltip, De = Le === void 0 ? Lt.tooltip : Le, vt = e.role, Xe = e.forwardedRef, qe = Ye(null), bt = Qo(t, n, r), We = bt.margin, Ze = bt.innerWidth, Je = bt.innerHeight, yt = bt.outerWidth, me = bt.outerHeight, Te = pt(), it = $t(null), Ie = it[0], Qe = it[1], at = s5({ data: a, xScale: c, xFormat: l, yScale: u, yFormat: f, width: Ze, height: Je, colors: b, curve: g, areaBaselineValue: A, pointColor: E, pointBorderColor: Y }), Mt = at.lineGenerator, Tt = at.areaGenerator, je = at.series, st = at.xScale, xt = at.yScale, Ge = at.points, Et = ue((function() {
+    return { innerWidth: Ze, innerHeight: Je, series: je, points: Ge, xScale: st, yScale: xt, lineWidth: _, lineGenerator: Mt, areaGenerator: Tt, currentPoint: Ie, setCurrentPoint: Qe };
+  }), [Ze, Je, je, Ge, st, xt, _, Mt, Tt, Ie, Qe]), Dt = a5({ points: Ge, width: Ze, height: Je, debug: ye }), ut = Dt.delaunay, Ke = Dt.voronoi;
+  Vt((function() {
     if (qe.current !== null) {
       qe.current.width = yt * i, qe.current.height = me * i;
       var fe = qe.current.getContext("2d");
@@ -26997,9 +27006,9 @@ var oQ = Gt((function(e, t) {
           fe.strokeStyle = Se.color, fe.lineWidth = _, fe.beginPath(), Mt(Se.data.map((function(Fe) {
             return Fe.position;
           }))), fe.stroke();
-        }))), Ae === "points" && $ === !0 && R > 0 && Ye.forEach((function(Se) {
+        }))), Ae === "points" && $ === !0 && R > 0 && Ge.forEach((function(Se) {
           fe.fillStyle = Se.color, fe.beginPath(), fe.arc(Se.x, Se.y, R / 2, 0, 2 * Math.PI), fe.fill(), O > 0 && (fe.strokeStyle = Se.borderColor, fe.lineWidth = O, fe.stroke());
-        })), Ae === "mesh" && ye === !0 && Ge !== void 0 && (BJ(fe, Ge), Ie && zJ(fe, Ge, Ie.absIndex)), Ae === "legends") {
+        })), Ae === "mesh" && ye === !0 && Ke !== void 0 && (BJ(fe, Ke), Ie && zJ(fe, Ke, Ie.absIndex)), Ae === "legends") {
           var Ce = je.map((function(Se) {
             return { id: Se.id, label: Se.id, color: Se.color };
           })).reverse();
@@ -27009,14 +27018,14 @@ var oQ = Gt((function(e, t) {
         }
       }));
     }
-  }), [qe, Ze, yt, Je, me, We.left, We.top, i, v, Te, Mt, je, st, xt, Q, Z, ne, K, H, V, q, T, z, Ye, $, R, O, Ie, Et, ye, S, Tt, L, _, Ge]);
+  }), [qe, Ze, yt, Je, me, We.left, We.top, i, v, Te, Mt, je, st, xt, Q, Z, ne, K, H, V, q, T, z, Ge, $, R, O, Ie, Et, ye, S, Tt, L, _, Ke]);
   var ke = le((function(fe) {
     if (!qe.current) return null;
     var Ae = Ei(qe.current, fe), Ft = Ae[0], qt = Ae[1];
     if (!VE(We.left, We.top, Ze, Je, Ft, qt)) return null;
     var Pt = ut.find(Ft - We.left, qt - We.top);
-    return Ye[Pt];
-  }), [qe, We, Ze, Je, ut, Ye]), Ve = Nr(), kt = Ve.showTooltipFromEvent, ct = Ve.hideTooltip, Rt = le((function(fe) {
+    return Ge[Pt];
+  }), [qe, We, Ze, Je, ut, Ge]), Ve = Nr(), kt = Ve.showTooltipFromEvent, ct = Ve.hideTooltip, Rt = le((function(fe) {
     var Ae = ke(fe);
     Qe(Ae), Ae ? kt(ht(De, { point: Ae }), fe) : ct();
   }), [ke, Qe, kt, ct, De]), vn = le((function(fe) {
@@ -27634,8 +27643,8 @@ var KS, BQ = function(e) {
     })), legendData: t.map((function(b) {
       return { id: b.id, label: b.label, color: b.color, hidden: u.includes(b.id), data: b };
     })) };
-  }), [m, t, u, c, o, l, i, d]), p = g.legendData, v = Ke(f);
-  return Yt((function() {
+  }), [m, t, u, c, o, l, i, d]), p = g.legendData, v = Ye(f);
+  return Vt((function() {
     typeof v.current == "function" && v.current(p);
   }), [v, p]), g;
 }, jQ = function(e) {
@@ -27684,8 +27693,8 @@ var KS, BQ = function(e) {
   }), [a, v, u, d]);
   return h(DQ, { center: t, data: n, arcGenerator: r, borderWidth: o, borderColor: i, transitionMode: m, onClick: y, onMouseEnter: b, onMouseMove: x, onMouseLeave: _ });
 }, GQ = ["isInteractive", "animate", "motionConfig", "theme", "renderWrapper"], KQ = function(e) {
-  var t = e.data, n = e.id, r = n === void 0 ? se.id : n, o = e.value, i = o === void 0 ? se.value : o, a = e.valueFormat, s = e.sortByValue, c = s === void 0 ? se.sortByValue : s, l = e.layers, d = l === void 0 ? se.layers : l, u = e.startAngle, f = u === void 0 ? se.startAngle : u, m = e.endAngle, g = m === void 0 ? se.endAngle : m, p = e.padAngle, v = p === void 0 ? se.padAngle : p, y = e.fit, b = y === void 0 ? se.fit : y, x = e.innerRadius, _ = x === void 0 ? se.innerRadius : x, C = e.cornerRadius, S = C === void 0 ? se.cornerRadius : C, M = e.activeInnerRadiusOffset, A = M === void 0 ? se.activeInnerRadiusOffset : M, I = e.activeOuterRadiusOffset, L = I === void 0 ? se.activeOuterRadiusOffset : I, k = e.width, $ = e.height, N = e.margin, R = e.colors, D = R === void 0 ? se.colors : R, E = e.borderWidth, F = E === void 0 ? se.borderWidth : E, O = e.borderColor, U = O === void 0 ? se.borderColor : O, Y = e.enableArcLabels, te = Y === void 0 ? se.enableArcLabels : Y, Q = e.arcLabel, Z = Q === void 0 ? se.arcLabel : Q, X = e.arcLabelsSkipAngle, ne = X === void 0 ? se.arcLabelsSkipAngle : X, K = e.arcLabelsSkipRadius, H = K === void 0 ? se.arcLabelsSkipRadius : K, V = e.arcLabelsTextColor, P = V === void 0 ? se.arcLabelsTextColor : V, q = e.arcLabelsRadiusOffset, B = q === void 0 ? se.arcLabelsRadiusOffset : q, T = e.arcLabelsComponent, re = e.enableArcLinkLabels, z = re === void 0 ? se.enableArcLinkLabels : re, j = e.arcLinkLabel, ie = j === void 0 ? se.arcLinkLabel : j, oe = e.arcLinkLabelsSkipAngle, ye = oe === void 0 ? se.arcLinkLabelsSkipAngle : oe, J = e.arcLinkLabelsOffset, ge = J === void 0 ? se.arcLinkLabelsOffset : J, _e = e.arcLinkLabelsDiagonalLength, xe = _e === void 0 ? se.arcLinkLabelsDiagonalLength : _e, de = e.arcLinkLabelsStraightLength, Le = de === void 0 ? se.arcLinkLabelsStraightLength : de, De = e.arcLinkLabelsThickness, vt = De === void 0 ? se.arcLinkLabelsThickness : De, Xe = e.arcLinkLabelsTextOffset, qe = Xe === void 0 ? se.arcLinkLabelsTextOffset : Xe, bt = e.arcLinkLabelsTextColor, We = bt === void 0 ? se.arcLinkLabelsTextColor : bt, Ze = e.arcLinkLabelsColor, Je = Ze === void 0 ? se.arcLinkLabelsColor : Ze, yt = e.arcLinkLabelComponent, me = e.defs, Te = me === void 0 ? se.defs : me, it = e.fill, Ie = it === void 0 ? se.fill : it, Qe = e.isInteractive, at = Qe === void 0 ? se.isInteractive : Qe, Mt = e.onClick, Tt = e.onMouseEnter, je = e.onMouseMove, st = e.onMouseLeave, xt = e.tooltip, Ye = xt === void 0 ? se.tooltip : xt, Et = e.activeId, Dt = e.onActiveIdChange, ut = e.defaultActiveId, Ge = e.transitionMode, ke = Ge === void 0 ? se.transitionMode : Ge, Ve = e.legends, kt = Ve === void 0 ? se.legends : Ve, ct = e.forwardLegendData, Rt = e.role, vn = Rt === void 0 ? se.role : Rt, en = e.forwardedRef, At = Qo(k, $, N), tn = At.outerWidth, Nt = At.outerHeight, fe = At.margin, Ae = At.innerWidth, Ft = At.innerHeight, qt = h5({ data: t, id: r, value: i, valueFormat: a, colors: D }), Pt = p5({ data: qt, width: Ae, height: Ft, fit: b, innerRadius: _, startAngle: f, endAngle: g, padAngle: v, sortByValue: c, cornerRadius: S, activeInnerRadiusOffset: A, activeOuterRadiusOffset: L, activeId: Et, onActiveIdChange: Dt, defaultActiveId: ut, forwardLegendData: ct }), Ce = Pt.dataWithArc, Se = Pt.legendData, Fe = Pt.arcGenerator, Ut = Pt.centerX, dt = Pt.centerY, Ee = Pt.radius, ft = Pt.innerRadius, gr = Pt.setActiveId, Ht = Pt.toggleSerie, rn = uy(Te, Ce, Ie), Sn = { arcs: null, arcLinkLabels: null, arcLabels: null, legends: null };
-  d.includes("arcs") && (Sn.arcs = h(YQ, { center: [Ut, dt], data: Ce, arcGenerator: Fe, borderWidth: F, borderColor: U, isInteractive: at, onClick: Mt, onMouseEnter: Tt, onMouseMove: je, onMouseLeave: st, setActiveId: gr, tooltip: Ye, transitionMode: ke }, "arcs")), z && d.includes("arcLinkLabels") && (Sn.arcLinkLabels = h(EQ, { center: [Ut, dt], data: Ce, label: ie, skipAngle: ye, offset: ge, diagonalLength: xe, straightLength: Le, strokeWidth: vt, textOffset: qe, textColor: We, linkColor: Je, component: yt }, "arcLinkLabels")), te && d.includes("arcLabels") && (Sn.arcLabels = h(xQ, { center: [Ut, dt], data: Ce, label: Z, radiusOffset: B, skipAngle: ne, skipRadius: H, textColor: P, transitionMode: ke, component: T }, "arcLabels")), kt.length > 0 && d.includes("legends") && (Sn.legends = h(BQ, { width: Ae, height: Ft, data: Se, legends: kt, toggleSerie: Ht }, "legends"));
+  var t = e.data, n = e.id, r = n === void 0 ? se.id : n, o = e.value, i = o === void 0 ? se.value : o, a = e.valueFormat, s = e.sortByValue, c = s === void 0 ? se.sortByValue : s, l = e.layers, d = l === void 0 ? se.layers : l, u = e.startAngle, f = u === void 0 ? se.startAngle : u, m = e.endAngle, g = m === void 0 ? se.endAngle : m, p = e.padAngle, v = p === void 0 ? se.padAngle : p, y = e.fit, b = y === void 0 ? se.fit : y, x = e.innerRadius, _ = x === void 0 ? se.innerRadius : x, C = e.cornerRadius, S = C === void 0 ? se.cornerRadius : C, M = e.activeInnerRadiusOffset, A = M === void 0 ? se.activeInnerRadiusOffset : M, I = e.activeOuterRadiusOffset, L = I === void 0 ? se.activeOuterRadiusOffset : I, k = e.width, $ = e.height, N = e.margin, R = e.colors, D = R === void 0 ? se.colors : R, E = e.borderWidth, F = E === void 0 ? se.borderWidth : E, O = e.borderColor, U = O === void 0 ? se.borderColor : O, Y = e.enableArcLabels, te = Y === void 0 ? se.enableArcLabels : Y, Q = e.arcLabel, Z = Q === void 0 ? se.arcLabel : Q, X = e.arcLabelsSkipAngle, ne = X === void 0 ? se.arcLabelsSkipAngle : X, K = e.arcLabelsSkipRadius, H = K === void 0 ? se.arcLabelsSkipRadius : K, V = e.arcLabelsTextColor, P = V === void 0 ? se.arcLabelsTextColor : V, q = e.arcLabelsRadiusOffset, B = q === void 0 ? se.arcLabelsRadiusOffset : q, T = e.arcLabelsComponent, re = e.enableArcLinkLabels, z = re === void 0 ? se.enableArcLinkLabels : re, j = e.arcLinkLabel, ie = j === void 0 ? se.arcLinkLabel : j, oe = e.arcLinkLabelsSkipAngle, ye = oe === void 0 ? se.arcLinkLabelsSkipAngle : oe, J = e.arcLinkLabelsOffset, ge = J === void 0 ? se.arcLinkLabelsOffset : J, _e = e.arcLinkLabelsDiagonalLength, xe = _e === void 0 ? se.arcLinkLabelsDiagonalLength : _e, de = e.arcLinkLabelsStraightLength, Le = de === void 0 ? se.arcLinkLabelsStraightLength : de, De = e.arcLinkLabelsThickness, vt = De === void 0 ? se.arcLinkLabelsThickness : De, Xe = e.arcLinkLabelsTextOffset, qe = Xe === void 0 ? se.arcLinkLabelsTextOffset : Xe, bt = e.arcLinkLabelsTextColor, We = bt === void 0 ? se.arcLinkLabelsTextColor : bt, Ze = e.arcLinkLabelsColor, Je = Ze === void 0 ? se.arcLinkLabelsColor : Ze, yt = e.arcLinkLabelComponent, me = e.defs, Te = me === void 0 ? se.defs : me, it = e.fill, Ie = it === void 0 ? se.fill : it, Qe = e.isInteractive, at = Qe === void 0 ? se.isInteractive : Qe, Mt = e.onClick, Tt = e.onMouseEnter, je = e.onMouseMove, st = e.onMouseLeave, xt = e.tooltip, Ge = xt === void 0 ? se.tooltip : xt, Et = e.activeId, Dt = e.onActiveIdChange, ut = e.defaultActiveId, Ke = e.transitionMode, ke = Ke === void 0 ? se.transitionMode : Ke, Ve = e.legends, kt = Ve === void 0 ? se.legends : Ve, ct = e.forwardLegendData, Rt = e.role, vn = Rt === void 0 ? se.role : Rt, en = e.forwardedRef, At = Qo(k, $, N), tn = At.outerWidth, Nt = At.outerHeight, fe = At.margin, Ae = At.innerWidth, Ft = At.innerHeight, qt = h5({ data: t, id: r, value: i, valueFormat: a, colors: D }), Pt = p5({ data: qt, width: Ae, height: Ft, fit: b, innerRadius: _, startAngle: f, endAngle: g, padAngle: v, sortByValue: c, cornerRadius: S, activeInnerRadiusOffset: A, activeOuterRadiusOffset: L, activeId: Et, onActiveIdChange: Dt, defaultActiveId: ut, forwardLegendData: ct }), Ce = Pt.dataWithArc, Se = Pt.legendData, Fe = Pt.arcGenerator, Ut = Pt.centerX, dt = Pt.centerY, Ee = Pt.radius, ft = Pt.innerRadius, gr = Pt.setActiveId, Ht = Pt.toggleSerie, rn = uy(Te, Ce, Ie), Sn = { arcs: null, arcLinkLabels: null, arcLabels: null, legends: null };
+  d.includes("arcs") && (Sn.arcs = h(YQ, { center: [Ut, dt], data: Ce, arcGenerator: Fe, borderWidth: F, borderColor: U, isInteractive: at, onClick: Mt, onMouseEnter: Tt, onMouseMove: je, onMouseLeave: st, setActiveId: gr, tooltip: Ge, transitionMode: ke }, "arcs")), z && d.includes("arcLinkLabels") && (Sn.arcLinkLabels = h(EQ, { center: [Ut, dt], data: Ce, label: ie, skipAngle: ye, offset: ge, diagonalLength: xe, straightLength: Le, strokeWidth: vt, textOffset: qe, textColor: We, linkColor: Je, component: yt }, "arcLinkLabels")), te && d.includes("arcLabels") && (Sn.arcLabels = h(xQ, { center: [Ut, dt], data: Ce, label: Z, radiusOffset: B, skipAngle: ne, skipRadius: H, textColor: P, transitionMode: ke, component: T }, "arcLabels")), kt.length > 0 && d.includes("legends") && (Sn.legends = h(BQ, { width: Ae, height: Ft, data: Se, legends: kt, toggleSerie: Ht }, "legends"));
   var va = VQ({ dataWithArc: Ce, arcGenerator: Fe, centerX: Ut, centerY: dt, radius: Ee, innerRadius: ft });
   return h(Od, { width: tn, height: Nt, margin: fe, defs: rn, role: vn, ref: en, children: d.map((function(It, ba) {
     return Sn[It] !== void 0 ? Sn[It] : typeof It == "function" ? h(Ni, { children: ht(It, va) }, ba) : null;
@@ -27700,18 +27709,18 @@ var KS, BQ = function(e) {
     return h(XQ, Wn({ width: c, height: l }, a, { ref: t }));
   } });
 })), QQ = ["isInteractive", "theme", "renderWrapper"], eee = function(e) {
-  var t = e.data, n = e.id, r = n === void 0 ? se.id : n, o = e.value, i = o === void 0 ? se.value : o, a = e.valueFormat, s = e.sortByValue, c = s === void 0 ? se.sortByValue : s, l = e.startAngle, d = l === void 0 ? se.startAngle : l, u = e.endAngle, f = u === void 0 ? se.endAngle : u, m = e.padAngle, g = m === void 0 ? se.padAngle : m, p = e.fit, v = p === void 0 ? se.fit : p, y = e.innerRadius, b = y === void 0 ? se.innerRadius : y, x = e.cornerRadius, _ = x === void 0 ? se.cornerRadius : x, C = e.activeInnerRadiusOffset, S = C === void 0 ? se.activeInnerRadiusOffset : C, M = e.activeOuterRadiusOffset, A = M === void 0 ? se.activeOuterRadiusOffset : M, I = e.width, L = e.height, k = e.margin, $ = e.pixelRatio, N = $ === void 0 ? se.pixelRatio : $, R = e.colors, D = R === void 0 ? se.colors : R, E = e.borderWidth, F = E === void 0 ? se.borderWidth : E, O = e.borderColor, U = O === void 0 ? se.borderColor : O, Y = e.enableArcLabels, te = Y === void 0 ? se.enableArcLabels : Y, Q = e.arcLabel, Z = Q === void 0 ? se.arcLabel : Q, X = e.arcLabelsSkipAngle, ne = X === void 0 ? se.arcLabelsSkipAngle : X, K = e.arcLabelsTextColor, H = K === void 0 ? se.arcLabelsTextColor : K, V = e.arcLabelsRadiusOffset, P = V === void 0 ? se.arcLabelsRadiusOffset : V, q = e.enableArcLinkLabels, B = q === void 0 ? se.enableArcLinkLabels : q, T = e.arcLinkLabel, re = T === void 0 ? se.arcLinkLabel : T, z = e.arcLinkLabelsSkipAngle, j = z === void 0 ? se.arcLinkLabelsSkipAngle : z, ie = e.arcLinkLabelsOffset, oe = ie === void 0 ? se.arcLinkLabelsOffset : ie, ye = e.arcLinkLabelsDiagonalLength, J = ye === void 0 ? se.arcLinkLabelsDiagonalLength : ye, ge = e.arcLinkLabelsStraightLength, _e = ge === void 0 ? se.arcLinkLabelsStraightLength : ge, xe = e.arcLinkLabelsThickness, de = xe === void 0 ? se.arcLinkLabelsThickness : xe, Le = e.arcLinkLabelsTextOffset, De = Le === void 0 ? se.arcLinkLabelsTextOffset : Le, vt = e.arcLinkLabelsTextColor, Xe = vt === void 0 ? se.arcLinkLabelsTextColor : vt, qe = e.arcLinkLabelsColor, bt = qe === void 0 ? se.arcLinkLabelsColor : qe, We = e.isInteractive, Ze = We === void 0 ? se.isInteractive : We, Je = e.onClick, yt = e.onMouseMove, me = e.tooltip, Te = me === void 0 ? se.tooltip : me, it = e.activeId, Ie = e.onActiveIdChange, Qe = e.defaultActiveId, at = e.legends, Mt = at === void 0 ? se.legends : at, Tt = e.forwardLegendData, je = e.role, st = e.forwardedRef, xt = Ke(null), Ye = pt(), Et = Qo(I, L, k), Dt = Et.margin, ut = Et.innerWidth, Ge = Et.innerHeight, ke = Et.outerWidth, Ve = Et.outerHeight, kt = h5({ data: t, id: r, value: i, valueFormat: a, colors: D }), ct = p5({ data: kt, width: ut, height: Ge, fit: v, innerRadius: b, startAngle: d, endAngle: f, padAngle: g, sortByValue: c, cornerRadius: _, activeInnerRadiusOffset: S, activeOuterRadiusOffset: A, activeId: it, onActiveIdChange: Ie, defaultActiveId: Qe, forwardLegendData: Tt }), Rt = ct.dataWithArc, vn = ct.arcGenerator, en = ct.centerX, At = ct.centerY, tn = ct.radius, Nt = ct.innerRadius, fe = ct.setActiveId, Ae = qn(U, Ye), Ft = _Q({ data: Rt, label: Z, skipAngle: ne, offset: P, textColor: H }), qt = IQ({ data: Rt, skipAngle: j, offset: oe, diagonalLength: J, straightLength: _e, label: re, linkColor: bt, textOffset: De, textColor: Xe });
-  Yt((function() {
+  var t = e.data, n = e.id, r = n === void 0 ? se.id : n, o = e.value, i = o === void 0 ? se.value : o, a = e.valueFormat, s = e.sortByValue, c = s === void 0 ? se.sortByValue : s, l = e.startAngle, d = l === void 0 ? se.startAngle : l, u = e.endAngle, f = u === void 0 ? se.endAngle : u, m = e.padAngle, g = m === void 0 ? se.padAngle : m, p = e.fit, v = p === void 0 ? se.fit : p, y = e.innerRadius, b = y === void 0 ? se.innerRadius : y, x = e.cornerRadius, _ = x === void 0 ? se.cornerRadius : x, C = e.activeInnerRadiusOffset, S = C === void 0 ? se.activeInnerRadiusOffset : C, M = e.activeOuterRadiusOffset, A = M === void 0 ? se.activeOuterRadiusOffset : M, I = e.width, L = e.height, k = e.margin, $ = e.pixelRatio, N = $ === void 0 ? se.pixelRatio : $, R = e.colors, D = R === void 0 ? se.colors : R, E = e.borderWidth, F = E === void 0 ? se.borderWidth : E, O = e.borderColor, U = O === void 0 ? se.borderColor : O, Y = e.enableArcLabels, te = Y === void 0 ? se.enableArcLabels : Y, Q = e.arcLabel, Z = Q === void 0 ? se.arcLabel : Q, X = e.arcLabelsSkipAngle, ne = X === void 0 ? se.arcLabelsSkipAngle : X, K = e.arcLabelsTextColor, H = K === void 0 ? se.arcLabelsTextColor : K, V = e.arcLabelsRadiusOffset, P = V === void 0 ? se.arcLabelsRadiusOffset : V, q = e.enableArcLinkLabels, B = q === void 0 ? se.enableArcLinkLabels : q, T = e.arcLinkLabel, re = T === void 0 ? se.arcLinkLabel : T, z = e.arcLinkLabelsSkipAngle, j = z === void 0 ? se.arcLinkLabelsSkipAngle : z, ie = e.arcLinkLabelsOffset, oe = ie === void 0 ? se.arcLinkLabelsOffset : ie, ye = e.arcLinkLabelsDiagonalLength, J = ye === void 0 ? se.arcLinkLabelsDiagonalLength : ye, ge = e.arcLinkLabelsStraightLength, _e = ge === void 0 ? se.arcLinkLabelsStraightLength : ge, xe = e.arcLinkLabelsThickness, de = xe === void 0 ? se.arcLinkLabelsThickness : xe, Le = e.arcLinkLabelsTextOffset, De = Le === void 0 ? se.arcLinkLabelsTextOffset : Le, vt = e.arcLinkLabelsTextColor, Xe = vt === void 0 ? se.arcLinkLabelsTextColor : vt, qe = e.arcLinkLabelsColor, bt = qe === void 0 ? se.arcLinkLabelsColor : qe, We = e.isInteractive, Ze = We === void 0 ? se.isInteractive : We, Je = e.onClick, yt = e.onMouseMove, me = e.tooltip, Te = me === void 0 ? se.tooltip : me, it = e.activeId, Ie = e.onActiveIdChange, Qe = e.defaultActiveId, at = e.legends, Mt = at === void 0 ? se.legends : at, Tt = e.forwardLegendData, je = e.role, st = e.forwardedRef, xt = Ye(null), Ge = pt(), Et = Qo(I, L, k), Dt = Et.margin, ut = Et.innerWidth, Ke = Et.innerHeight, ke = Et.outerWidth, Ve = Et.outerHeight, kt = h5({ data: t, id: r, value: i, valueFormat: a, colors: D }), ct = p5({ data: kt, width: ut, height: Ke, fit: v, innerRadius: b, startAngle: d, endAngle: f, padAngle: g, sortByValue: c, cornerRadius: _, activeInnerRadiusOffset: S, activeOuterRadiusOffset: A, activeId: it, onActiveIdChange: Ie, defaultActiveId: Qe, forwardLegendData: Tt }), Rt = ct.dataWithArc, vn = ct.arcGenerator, en = ct.centerX, At = ct.centerY, tn = ct.radius, Nt = ct.innerRadius, fe = ct.setActiveId, Ae = qn(U, Ge), Ft = _Q({ data: Rt, label: Z, skipAngle: ne, offset: P, textColor: H }), qt = IQ({ data: Rt, skipAngle: j, offset: oe, diagonalLength: J, straightLength: _e, label: re, linkColor: bt, textOffset: De, textColor: Xe });
+  Vt((function() {
     if (xt.current) {
       xt.current.width = ke * N, xt.current.height = Ve * N;
       var Ee = xt.current.getContext("2d");
-      Ee.scale(N, N), Ee.fillStyle = Ye.background, Ee.fillRect(0, 0, ke, Ve), Ee.save(), Ee.translate(Dt.left, Dt.top), vn.context(Ee), Ee.save(), Ee.translate(en, At), Rt.forEach((function(ft) {
+      Ee.scale(N, N), Ee.fillStyle = Ge.background, Ee.fillRect(0, 0, ke, Ve), Ee.save(), Ee.translate(Dt.left, Dt.top), vn.context(Ee), Ee.save(), Ee.translate(en, At), Rt.forEach((function(ft) {
         Ee.beginPath(), Ee.fillStyle = ft.color, Ee.strokeStyle = Ae(ft), Ee.lineWidth = F, vn(ft.arc), Ee.fill(), F > 0 && Ee.stroke();
-      })), B === !0 && NQ(Ee, qt, Ye, de), te === !0 && wQ(Ee, Ft, Ye), Ee.restore(), Mt.forEach((function(ft) {
-        Cy(Ee, Wn({}, ft, { data: Rt, containerWidth: ut, containerHeight: Ge, theme: Ye }));
+      })), B === !0 && NQ(Ee, qt, Ge, de), te === !0 && wQ(Ee, Ft, Ge), Ee.restore(), Mt.forEach((function(ft) {
+        Cy(Ee, Wn({}, ft, { data: Rt, containerWidth: ut, containerHeight: Ke, theme: Ge }));
       }));
     }
-  }), [xt, ut, Ge, ke, Ve, Dt.top, Dt.left, N, en, At, vn, Rt, F, Ae, te, Ft, B, qt, de, Mt, Ye]);
+  }), [xt, ut, Ke, ke, Ve, Dt.top, Dt.left, N, en, At, vn, Rt, F, Ae, te, Ft, B, qt, de, Mt, Ge]);
   var Pt = ue((function() {
     return Rt.map((function(Ee) {
       return Wn({ id: Ee.id }, Ee.arc);
@@ -29530,8 +29539,8 @@ const Y0 = "@Archon:oidc:state", G0 = "@Archon:oidc:nonce", K0 = "@Archon:oidc:c
   oidcScope: a,
   oidcRedirectUri: s
 }) => {
-  const c = nT(), l = Ke(!1);
-  return Yt(() => {
+  const c = nT(), l = Ye(!1);
+  return Vt(() => {
     if (t) {
       l.current = !1;
       return;
@@ -29591,7 +29600,7 @@ const Y0 = "@Archon:oidc:state", G0 = "@Archon:oidc:nonce", K0 = "@Archon:oidc:c
   onError: i
 }) => {
   const a = rT(), [s] = N5(), { login: c } = Kv();
-  return Yt(() => {
+  return Vt(() => {
     const l = async () => {
       try {
         await d();
@@ -29891,9 +29900,9 @@ function Ote(e = {}) {
     } catch {
     }
   }, []);
-  Yt(() => {
+  Vt(() => {
     d();
-  }, [d]), Yt(() => {
+  }, [d]), Vt(() => {
     if (!r || n <= 0) return;
     const p = setInterval(d, n);
     return () => clearInterval(p);
