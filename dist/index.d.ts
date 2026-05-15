@@ -1100,11 +1100,22 @@ export declare interface TableToolbarProps {
 
 export declare const Tabs: React_2.ForwardRefExoticComponent<TabsPrimitive.TabsProps & React_2.RefAttributes<HTMLDivElement>>;
 
+export declare const TabsBadge: React_2.ForwardRefExoticComponent<TabsBadgeProps & React_2.RefAttributes<HTMLSpanElement>>;
+
+declare interface TabsBadgeProps extends React_2.HTMLAttributes<HTMLSpanElement> {
+}
+
 export declare const TabsContent: React_2.ForwardRefExoticComponent<Omit<TabsPrimitive.TabsContentProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
 
-export declare const TabsList: React_2.ForwardRefExoticComponent<Omit<TabsPrimitive.TabsListProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
+export declare const TabsList: React_2.ForwardRefExoticComponent<TabsListProps & React_2.RefAttributes<HTMLDivElement>>;
+
+declare interface TabsListProps extends React_2.ComponentPropsWithoutRef<typeof TabsPrimitive.List> {
+    variant?: TabsVariant;
+}
 
 export declare const TabsTrigger: React_2.ForwardRefExoticComponent<Omit<TabsPrimitive.TabsTriggerProps & React_2.RefAttributes<HTMLButtonElement>, "ref"> & React_2.RefAttributes<HTMLButtonElement>>;
+
+export declare type TabsVariant = "default" | "underline";
 
 declare interface ThemeContextType {
     isDark: boolean;
