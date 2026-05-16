@@ -31,6 +31,13 @@ export interface CreateUserInContractPayload {
   roleId: number
 }
 
+export interface UpdateUserPayload {
+  name: string
+  password?: string
+  isActive: boolean
+  roleId: number
+}
+
 const RESOURCE = "/UsersManagement"
 
 export class UsersManagementService {
@@ -62,5 +69,13 @@ export class UsersManagementService {
 
   static async setActive(userId: number, isActive: boolean): Promise<void> {
     await httpClient.put(`${RESOURCE}/SetActive/${userId}`, { isActive })
+  }
+
+  static async updateInCurrentContract(userId: number, payload: UpdateUserPayload): Promise<ContractUser> {
+    const response = await httpClient.put<ContractUser>(`${RESOURCE}/Update/${userId}`, payload)
+    if (!response.data) {
+      throw new Error(response.message || "Falha ao atualizar usuário")
+    }
+    return response.data
   }
 }

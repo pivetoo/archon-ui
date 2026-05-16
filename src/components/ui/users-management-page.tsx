@@ -1,11 +1,12 @@
 import * as React from "react"
-import { Shield, ShieldOff, UserPlus } from "lucide-react"
+import { Pencil, Shield, UserPlus } from "lucide-react"
 import { usePermissions } from "../../hooks/usePermissions"
 import {
   UsersManagementService,
   type ContractRole,
   type ContractUser,
   type CreateUserInContractPayload,
+  type UpdateUserPayload,
 } from "../../services/users-management/usersManagementService"
 import { Badge } from "./badge"
 import { Button } from "./button"
@@ -36,6 +37,7 @@ interface FormState {
   name: string
   password: string
   roleId: string
+  isActive: boolean
 }
 
 const emptyForm: FormState = {
@@ -44,6 +46,7 @@ const emptyForm: FormState = {
   name: "",
   password: "",
   roleId: "",
+  isActive: true,
 }
 
 function getApiErrorMessage(error: unknown, fallback: string): string {
@@ -74,8 +77,9 @@ export function UsersManagementPage({
   const [isFormOpen, setIsFormOpen] = React.useState(false)
   const [isSaving, setIsSaving] = React.useState(false)
   const [form, setForm] = React.useState<FormState>(emptyForm)
-  const [editingRoleUser, setEditingRoleUser] = React.useState<ContractUser | null>(null)
-  const [pendingRoleId, setPendingRoleId] = React.useState<string>("")
+  const [editingUser, setEditingUser] = React.useState<ContractUser | null>(null)
+
+  const isEditMode = editingUser !== null
 
   const loadData = React.useCallback(async () => {
     setLoading(true)
@@ -109,6 +113,7 @@ export function UsersManagementPage({
   )
 
   const openCreateForm = () => {
+    setEditingUser(null)
     setForm({
       ...emptyForm,
       roleId: roles.find((role) => role.isDefault)?.id?.toString() ?? roleOptions[0]?.value ?? "",
@@ -116,7 +121,61 @@ export function UsersManagementPage({
     setIsFormOpen(true)
   }
 
-  const handleCreate = async () => {
+  const openEditForm = (user: ContractUser) => {
+    setEditingUser(user)
+    setForm({
+      username: user.username,
+      email: user.email,
+      name: user.name,
+      password: "",
+      roleId: String(user.roleId),
+      isActive: user.isActive,
+    })
+    setIsFormOpen(true)
+  }
+
+  const closeForm = () => {
+    setIsFormOpen(false)
+    setEditingUser(null)
+    setForm(emptyForm)
+  }
+
+  const handleSave = async () => {
+    if (isEditMode) {
+      if (!form.name || !form.roleId) {
+        toast({
+          variant: "destructive",
+          title: "Preencha os campos obrigatórios",
+          description: "Nome e perfil são obrigatórios.",
+        })
+        return
+      }
+
+      const payload: UpdateUserPayload = {
+        name: form.name.trim(),
+        password: form.password ? form.password : undefined,
+        isActive: form.isActive,
+        roleId: Number(form.roleId),
+      }
+
+      setIsSaving(true)
+      try {
+        await UsersManagementService.updateInCurrentContract(editingUser!.userId, payload)
+        toast({ title: "Usuário atualizado", description: editingUser!.name })
+        closeForm()
+        await loadData()
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Não foi possível atualizar o usuário",
+          description: getApiErrorMessage(error, "Verifique os dados e tente novamente."),
+        })
+      } finally {
+        setIsSaving(false)
+      }
+      return
+    }
+
     if (!form.username || !form.email || !form.name || !form.password || !form.roleId) {
       toast({
         variant: "destructive",
@@ -141,8 +200,7 @@ export function UsersManagementPage({
         title: "Usuário criado",
         description: "O usuário já tem acesso ao contrato ativo.",
       })
-      setIsFormOpen(false)
-      setForm(emptyForm)
+      closeForm()
       await loadData()
     } catch (error) {
       toast({
@@ -152,51 +210,6 @@ export function UsersManagementPage({
       })
     } finally {
       setIsSaving(false)
-    }
-  }
-
-  const handleChangeRole = async () => {
-    if (!editingRoleUser || !pendingRoleId) return
-    const newRoleId = Number(pendingRoleId)
-    if (newRoleId === editingRoleUser.roleId) {
-      setEditingRoleUser(null)
-      return
-    }
-
-    setIsSaving(true)
-    try {
-      await UsersManagementService.updateRoleInCurrentContract(editingRoleUser.userId, newRoleId)
-      toast({
-        title: "Perfil atualizado",
-        description: `${editingRoleUser.name} agora possui o novo perfil.`,
-      })
-      setEditingRoleUser(null)
-      await loadData()
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Falha ao atualizar perfil",
-        description: getApiErrorMessage(error, "Tente novamente."),
-      })
-    } finally {
-      setIsSaving(false)
-    }
-  }
-
-  const handleToggleActive = async (user: ContractUser) => {
-    try {
-      await UsersManagementService.setActive(user.userId, !user.isActive)
-      toast({
-        title: user.isActive ? "Usuário desativado" : "Usuário reativado",
-        description: user.name,
-      })
-      await loadData()
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Falha ao alterar status",
-        description: getApiErrorMessage(error, "Tente novamente."),
-      })
     }
   }
 
@@ -242,37 +255,19 @@ export function UsersManagementPage({
     {
       key: "actions",
       title: "",
-      width: 220,
+      width: 90,
       render: (_: unknown, record: ContractUser) => (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-end">
           <button
             type="button"
-            className="text-xs text-primary hover:underline"
+            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
             onClick={(event) => {
               event.stopPropagation()
-              setEditingRoleUser(record)
-              setPendingRoleId(String(record.roleId))
+              openEditForm(record)
             }}
           >
-            Alterar perfil
-          </button>
-          <button
-            type="button"
-            className="text-xs text-muted-foreground hover:text-foreground hover:underline"
-            onClick={(event) => {
-              event.stopPropagation()
-              void handleToggleActive(record)
-            }}
-          >
-            {record.isActive ? (
-              <span className="inline-flex items-center gap-1">
-                <ShieldOff className="h-3 w-3" /> Desativar
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1">
-                <Shield className="h-3 w-3" /> Reativar
-              </span>
-            )}
+            <Pencil className="h-3 w-3" />
+            Editar
           </button>
         </div>
       ),
@@ -308,12 +303,14 @@ export function UsersManagementPage({
         />
       </PageLayout>
 
-      <Modal open={isFormOpen} onOpenChange={setIsFormOpen}>
+      <Modal open={isFormOpen} onOpenChange={(open) => (open ? setIsFormOpen(true) : closeForm())}>
         <ModalContent size="lg">
           <ModalHeader>
-            <ModalTitle>Novo usuário</ModalTitle>
+            <ModalTitle>{isEditMode ? "Editar usuário" : "Novo usuário"}</ModalTitle>
             <ModalDescription>
-              O usuário será criado e vinculado automaticamente ao contrato ativo.
+              {isEditMode
+                ? "Username e e-mail não são editáveis."
+                : "O usuário será criado e vinculado automaticamente ao contrato ativo."}
             </ModalDescription>
           </ModalHeader>
           <ModalBody>
@@ -332,6 +329,8 @@ export function UsersManagementPage({
                   value={form.username}
                   onChange={(event) => setForm((prev) => ({ ...prev, username: event.target.value }))}
                   placeholder="maria.silva"
+                  disabled={isEditMode}
+                  readOnly={isEditMode}
                 />
               </div>
               <div className="space-y-1 sm:col-span-2">
@@ -341,15 +340,19 @@ export function UsersManagementPage({
                   value={form.email}
                   onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
                   placeholder="maria@empresa.com"
+                  disabled={isEditMode}
+                  readOnly={isEditMode}
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Senha</label>
+                <label className="text-xs text-muted-foreground">
+                  {isEditMode ? "Nova senha (opcional)" : "Senha"}
+                </label>
                 <Input
                   type="password"
                   value={form.password}
                   onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder={isEditMode ? "Deixe em branco para manter" : "Mínimo 6 caracteres"}
                 />
               </div>
               <div className="space-y-1">
@@ -361,44 +364,28 @@ export function UsersManagementPage({
                   placeholder="Selecione um perfil"
                 />
               </div>
+              {isEditMode ? (
+                <div className="flex items-center gap-2 sm:col-span-2">
+                  <input
+                    id="user-active-toggle"
+                    type="checkbox"
+                    checked={form.isActive}
+                    onChange={(event) => setForm((prev) => ({ ...prev, isActive: event.target.checked }))}
+                    className="h-4 w-4 rounded border-border"
+                  />
+                  <label htmlFor="user-active-toggle" className="text-sm text-foreground">
+                    Usuário ativo
+                  </label>
+                </div>
+              ) : null}
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button variant="outline" onClick={() => setIsFormOpen(false)} disabled={isSaving}>
+            <Button variant="outline" onClick={closeForm} disabled={isSaving}>
               Cancelar
             </Button>
-            <Button onClick={handleCreate} disabled={isSaving}>
-              {isSaving ? "Criando..." : "Criar usuário"}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      <Modal open={!!editingRoleUser} onOpenChange={(open) => !open && setEditingRoleUser(null)}>
-        <ModalContent size="md">
-          <ModalHeader>
-            <ModalTitle>Alterar perfil</ModalTitle>
-            <ModalDescription>
-              {editingRoleUser ? `Definir um novo perfil para ${editingRoleUser.name}.` : ""}
-            </ModalDescription>
-          </ModalHeader>
-          <ModalBody>
-            <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">Perfil</label>
-              <SearchableSelect
-                value={pendingRoleId}
-                onValueChange={setPendingRoleId}
-                options={roleOptions}
-                placeholder="Selecione um perfil"
-              />
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setEditingRoleUser(null)} disabled={isSaving}>
-              Cancelar
-            </Button>
-            <Button onClick={handleChangeRole} disabled={isSaving || !pendingRoleId}>
-              {isSaving ? "Salvando..." : "Salvar"}
+            <Button onClick={handleSave} disabled={isSaving}>
+              {isSaving ? "Salvando..." : isEditMode ? "Salvar" : "Criar usuário"}
             </Button>
           </ModalFooter>
         </ModalContent>
