@@ -4,8 +4,6 @@ import type { User } from "../../types/auth"
 
 export interface UpdateProfileRequest {
   id: number
-  username: string
-  email: string
   name: string
   avatarUrl?: string
   isActive?: boolean
@@ -44,8 +42,6 @@ export class ProfileService {
       `${baseUrl}/users/${request.id}`,
       {
         id: request.id,
-        username: request.username,
-        email: request.email,
         name: request.name,
         isActive: request.isActive ?? true,
       },

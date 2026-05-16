@@ -121,8 +121,6 @@ export function UserProfilePage({
       } else if (auth?.user) {
         const updatedUser = await ProfileService.updateProfile({
           id: auth.user.id,
-          username: profile.username ?? auth.user.username,
-          email: profile.email,
           name: profile.name,
           avatarUrl: profile.avatarUrl,
           isActive: auth.user.isActive ?? true,
@@ -281,8 +279,8 @@ export function UserProfilePage({
                       <Input
                         type="email"
                         value={profile.email}
-                        onChange={(event) => handleChange("email", event.target.value)}
-                        placeholder={t("profile.placeholder.email")}
+                        disabled
+                        readOnly
                       />
                     }
                   />
@@ -291,8 +289,8 @@ export function UserProfilePage({
                     input={
                       <Input
                         value={profile.username ?? ""}
-                        onChange={(event) => handleChange("username", event.target.value)}
-                        placeholder={t("profile.placeholder.username")}
+                        disabled
+                        readOnly
                       />
                     }
                   />

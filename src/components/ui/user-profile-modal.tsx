@@ -82,8 +82,6 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserPro
 
       const updated = await ProfileService.updateProfile({
         id: user.id,
-        username,
-        email,
         name,
         avatarUrl: finalAvatarUrl,
         isActive: user.isActive ?? true,
@@ -207,11 +205,11 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserPro
                 </div>
                 <div className="grid gap-1.5">
                   <label className="text-sm font-medium">E-mail</label>
-                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" />
+                  <Input type="email" value={email} disabled readOnly />
                 </div>
                 <div className="grid gap-1.5">
                   <label className="text-sm font-medium">Usuário</label>
-                  <Input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="nome de usuário" />
+                  <Input value={username} disabled readOnly />
                 </div>
               </div>
             </TabsContent>
