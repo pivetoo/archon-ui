@@ -21,6 +21,34 @@ export interface ContractRole {
   contractId: number
   isRoot: boolean
   isDefault: boolean
+  accessResourceIds?: number[]
+}
+
+export interface AccessResource {
+  id: number
+  systemApplicationId: number
+  name: string
+  description: string
+  controller: string
+  action: string
+  httpMethod: string
+  route: string
+}
+
+export interface CreateRolePayload {
+  name: string
+  description: string
+  isRoot: boolean
+  isDefault: boolean
+  accessResourceIds: number[]
+}
+
+export interface UpdateRolePayload {
+  name: string
+  description: string
+  isRoot: boolean
+  isDefault: boolean
+  accessResourceIds: number[]
 }
 
 export interface CreateUserInContractPayload {
@@ -77,5 +105,38 @@ export class UsersManagementService {
       throw new Error(response.message || "Falha ao atualizar usuário")
     }
     return response.data
+  }
+
+  static async getRoleById(roleId: number): Promise<ContractRole> {
+    const response = await httpClient.get<ContractRole>(`${RESOURCE}/GetRoleById/${roleId}`)
+    if (!response.data) {
+      throw new Error(response.message || "Perfil não encontrado")
+    }
+    return response.data
+  }
+
+  static async createRole(payload: CreateRolePayload): Promise<ContractRole> {
+    const response = await httpClient.post<ContractRole>(`${RESOURCE}/CreateRole`, payload)
+    if (!response.data) {
+      throw new Error(response.message || "Falha ao criar perfil")
+    }
+    return response.data
+  }
+
+  static async updateRole(roleId: number, payload: UpdateRolePayload): Promise<ContractRole> {
+    const response = await httpClient.put<ContractRole>(`${RESOURCE}/UpdateRole/${roleId}`, payload)
+    if (!response.data) {
+      throw new Error(response.message || "Falha ao atualizar perfil")
+    }
+    return response.data
+  }
+
+  static async deleteRole(roleId: number): Promise<void> {
+    await httpClient.delete(`${RESOURCE}/DeleteRole/${roleId}`)
+  }
+
+  static async listAccessResources(): Promise<AccessResource[]> {
+    const response = await httpClient.get<AccessResource[]>(`${RESOURCE}/GetAccessResources`)
+    return response.data ?? []
   }
 }

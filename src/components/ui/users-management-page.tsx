@@ -22,9 +22,11 @@ import {
   ModalTitle,
 } from "./modal"
 import { PageLayout } from "./page-layout"
+import { RoleFormModal } from "./role-form-modal"
 import { SearchableSelect } from "./searchable-select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs"
 import { useToast } from "./use-toast"
+import { ConfirmModal } from "./confirm-modal"
 
 export interface UsersManagementPageProps {
   title?: string
@@ -84,6 +86,10 @@ export function UsersManagementPage({
   const [editingUser, setEditingUser] = React.useState<ContractUser | null>(null)
   const [selectedUser, setSelectedUser] = React.useState<ContractUser | null>(null)
   const [selectedRole, setSelectedRole] = React.useState<ContractRole | null>(null)
+  const [isRoleModalOpen, setIsRoleModalOpen] = React.useState(false)
+  const [editingRoleId, setEditingRoleId] = React.useState<number | null>(null)
+  const [isConfirmDeleteRoleOpen, setIsConfirmDeleteRoleOpen] = React.useState(false)
+  const [isDeletingRole, setIsDeletingRole] = React.useState(false)
 
   const isEditMode = editingUser !== null
 
@@ -320,10 +326,8 @@ export function UsersManagementPage({
       })
       return
     }
-    toast({
-      title: "Em breve",
-      description: "O editor de permissões do perfil chega na próxima etapa.",
-    })
+    setEditingRoleId(selectedRole.id)
+    setIsRoleModalOpen(true)
   }
 
   const handleAdd = () => {
@@ -331,10 +335,55 @@ export function UsersManagementPage({
       openCreateForm()
       return
     }
-    toast({
-      title: "Em breve",
-      description: "Criar perfis novos chega na próxima etapa.",
-    })
+    setEditingRoleId(null)
+    setIsRoleModalOpen(true)
+  }
+
+  const handleDeleteSelected = () => {
+    if (activeTab !== "roles") {
+      return
+    }
+
+    if (!selectedRole) {
+      toast({
+        variant: "warning",
+        title: "Selecione um perfil",
+        description: "Marque a linha do perfil que você quer excluir.",
+      })
+      return
+    }
+
+    const usersInRole = userCountByRole.get(selectedRole.id) ?? 0
+    if (usersInRole > 0) {
+      toast({
+        variant: "destructive",
+        title: "Perfil com usuários vinculados",
+        description: `Existem ${usersInRole} usuário(s) usando este perfil. Reatribua antes de excluir.`,
+      })
+      return
+    }
+
+    setIsConfirmDeleteRoleOpen(true)
+  }
+
+  const confirmDeleteRole = async () => {
+    if (!selectedRole) return
+    setIsDeletingRole(true)
+    try {
+      await UsersManagementService.deleteRole(selectedRole.id)
+      toast({ variant: "success", title: "Perfil excluído", description: selectedRole.name })
+      setIsConfirmDeleteRoleOpen(false)
+      setSelectedRole(null)
+      await loadData()
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Não foi possível excluir",
+        description: getApiErrorMessage(error, "Tente novamente."),
+      })
+    } finally {
+      setIsDeletingRole(false)
+    }
   }
 
   const selectedRowsCount = activeTab === "users"
@@ -350,6 +399,7 @@ export function UsersManagementPage({
         onRefresh={() => void loadData()}
         onAdd={handleAdd}
         onEdit={handleEditSelected}
+        onDelete={activeTab === "roles" ? handleDeleteSelected : undefined}
         selectedRowsCount={selectedRowsCount}
       >
         <Tabs
@@ -488,6 +538,34 @@ export function UsersManagementPage({
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <RoleFormModal
+        open={isRoleModalOpen}
+        onOpenChange={(open) => {
+          setIsRoleModalOpen(open)
+          if (!open) setEditingRoleId(null)
+        }}
+        roleId={editingRoleId}
+        onSaved={() => {
+          setSelectedRole(null)
+          void loadData()
+        }}
+      />
+
+      <ConfirmModal
+        open={isConfirmDeleteRoleOpen}
+        onOpenChange={(open) => setIsConfirmDeleteRoleOpen(open)}
+        onConfirm={() => void confirmDeleteRole()}
+        title="Excluir perfil"
+        description={
+          selectedRole
+            ? `Confirma a exclusão do perfil "${selectedRole.name}"? Esta ação não pode ser desfeita.`
+            : ""
+        }
+        confirmText="Excluir"
+        variant="danger"
+        loading={isDeletingRole}
+      />
     </>
   )
 }
