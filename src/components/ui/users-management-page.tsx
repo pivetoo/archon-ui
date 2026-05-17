@@ -23,6 +23,7 @@ import {
 } from "./modal"
 import { PageLayout } from "./page-layout"
 import { SearchableSelect } from "./searchable-select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs"
 import { useToast } from "./use-toast"
 
 export interface UsersManagementPageProps {
@@ -30,6 +31,8 @@ export interface UsersManagementPageProps {
   subtitle?: string
   className?: string
 }
+
+type ActiveTab = "users" | "roles"
 
 interface FormState {
   username: string
@@ -64,13 +67,14 @@ function getApiErrorMessage(error: unknown, fallback: string): string {
 }
 
 export function UsersManagementPage({
-  title = "Usuários",
-  subtitle = "Gerencie quem tem acesso ao contrato ativo",
+  title = "Controle de Acesso",
+  subtitle = "Gerencie usuários e perfis do contrato ativo",
   className,
 }: UsersManagementPageProps) {
   const { isRoot } = usePermissions()
   const { toast } = useToast()
 
+  const [activeTab, setActiveTab] = React.useState<ActiveTab>("users")
   const [users, setUsers] = React.useState<ContractUser[]>([])
   const [roles, setRoles] = React.useState<ContractRole[]>([])
   const [loading, setLoading] = React.useState(false)
@@ -79,6 +83,7 @@ export function UsersManagementPage({
   const [form, setForm] = React.useState<FormState>(emptyForm)
   const [editingUser, setEditingUser] = React.useState<ContractUser | null>(null)
   const [selectedUser, setSelectedUser] = React.useState<ContractUser | null>(null)
+  const [selectedRole, setSelectedRole] = React.useState<ContractRole | null>(null)
 
   const isEditMode = editingUser !== null
 
@@ -94,7 +99,7 @@ export function UsersManagementPage({
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Falha ao carregar usuários",
+        title: "Falha ao carregar dados",
         description: getApiErrorMessage(error, "Tente novamente em alguns instantes."),
       })
     } finally {
@@ -112,6 +117,14 @@ export function UsersManagementPage({
     () => roles.map((role) => ({ value: String(role.id), label: role.name })),
     [roles]
   )
+
+  const userCountByRole = React.useMemo(() => {
+    const map = new Map<number, number>()
+    for (const user of users) {
+      map.set(user.roleId, (map.get(user.roleId) ?? 0) + 1)
+    }
+    return map
+  }, [users])
 
   const openCreateForm = () => {
     setEditingUser(null)
@@ -222,14 +235,14 @@ export function UsersManagementPage({
           <Shield className="mb-3 h-10 w-10 text-muted-foreground" />
           <h3 className="text-base font-semibold text-foreground">Acesso restrito</h3>
           <p className="mt-1 max-w-md text-sm text-muted-foreground">
-            Apenas administradores do contrato podem gerenciar usuários.
+            Apenas administradores do contrato podem gerenciar o controle de acesso.
           </p>
         </div>
       </PageLayout>
     )
   }
 
-  const columns: DataTableColumn<ContractUser>[] = [
+  const userColumns: DataTableColumn<ContractUser>[] = [
     { key: "name", title: "Nome", dataIndex: "name" },
     { key: "username", title: "Usuário", dataIndex: "username" },
     { key: "email", title: "E-mail", dataIndex: "email" },
@@ -256,17 +269,77 @@ export function UsersManagementPage({
     },
   ]
 
+  const roleColumns: DataTableColumn<ContractRole>[] = [
+    { key: "name", title: "Perfil", dataIndex: "name" },
+    {
+      key: "description",
+      title: "Descrição",
+      dataIndex: "description",
+      render: (value?: string) => value || "-",
+    },
+    {
+      key: "isRoot",
+      title: "Tipo",
+      dataIndex: "isRoot",
+      render: (value: boolean) =>
+        value ? <Badge variant="warning">Root</Badge> : <Badge variant="outline">Padrão</Badge>,
+    },
+    {
+      key: "isDefault",
+      title: "Default",
+      dataIndex: "isDefault",
+      render: (value: boolean) => (value ? <Badge variant="success">Sim</Badge> : "-"),
+    },
+    {
+      key: "userCount",
+      title: "Usuários",
+      dataIndex: "id",
+      render: (value: number) => userCountByRole.get(value) ?? 0,
+    },
+  ]
+
   const handleEditSelected = () => {
-    if (!selectedUser) {
+    if (activeTab === "users") {
+      if (!selectedUser) {
+        toast({
+          variant: "warning",
+          title: "Selecione um usuário",
+          description: "Marque a linha do usuário que você quer editar.",
+        })
+        return
+      }
+      openEditForm(selectedUser)
+      return
+    }
+
+    if (!selectedRole) {
       toast({
         variant: "warning",
-        title: "Selecione um usuário",
-        description: "Marque a linha do usuário que você quer editar.",
+        title: "Selecione um perfil",
+        description: "Marque a linha do perfil que você quer editar.",
       })
       return
     }
-    openEditForm(selectedUser)
+    toast({
+      title: "Em breve",
+      description: "O editor de permissões do perfil chega na próxima etapa.",
+    })
   }
+
+  const handleAdd = () => {
+    if (activeTab === "users") {
+      openCreateForm()
+      return
+    }
+    toast({
+      title: "Em breve",
+      description: "Criar perfis novos chega na próxima etapa.",
+    })
+  }
+
+  const selectedRowsCount = activeTab === "users"
+    ? selectedUser ? 1 : 0
+    : selectedRole ? 1 : 0
 
   return (
     <>
@@ -275,22 +348,57 @@ export function UsersManagementPage({
         subtitle={subtitle}
         className={className}
         onRefresh={() => void loadData()}
-        onAdd={openCreateForm}
+        onAdd={handleAdd}
         onEdit={handleEditSelected}
-        selectedRowsCount={selectedUser ? 1 : 0}
+        selectedRowsCount={selectedRowsCount}
       >
-        <DataTable
-          columns={columns}
-          data={users}
-          rowKey="userId"
-          emptyText="Nenhum usuário vinculado a este contrato."
-          loading={loading}
-          pageSize={10}
-          pageSizeOptions={[10, 25, 50]}
-          selectable
-          selectedRows={selectedUser ? [selectedUser] : []}
-          onSelectionChange={(rows) => setSelectedUser(rows[0] ?? null)}
-        />
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => {
+            setActiveTab(value as ActiveTab)
+            setSelectedUser(null)
+            setSelectedRole(null)
+          }}
+        >
+          <TabsList variant="underline" className="mb-4">
+            <TabsTrigger value="users" variant="underline">
+              Usuários
+            </TabsTrigger>
+            <TabsTrigger value="roles" variant="underline">
+              Perfis
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="users">
+            <DataTable
+              columns={userColumns}
+              data={users}
+              rowKey="userId"
+              emptyText="Nenhum usuário vinculado a este contrato."
+              loading={loading}
+              pageSize={10}
+              pageSizeOptions={[10, 25, 50]}
+              selectable
+              selectedRows={selectedUser ? [selectedUser] : []}
+              onSelectionChange={(rows) => setSelectedUser(rows[0] ?? null)}
+            />
+          </TabsContent>
+
+          <TabsContent value="roles">
+            <DataTable
+              columns={roleColumns}
+              data={roles}
+              rowKey="id"
+              emptyText="Nenhum perfil cadastrado neste contrato."
+              loading={loading}
+              pageSize={10}
+              pageSizeOptions={[10, 25, 50]}
+              selectable
+              selectedRows={selectedRole ? [selectedRole] : []}
+              onSelectionChange={(rows) => setSelectedRole(rows[0] ?? null)}
+            />
+          </TabsContent>
+        </Tabs>
       </PageLayout>
 
       <Modal open={isFormOpen} onOpenChange={(open) => (open ? setIsFormOpen(true) : closeForm())}>
