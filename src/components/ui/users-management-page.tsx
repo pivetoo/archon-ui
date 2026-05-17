@@ -273,7 +273,6 @@ export function UsersManagementPage({
         title={title}
         subtitle={subtitle}
         className={className}
-        showDefaultActions={false}
         onRefresh={() => void loadData()}
         onAdd={openCreateForm}
         onEdit={handleEditSelected}
