@@ -411,12 +411,8 @@ export function UsersManagementPage({
           }}
         >
           <TabsList variant="underline" className="mb-4">
-            <TabsTrigger value="users" variant="underline">
-              Usuários
-            </TabsTrigger>
-            <TabsTrigger value="roles" variant="underline">
-              Perfis
-            </TabsTrigger>
+            <TabsTrigger value="users">Usuários</TabsTrigger>
+            <TabsTrigger value="roles">Perfis</TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">

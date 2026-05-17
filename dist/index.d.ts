@@ -17,6 +17,17 @@ import * as ToastPrimitives from '@radix-ui/react-toast';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { VariantProps } from 'class-variance-authority';
 
+export declare interface AccessResource {
+    id: number;
+    systemApplicationId: number;
+    name: string;
+    description: string;
+    controller: string;
+    action: string;
+    httpMethod: string;
+    route: string;
+}
+
 declare type Action = {
     type: ActionType["ADD_TOAST"];
     toast: ToasterToast;
@@ -314,6 +325,7 @@ export declare interface ContractRole {
     contractId: number;
     isRoot: boolean;
     isDefault: boolean;
+    accessResourceIds?: number[];
 }
 
 export declare interface ContractType {
@@ -336,6 +348,14 @@ export declare interface ContractUser {
     roleName: string;
     isRoot: boolean;
     assignedAt: string;
+}
+
+export declare interface CreateRolePayload {
+    name: string;
+    description: string;
+    isRoot: boolean;
+    isDefault: boolean;
+    accessResourceIds: number[];
 }
 
 export declare interface CreateUserInContractPayload {
@@ -1186,11 +1206,24 @@ export declare function translate(key: string): string;
 
 export declare interface UpdateProfileRequest {
     id: number;
-    username: string;
-    email: string;
     name: string;
     avatarUrl?: string;
     isActive?: boolean;
+}
+
+export declare interface UpdateRolePayload {
+    name: string;
+    description: string;
+    isRoot: boolean;
+    isDefault: boolean;
+    accessResourceIds: number[];
+}
+
+export declare interface UpdateUserPayload {
+    name: string;
+    password?: string;
+    isActive: boolean;
+    roleId: number;
 }
 
 export declare function useApi<T = any>(options?: UseApiOptions): {
@@ -1357,6 +1390,12 @@ export declare class UsersManagementService {
     static createInCurrentContract(payload: CreateUserInContractPayload): Promise<ContractUser>;
     static updateRoleInCurrentContract(userId: number, roleId: number): Promise<ContractUser>;
     static setActive(userId: number, isActive: boolean): Promise<void>;
+    static updateInCurrentContract(userId: number, payload: UpdateUserPayload): Promise<ContractUser>;
+    static getRoleById(roleId: number): Promise<ContractRole>;
+    static createRole(payload: CreateRolePayload): Promise<ContractRole>;
+    static updateRole(roleId: number, payload: UpdateRolePayload): Promise<ContractRole>;
+    static deleteRole(roleId: number): Promise<void>;
+    static listAccessResources(): Promise<AccessResource[]>;
 }
 
 export declare const useTheme: () => ThemeContextType;

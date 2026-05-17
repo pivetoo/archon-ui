@@ -3,7 +3,6 @@ import { Search } from "lucide-react"
 import {
   UsersManagementService,
   type AccessResource,
-  type ContractRole,
   type CreateRolePayload,
   type UpdateRolePayload,
 } from "../../services/users-management/usersManagementService"
@@ -132,7 +131,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, onSaved }: RoleFormM
     })
   }
 
-  const toggleAllInGroup = (controller: string, resources: AccessResource[]) => {
+  const toggleAllInGroup = (resources: AccessResource[]) => {
     setForm((prev) => {
       const next = new Set(prev.selected)
       const allSelected = resources.every((item) => next.has(item.id))
@@ -313,7 +312,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, onSaved }: RoleFormM
                                       input.indeterminate = someSelected
                                     }
                                   }}
-                                  onChange={() => toggleAllInGroup(controller, resources)}
+                                  onChange={() => toggleAllInGroup(resources)}
                                   className="h-4 w-4 rounded border-border"
                                 />
                                 {controller}
