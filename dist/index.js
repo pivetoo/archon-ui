@@ -29403,7 +29403,7 @@ function $ee({ open: e, onOpenChange: t, roleId: n, accessResources: r, onSaved:
                 onCheckedChange: (y) => c((_) => ({ ..._, isRoot: y }))
               }
             ),
-            /* @__PURE__ */ h("label", { className: "cursor-pointer text-sm font-medium", children: "Perfil root" })
+            /* @__PURE__ */ h("label", { className: "cursor-pointer text-sm font-medium", children: "Acesso total ao sistema" })
           ] }),
           /* @__PURE__ */ F("div", { className: "flex items-center gap-2", children: [
             /* @__PURE__ */ h(
@@ -29418,7 +29418,7 @@ function $ee({ open: e, onOpenChange: t, roleId: n, accessResources: r, onSaved:
         ] }),
         /* @__PURE__ */ F("div", { className: "flex flex-col gap-2", children: [
           /* @__PURE__ */ h("label", { className: "text-sm font-medium", children: "Permissões" }),
-          /* @__PURE__ */ h("div", { className: "rounded-lg border bg-muted/20 p-4", children: s.isRoot ? /* @__PURE__ */ h("div", { className: "rounded-md border border-dashed border-warning/40 bg-warning/10 p-3 text-sm", children: "Perfis root ignoram a lista de permissões e têm acesso a tudo no sistema." }) : /* @__PURE__ */ F(Fe, { children: [
+          /* @__PURE__ */ h("div", { className: "rounded-lg border bg-muted/20 p-4", children: s.isRoot ? /* @__PURE__ */ h("div", { className: "rounded-md border border-dashed border-warning/40 bg-warning/10 p-3 text-sm", children: "Perfis com acesso total não precisam de permissões específicas — podem fazer tudo no sistema." }) : /* @__PURE__ */ F(Fe, { children: [
             /* @__PURE__ */ h("div", { className: "flex items-start justify-between gap-4", children: /* @__PURE__ */ F("div", { className: "space-y-1", children: [
               /* @__PURE__ */ h("p", { className: "text-sm font-medium", children: "Permissões deste perfil" }),
               /* @__PURE__ */ F("p", { className: "text-sm text-muted-foreground", children: [
@@ -29629,7 +29629,7 @@ function gne({
       key: "isRoot",
       title: "Tipo",
       dataIndex: "isRoot",
-      render: (B) => B ? /* @__PURE__ */ h(Br, { variant: "warning", children: "Root" }) : /* @__PURE__ */ h(Br, { variant: "outline", children: "Padrão" })
+      render: (B) => B ? /* @__PURE__ */ h(Br, { variant: "warning", children: "Acesso total" }) : /* @__PURE__ */ h(Br, { variant: "outline", children: "Restrito" })
     },
     {
       key: "isDefault",

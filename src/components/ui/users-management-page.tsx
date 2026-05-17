@@ -292,7 +292,7 @@ export function UsersManagementPage({
       title: "Tipo",
       dataIndex: "isRoot",
       render: (value: boolean) =>
-        value ? <Badge variant="warning">Root</Badge> : <Badge variant="outline">Padrão</Badge>,
+        value ? <Badge variant="warning">Acesso total</Badge> : <Badge variant="outline">Restrito</Badge>,
     },
     {
       key: "isDefault",

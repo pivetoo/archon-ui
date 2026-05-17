@@ -189,7 +189,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, accessResources, onS
                       checked={form.isRoot}
                       onCheckedChange={(checked) => setForm((prev) => ({ ...prev, isRoot: checked }))}
                     />
-                    <label className="cursor-pointer text-sm font-medium">Perfil root</label>
+                    <label className="cursor-pointer text-sm font-medium">Acesso total ao sistema</label>
                   </div>
                   <div className="flex items-center gap-2">
                     <Switch
@@ -205,7 +205,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, accessResources, onS
                   <div className="rounded-lg border bg-muted/20 p-4">
                     {form.isRoot ? (
                       <div className="rounded-md border border-dashed border-warning/40 bg-warning/10 p-3 text-sm">
-                        Perfis root ignoram a lista de permissões e têm acesso a tudo no sistema.
+                        Perfis com acesso total não precisam de permissões específicas — podem fazer tudo no sistema.
                       </div>
                     ) : (
                       <>
