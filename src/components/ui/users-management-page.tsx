@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Shield } from "lucide-react"
+import { Copy, Shield } from "lucide-react"
 import { usePermissions } from "../../hooks/usePermissions"
 import {
   UsersManagementService,
@@ -23,7 +23,7 @@ import {
   ModalTitle,
 } from "./modal"
 import { PageLayout } from "./page-layout"
-import { RoleFormModal } from "./role-form-modal"
+import { RoleFormModal, type RoleFormInitialData } from "./role-form-modal"
 import { SearchableSelect } from "./searchable-select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs"
 import { useToast } from "./use-toast"
@@ -90,6 +90,7 @@ export function UsersManagementPage({
   const [selectedRole, setSelectedRole] = React.useState<ContractRole | null>(null)
   const [isRoleModalOpen, setIsRoleModalOpen] = React.useState(false)
   const [editingRoleId, setEditingRoleId] = React.useState<number | null>(null)
+  const [duplicateInitial, setDuplicateInitial] = React.useState<RoleFormInitialData | null>(null)
   const [isConfirmDeleteRoleOpen, setIsConfirmDeleteRoleOpen] = React.useState(false)
   const [isDeletingRole, setIsDeletingRole] = React.useState(false)
 
@@ -330,6 +331,7 @@ export function UsersManagementPage({
       })
       return
     }
+    setDuplicateInitial(null)
     setEditingRoleId(selectedRole.id)
     setIsRoleModalOpen(true)
   }
@@ -339,8 +341,39 @@ export function UsersManagementPage({
       openCreateForm()
       return
     }
+    setDuplicateInitial(null)
     setEditingRoleId(null)
     setIsRoleModalOpen(true)
+  }
+
+  const handleDuplicateRole = async () => {
+    if (!selectedRole) {
+      toast({
+        variant: "warning",
+        title: "Selecione um perfil",
+        description: "Marque a linha do perfil que você quer duplicar.",
+      })
+      return
+    }
+
+    try {
+      const source = await UsersManagementService.getRoleById(selectedRole.id)
+      setDuplicateInitial({
+        name: `${source.name} (cópia)`,
+        description: source.description ?? "",
+        isRoot: source.isRoot,
+        isDefault: false,
+        accessResourceIds: source.accessResourceIds ?? [],
+      })
+      setEditingRoleId(null)
+      setIsRoleModalOpen(true)
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Não foi possível duplicar",
+        description: getApiErrorMessage(error, "Tente novamente."),
+      })
+    }
   }
 
   const handleDeleteSelected = () => {
@@ -405,6 +438,16 @@ export function UsersManagementPage({
         onEdit={handleEditSelected}
         onDelete={activeTab === "roles" ? handleDeleteSelected : undefined}
         selectedRowsCount={selectedRowsCount}
+        actions={activeTab === "roles" ? [
+          {
+            key: "duplicate",
+            label: "Duplicar perfil",
+            icon: <Copy className="h-4 w-4" />,
+            variant: "outline",
+            onClick: () => void handleDuplicateRole(),
+            disabled: !selectedRole,
+          },
+        ] : []}
       >
         <Tabs
           value={activeTab}
@@ -543,9 +586,13 @@ export function UsersManagementPage({
         open={isRoleModalOpen}
         onOpenChange={(open) => {
           setIsRoleModalOpen(open)
-          if (!open) setEditingRoleId(null)
+          if (!open) {
+            setEditingRoleId(null)
+            setDuplicateInitial(null)
+          }
         }}
         roleId={editingRoleId}
+        initialData={duplicateInitial}
         accessResources={accessResources}
         onSaved={() => {
           setSelectedRole(null)

@@ -20,10 +20,19 @@ import { RolePermissionsPickerModal } from "./role-permissions-picker-modal"
 import { Switch } from "./switch"
 import { useToast } from "./use-toast"
 
+export interface RoleFormInitialData {
+  name: string
+  description: string
+  isRoot: boolean
+  isDefault: boolean
+  accessResourceIds: number[]
+}
+
 export interface RoleFormModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   roleId: number | null
+  initialData?: RoleFormInitialData | null
   accessResources: AccessResource[]
   onSaved: () => void
 }
@@ -56,7 +65,7 @@ function getApiErrorMessage(error: unknown, fallback: string): string {
   return fallback
 }
 
-export function RoleFormModal({ open, onOpenChange, roleId, accessResources, onSaved }: RoleFormModalProps) {
+export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessResources, onSaved }: RoleFormModalProps) {
   const { toast } = useToast()
   const isEditMode = roleId !== null
 
@@ -68,8 +77,18 @@ export function RoleFormModal({ open, onOpenChange, roleId, accessResources, onS
 
   const loadInitialData = React.useCallback(async () => {
     if (!isEditMode || roleId === null) {
-      setForm(emptyForm)
-      setSelectedIds([])
+      if (initialData) {
+        setForm({
+          name: initialData.name,
+          description: initialData.description,
+          isRoot: initialData.isRoot,
+          isDefault: initialData.isDefault,
+        })
+        setSelectedIds(initialData.accessResourceIds)
+      } else {
+        setForm(emptyForm)
+        setSelectedIds([])
+      }
       return
     }
 
@@ -92,7 +111,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, accessResources, onS
     } finally {
       setLoading(false)
     }
-  }, [isEditMode, roleId, toast])
+  }, [isEditMode, roleId, initialData, toast])
 
   React.useEffect(() => {
     if (open) {
