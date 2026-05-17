@@ -3,6 +3,7 @@ import { Shield } from "lucide-react"
 import { usePermissions } from "../../hooks/usePermissions"
 import {
   UsersManagementService,
+  type AccessResource,
   type ContractRole,
   type ContractUser,
   type CreateUserInContractPayload,
@@ -79,6 +80,7 @@ export function UsersManagementPage({
   const [activeTab, setActiveTab] = React.useState<ActiveTab>("users")
   const [users, setUsers] = React.useState<ContractUser[]>([])
   const [roles, setRoles] = React.useState<ContractRole[]>([])
+  const [accessResources, setAccessResources] = React.useState<AccessResource[]>([])
   const [loading, setLoading] = React.useState(false)
   const [isFormOpen, setIsFormOpen] = React.useState(false)
   const [isSaving, setIsSaving] = React.useState(false)
@@ -96,12 +98,14 @@ export function UsersManagementPage({
   const loadData = React.useCallback(async () => {
     setLoading(true)
     try {
-      const [list, contractRoles] = await Promise.all([
+      const [list, contractRoles, resources] = await Promise.all([
         UsersManagementService.listInCurrentContract(),
         UsersManagementService.listRoles(),
+        UsersManagementService.listAccessResources(),
       ])
       setUsers(list)
       setRoles(contractRoles)
+      setAccessResources(resources)
     } catch (error) {
       toast({
         variant: "destructive",
@@ -542,6 +546,7 @@ export function UsersManagementPage({
           if (!open) setEditingRoleId(null)
         }}
         roleId={editingRoleId}
+        accessResources={accessResources}
         onSaved={() => {
           setSelectedRole(null)
           void loadData()

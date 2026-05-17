@@ -24,6 +24,7 @@ export interface RoleFormModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   roleId: number | null
+  accessResources: AccessResource[]
   onSaved: () => void
 }
 
@@ -55,36 +56,33 @@ function getApiErrorMessage(error: unknown, fallback: string): string {
   return fallback
 }
 
-export function RoleFormModal({ open, onOpenChange, roleId, onSaved }: RoleFormModalProps) {
+export function RoleFormModal({ open, onOpenChange, roleId, accessResources, onSaved }: RoleFormModalProps) {
   const { toast } = useToast()
   const isEditMode = roleId !== null
 
   const [form, setForm] = React.useState<FormState>(emptyForm)
   const [selectedIds, setSelectedIds] = React.useState<number[]>([])
-  const [accessResources, setAccessResources] = React.useState<AccessResource[]>([])
   const [loading, setLoading] = React.useState(false)
   const [saving, setSaving] = React.useState(false)
   const [isPickerOpen, setIsPickerOpen] = React.useState(false)
 
   const loadInitialData = React.useCallback(async () => {
+    if (!isEditMode || roleId === null) {
+      setForm(emptyForm)
+      setSelectedIds([])
+      return
+    }
+
     setLoading(true)
     try {
-      const resources = await UsersManagementService.listAccessResources()
-      setAccessResources(resources)
-
-      if (isEditMode && roleId !== null) {
-        const role = await UsersManagementService.getRoleById(roleId)
-        setForm({
-          name: role.name,
-          description: role.description ?? "",
-          isRoot: role.isRoot,
-          isDefault: role.isDefault,
-        })
-        setSelectedIds(role.accessResourceIds ?? [])
-      } else {
-        setForm(emptyForm)
-        setSelectedIds([])
-      }
+      const role = await UsersManagementService.getRoleById(roleId)
+      setForm({
+        name: role.name,
+        description: role.description ?? "",
+        isRoot: role.isRoot,
+        isDefault: role.isDefault,
+      })
+      setSelectedIds(role.accessResourceIds ?? [])
     } catch (error) {
       toast({
         variant: "destructive",
