@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Pencil, Shield, UserPlus } from "lucide-react"
+import { Shield } from "lucide-react"
 import { usePermissions } from "../../hooks/usePermissions"
 import {
   UsersManagementService,
@@ -78,6 +78,7 @@ export function UsersManagementPage({
   const [isSaving, setIsSaving] = React.useState(false)
   const [form, setForm] = React.useState<FormState>(emptyForm)
   const [editingUser, setEditingUser] = React.useState<ContractUser | null>(null)
+  const [selectedUser, setSelectedUser] = React.useState<ContractUser | null>(null)
 
   const isEditMode = editingUser !== null
 
@@ -252,27 +253,19 @@ export function UsersManagementPage({
       render: (value?: string) =>
         value ? new Date(value).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : "-",
     },
-    {
-      key: "actions",
-      title: "",
-      width: 90,
-      render: (_: unknown, record: ContractUser) => (
-        <div className="flex items-center justify-end">
-          <button
-            type="button"
-            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-            onClick={(event) => {
-              event.stopPropagation()
-              openEditForm(record)
-            }}
-          >
-            <Pencil className="h-3 w-3" />
-            Editar
-          </button>
-        </div>
-      ),
-    },
   ]
+
+  const handleEditSelected = () => {
+    if (!selectedUser) {
+      toast({
+        variant: "warning",
+        title: "Selecione um usuário",
+        description: "Marque a linha do usuário que você quer editar.",
+      })
+      return
+    }
+    openEditForm(selectedUser)
+  }
 
   return (
     <>
@@ -282,15 +275,9 @@ export function UsersManagementPage({
         className={className}
         showDefaultActions={false}
         onRefresh={() => void loadData()}
-        actions={[
-          {
-            key: "create",
-            label: "Novo usuário",
-            icon: <UserPlus className="h-4 w-4" />,
-            variant: "primary",
-            onClick: openCreateForm,
-          },
-        ]}
+        onAdd={openCreateForm}
+        onEdit={handleEditSelected}
+        selectedRowsCount={selectedUser ? 1 : 0}
       >
         <DataTable
           columns={columns}
@@ -300,6 +287,10 @@ export function UsersManagementPage({
           loading={loading}
           pageSize={10}
           pageSizeOptions={[10, 25, 50]}
+          selectable
+          selectedRows={selectedUser ? [selectedUser] : []}
+          onSelectionChange={(rows) => setSelectedUser(rows[0] ?? null)}
+          onRowDoubleClick={openEditForm}
         />
       </PageLayout>
 
