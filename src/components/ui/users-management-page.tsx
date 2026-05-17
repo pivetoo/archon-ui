@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Copy, Shield } from "lucide-react"
+import { Copy, Shield, ShieldCheck, Users } from "lucide-react"
 import { usePermissions } from "../../hooks/usePermissions"
 import {
   UsersManagementService,
@@ -25,7 +25,7 @@ import {
 import { PageLayout } from "./page-layout"
 import { RoleFormModal, type RoleFormInitialData } from "./role-form-modal"
 import { SearchableSelect } from "./searchable-select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs"
+import { Tabs, TabsBadge, TabsContent, TabsList, TabsTrigger } from "./tabs"
 import { useToast } from "./use-toast"
 import { ConfirmModal } from "./confirm-modal"
 
@@ -458,8 +458,16 @@ export function UsersManagementPage({
           }}
         >
           <TabsList variant="underline" className="mb-4">
-            <TabsTrigger value="users">Usuários</TabsTrigger>
-            <TabsTrigger value="roles">Perfis</TabsTrigger>
+            <TabsTrigger value="users">
+              <Users className="h-4 w-4" />
+              Usuários
+              <TabsBadge>{users.length}</TabsBadge>
+            </TabsTrigger>
+            <TabsTrigger value="roles">
+              <ShieldCheck className="h-4 w-4" />
+              Perfis
+              <TabsBadge>{roles.length}</TabsBadge>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
