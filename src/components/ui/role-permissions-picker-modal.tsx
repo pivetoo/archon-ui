@@ -1,4 +1,5 @@
 import * as React from "react"
+import { ChevronDown, ChevronRight } from "lucide-react"
 import type { AccessResource } from "../../services/users-management/usersManagementService"
 import { Badge } from "./badge"
 import { Button } from "./button"
@@ -21,20 +22,20 @@ export interface RolePermissionsPickerModalProps {
   disabled?: boolean
 }
 
-function getHttpMethodClassName(method: string): string {
+function getActionInfo(method: string): { label: string; className: string } {
   switch (method?.toUpperCase()) {
     case "GET":
-      return "border-emerald-500/40 text-emerald-700 dark:text-emerald-300"
+      return { label: "Consultar", className: "border-emerald-500/40 text-emerald-700 dark:text-emerald-300" }
     case "POST":
-      return "border-blue-500/40 text-blue-700 dark:text-blue-300"
+      return { label: "Criar", className: "border-blue-500/40 text-blue-700 dark:text-blue-300" }
     case "PUT":
-      return "border-amber-500/40 text-amber-700 dark:text-amber-300"
+      return { label: "Editar", className: "border-amber-500/40 text-amber-700 dark:text-amber-300" }
     case "PATCH":
-      return "border-violet-500/40 text-violet-700 dark:text-violet-300"
+      return { label: "Ajustar", className: "border-violet-500/40 text-violet-700 dark:text-violet-300" }
     case "DELETE":
-      return "border-red-500/40 text-red-700 dark:text-red-300"
+      return { label: "Excluir", className: "border-red-500/40 text-red-700 dark:text-red-300" }
     default:
-      return ""
+      return { label: method || "Outro", className: "" }
   }
 }
 
@@ -48,13 +49,27 @@ export function RolePermissionsPickerModal({
 }: RolePermissionsPickerModalProps) {
   const [search, setSearch] = React.useState("")
   const [draftIds, setDraftIds] = React.useState<number[]>(selectedResourceIds)
+  const [collapsedGroups, setCollapsedGroups] = React.useState<Set<string>>(new Set())
 
   React.useEffect(() => {
     if (open) {
       setDraftIds(selectedResourceIds)
       setSearch("")
+      setCollapsedGroups(new Set())
     }
   }, [open, selectedResourceIds])
+
+  const toggleGroupCollapsed = (groupTitle: string) => {
+    setCollapsedGroups((prev) => {
+      const next = new Set(prev)
+      if (next.has(groupTitle)) {
+        next.delete(groupTitle)
+      } else {
+        next.add(groupTitle)
+      }
+      return next
+    })
+  }
 
   const normalizedSearch = search.trim().toLowerCase()
 
@@ -114,6 +129,14 @@ export function RolePermissionsPickerModal({
     onOpenChange(false)
   }
 
+  const collapseAll = () => {
+    setCollapsedGroups(new Set(filteredGroups.map((group) => group.title)))
+  }
+
+  const expandAll = () => {
+    setCollapsedGroups(new Set())
+  }
+
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
       <ModalContent size="full" className="h-[92vh] max-w-[96vw] grid-rows-[auto_auto_minmax(0,1fr)_auto]">
@@ -142,6 +165,14 @@ export function RolePermissionsPickerModal({
                   <button type="button" className="text-primary hover:underline" onClick={handleClearAll} disabled={disabled}>
                     Limpar
                   </button>
+                  <span className="text-muted-foreground">·</span>
+                  <button type="button" className="text-primary hover:underline" onClick={expandAll}>
+                    Expandir tudo
+                  </button>
+                  <span className="text-muted-foreground">·</span>
+                  <button type="button" className="text-primary hover:underline" onClick={collapseAll}>
+                    Colapsar tudo
+                  </button>
                 </div>
               </div>
             </div>
@@ -152,7 +183,7 @@ export function RolePermissionsPickerModal({
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Filtrar por nome, controller, action ou rota..."
+              placeholder="Filtrar permissões…"
               disabled={disabled}
             />
           </div>
@@ -171,20 +202,28 @@ export function RolePermissionsPickerModal({
                 const totalInGroup = resourceIds.length
                 const selectedInGroup = resourceIds.filter((resourceId) => draftIds.includes(resourceId)).length
                 const allSelected = totalInGroup > 0 && selectedInGroup === totalInGroup
+                const isCollapsed = collapsedGroups.has(group.title)
 
                 return (
                   <div key={group.title} className="rounded-lg border bg-background">
-                    <div className="flex items-start justify-between gap-4 border-b px-4 py-3">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold">{group.title}</p>
-                          <Badge variant="outline">
-                            {selectedInGroup}/{totalInGroup}
-                          </Badge>
-                        </div>
-                      </div>
+                    <div className="flex items-center justify-between gap-4 border-b px-4 py-3">
+                      <button
+                        type="button"
+                        className="flex flex-1 items-center gap-2 text-left"
+                        onClick={() => toggleGroupCollapsed(group.title)}
+                      >
+                        {isCollapsed ? (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        )}
+                        <p className="text-sm font-semibold">{group.title}</p>
+                        <Badge variant="outline">
+                          {selectedInGroup}/{totalInGroup}
+                        </Badge>
+                      </button>
 
-                      <label className="flex items-center gap-2 text-sm">
+                      <label className="flex items-center gap-2 text-sm" onClick={(event) => event.stopPropagation()}>
                         <Checkbox
                           checked={allSelected}
                           onCheckedChange={(checked) => toggleGroup(resourceIds, checked === true)}
@@ -194,38 +233,40 @@ export function RolePermissionsPickerModal({
                       </label>
                     </div>
 
-                    <div className="grid gap-3 px-4 py-4 md:grid-cols-2 xl:grid-cols-3">
-                      {group.resources.map((resource) => (
-                        <label
-                          key={resource.id}
-                          className="flex min-w-0 items-start gap-3 rounded-md border p-3 text-sm transition-colors hover:bg-muted/30"
-                        >
-                          <Checkbox
-                            checked={draftIds.includes(resource.id)}
-                            onCheckedChange={(checked) => toggleResource(resource.id, checked === true)}
-                            disabled={disabled}
-                          />
-                          <div className="min-w-0 flex-1 space-y-1">
-                            <div className="flex min-w-0 items-center gap-2">
-                              <span className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-medium" title={resource.action || resource.name}>
-                                {resource.action || resource.name}
-                              </span>
-                              <Badge variant="outline" className={getHttpMethodClassName(resource.httpMethod)}>
-                                {resource.httpMethod}
-                              </Badge>
-                            </div>
-                            {resource.description ? (
-                              <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-muted-foreground" title={resource.description}>
-                                {resource.description}
-                              </p>
-                            ) : null}
-                            <p className="overflow-hidden text-ellipsis whitespace-nowrap font-mono text-[10px] text-muted-foreground" title={resource.route}>
-                              {resource.route}
-                            </p>
-                          </div>
-                        </label>
-                      ))}
-                    </div>
+                    {isCollapsed ? null : (
+                      <div className="grid gap-3 px-4 py-4 md:grid-cols-2 xl:grid-cols-3">
+                        {group.resources.map((resource) => {
+                          const actionInfo = getActionInfo(resource.httpMethod)
+                          return (
+                            <label
+                              key={resource.id}
+                              className="flex min-w-0 items-start gap-3 rounded-md border p-3 text-sm transition-colors hover:bg-muted/30"
+                            >
+                              <Checkbox
+                                checked={draftIds.includes(resource.id)}
+                                onCheckedChange={(checked) => toggleResource(resource.id, checked === true)}
+                                disabled={disabled}
+                              />
+                              <div className="min-w-0 flex-1 space-y-1">
+                                <div className="flex min-w-0 items-center gap-2">
+                                  <Badge variant="outline" className={actionInfo.className}>
+                                    {actionInfo.label}
+                                  </Badge>
+                                  <span className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-medium" title={resource.action || resource.name}>
+                                    {resource.action || resource.name}
+                                  </span>
+                                </div>
+                                {resource.description ? (
+                                  <p className="text-xs text-muted-foreground" title={resource.description}>
+                                    {resource.description}
+                                  </p>
+                                ) : null}
+                              </div>
+                            </label>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
                 )
               })
