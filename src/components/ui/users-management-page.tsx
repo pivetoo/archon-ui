@@ -162,7 +162,7 @@ export function UsersManagementPage({
       setIsSaving(true)
       try {
         await UsersManagementService.updateInCurrentContract(editingUser!.userId, payload)
-        toast({ title: "Usuário atualizado", description: editingUser!.name })
+        toast({ variant: "success", title: "Usuário atualizado", description: editingUser!.name })
         closeForm()
         await loadData()
       } catch (error) {
@@ -198,6 +198,7 @@ export function UsersManagementPage({
     try {
       await UsersManagementService.createInCurrentContract(payload)
       toast({
+        variant: "success",
         title: "Usuário criado",
         description: "O usuário já tem acesso ao contrato ativo.",
       })
@@ -289,7 +290,6 @@ export function UsersManagementPage({
           selectable
           selectedRows={selectedUser ? [selectedUser] : []}
           onSelectionChange={(rows) => setSelectedUser(rows[0] ?? null)}
-          onRowDoubleClick={openEditForm}
         />
       </PageLayout>
 
