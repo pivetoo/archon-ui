@@ -3,7 +3,6 @@ import { Eye, Plus, Edit, Trash2, RefreshCw } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { useI18n } from "../../i18n"
 import { Button } from "./button"
-import { useToast } from "./use-toast"
 
 export interface PageAction {
   key: string
@@ -12,6 +11,7 @@ export interface PageAction {
   variant?: "primary" | "secondary" | "outline" | "outline-primary" | "outline-secondary" | "outline-success" | "outline-warning" | "outline-danger" | "ghost" | "danger"
   onClick: () => void
   disabled?: boolean
+  tooltip?: string
   testId?: string
 }
 
@@ -29,6 +29,10 @@ export interface PageLayoutProps {
   onEdit?: () => void
   onDelete?: () => void
   onRefresh?: () => void
+  addLabel?: string
+  viewLabel?: string
+  editLabel?: string
+  deleteLabel?: string
   selectedRowsCount?: number
   children?: React.ReactNode
   className?: string
@@ -48,12 +52,15 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   onEdit,
   onDelete,
   onRefresh,
+  addLabel,
+  viewLabel,
+  editLabel,
+  deleteLabel,
   selectedRowsCount = 0,
   children,
   className
 }) => {
   const { t } = useI18n()
-  const { toast } = useToast()
   const [isRefreshing, setIsRefreshing] = React.useState(false)
 
   const handleRefresh = async () => {
@@ -66,79 +73,42 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     }
   }
 
-  const handleEdit = () => {
-    if (selectedRowsCount === 0) {
-      toast({
-        title: t("common.toast.warningTitle"),
-        description: t("pageLayout.edit.selectOne"),
-        variant: 'warning',
-      })
-      return
-    }
-    if (selectedRowsCount > 1) {
-      toast({
-        title: t("common.toast.warningTitle"),
-        description: t("pageLayout.edit.selectOnlyOne"),
-        variant: 'warning',
-      })
-      return
-    }
-    onEdit?.()
+  const resolveTooltip = (key: string, fallback: string): string => {
+    const value = t(key)
+    return value === key ? fallback : value
   }
 
-  const handleView = () => {
-    if (selectedRowsCount === 0) {
-      toast({
-        title: t("common.toast.warningTitle"),
-        description: t("pageLayout.view.selectOne"),
-        variant: 'warning',
-      })
-      return
-    }
-    if (selectedRowsCount > 1) {
-      toast({
-        title: t("common.toast.warningTitle"),
-        description: t("pageLayout.view.selectOnlyOne"),
-        variant: 'warning',
-      })
-      return
-    }
-    onView?.()
-  }
+  const needsSingleSelection = selectedRowsCount !== 1
+  const needsAnySelection = selectedRowsCount === 0
 
-  const handleDelete = () => {
-    if (selectedRowsCount === 0) {
-      toast({
-        title: t("common.toast.warningTitle"),
-        description: t("pageLayout.delete.selectAtLeastOne"),
-        variant: 'warning',
-      })
-      return
-    }
-    onDelete?.()
-  }
+  const editTooltip = needsSingleSelection
+    ? selectedRowsCount === 0
+      ? resolveTooltip("pageLayout.edit.selectOne", "Selecione um registro para editar.")
+      : resolveTooltip("pageLayout.edit.selectOnlyOne", "Selecione apenas um registro para editar.")
+    : undefined
+
+  const viewTooltip = needsSingleSelection
+    ? selectedRowsCount === 0
+      ? resolveTooltip("pageLayout.view.selectOne", "Selecione um registro para visualizar.")
+      : resolveTooltip("pageLayout.view.selectOnlyOne", "Selecione apenas um registro para visualizar.")
+    : undefined
+
+  const deleteTooltip = needsAnySelection
+    ? resolveTooltip("pageLayout.delete.selectAtLeastOne", "Selecione ao menos um registro para excluir.")
+    : undefined
 
   const defaultActions: PageAction[] = []
 
   if (showDefaultActions) {
-    if (onAdd) {
-      defaultActions.push({
-        key: "add",
-        label: t("pageLayout.action.add"),
-        icon: <Plus className="h-4 w-4" />,
-        variant: "secondary",
-        onClick: onAdd,
-        testId: "crud-add-button"
-      })
-    }
-
     if (onView) {
       defaultActions.push({
         key: "view",
-        label: t("pageLayout.action.view"),
+        label: viewLabel ?? t("pageLayout.action.view"),
         icon: <Eye className="h-4 w-4" />,
-        variant: "outline",
-        onClick: handleView,
+        variant: "ghost",
+        onClick: () => onView(),
+        disabled: needsSingleSelection,
+        tooltip: viewTooltip,
         testId: "crud-view-button"
       })
     }
@@ -146,10 +116,12 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     if (onEdit) {
       defaultActions.push({
         key: "edit",
-        label: t("pageLayout.action.edit"),
+        label: editLabel ?? t("pageLayout.action.edit"),
         icon: <Edit className="h-4 w-4" />,
-        variant: "outline",
-        onClick: handleEdit,
+        variant: "ghost",
+        onClick: () => onEdit(),
+        disabled: needsSingleSelection,
+        tooltip: editTooltip,
         testId: "crud-edit-button"
       })
     }
@@ -157,11 +129,24 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     if (onDelete) {
       defaultActions.push({
         key: "delete",
-        label: t("pageLayout.action.delete"),
+        label: deleteLabel ?? t("pageLayout.action.delete"),
         icon: <Trash2 className="h-4 w-4" />,
-        variant: "outline",
-        onClick: handleDelete,
+        variant: "ghost",
+        onClick: () => onDelete(),
+        disabled: needsAnySelection,
+        tooltip: deleteTooltip,
         testId: "crud-delete-button"
+      })
+    }
+
+    if (onAdd) {
+      defaultActions.push({
+        key: "add",
+        label: addLabel ?? t("pageLayout.action.add"),
+        icon: <Plus className="h-4 w-4" />,
+        variant: "secondary",
+        onClick: onAdd,
+        testId: "crud-add-button"
       })
     }
   }
@@ -222,20 +207,33 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
             {(allActions.length > 0 || actionsSlot) && (
               <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto xl:justify-end">
                 {actionsSlot}
-                {allActions.map((action) => (
-                  <Button
-                    key={action.key}
-                    data-testid={action.testId}
-                    variant={action.variant || "outline"}
-                    size="sm"
-                    onClick={action.onClick}
-                    disabled={action.disabled}
-                    className="gap-2 rounded-lg px-3.5"
-                  >
-                    {action.icon}
-                    {action.label}
-                  </Button>
-                ))}
+                {allActions.map((action) => {
+                  const button = (
+                    <Button
+                      key={action.key}
+                      data-testid={action.testId}
+                      variant={action.variant || "outline"}
+                      size="sm"
+                      onClick={action.onClick}
+                      disabled={action.disabled}
+                      title={!action.disabled ? action.tooltip : undefined}
+                      className="gap-2 rounded-lg px-3.5"
+                    >
+                      {action.icon}
+                      {action.label}
+                    </Button>
+                  )
+
+                  if (action.disabled && action.tooltip) {
+                    return (
+                      <span key={action.key} title={action.tooltip} className="inline-flex cursor-not-allowed">
+                        {button}
+                      </span>
+                    )
+                  }
+
+                  return button
+                })}
               </div>
             )}
           </div>

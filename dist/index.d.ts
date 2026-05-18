@@ -775,6 +775,7 @@ export declare interface PageAction {
     variant?: "primary" | "secondary" | "outline" | "outline-primary" | "outline-secondary" | "outline-success" | "outline-warning" | "outline-danger" | "ghost" | "danger";
     onClick: () => void;
     disabled?: boolean;
+    tooltip?: string;
     testId?: string;
 }
 
@@ -799,6 +800,10 @@ export declare interface PageLayoutProps {
     onEdit?: () => void;
     onDelete?: () => void;
     onRefresh?: () => void;
+    addLabel?: string;
+    viewLabel?: string;
+    editLabel?: string;
+    deleteLabel?: string;
     selectedRowsCount?: number;
     children?: React_2.ReactNode;
     className?: string;
