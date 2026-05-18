@@ -28005,15 +28005,6 @@ const dne = ({
     disabled: N,
     tooltip: F,
     testId: "crud-view-button"
-  }), d && A.push({
-    key: "edit",
-    label: m ?? _("pageLayout.action.edit"),
-    icon: /* @__PURE__ */ h(d6, { className: "h-4 w-4" }),
-    variant: "ghost",
-    onClick: () => d(),
-    disabled: N,
-    tooltip: R,
-    testId: "crud-edit-button"
   }), u && A.push({
     key: "delete",
     label: v ?? _("pageLayout.action.delete"),
@@ -28023,6 +28014,15 @@ const dne = ({
     disabled: $,
     tooltip: I,
     testId: "crud-delete-button"
+  }), d && A.push({
+    key: "edit",
+    label: m ?? _("pageLayout.action.edit"),
+    icon: /* @__PURE__ */ h(d6, { className: "h-4 w-4" }),
+    variant: "ghost",
+    onClick: () => d(),
+    disabled: N,
+    tooltip: R,
+    testId: "crud-edit-button"
   }), c && A.push({
     key: "add",
     label: p ?? _("pageLayout.action.add"),
@@ -28031,7 +28031,7 @@ const dne = ({
     onClick: c,
     testId: "crud-add-button"
   }));
-  const L = [...A, ...i], E = r === "compact";
+  const L = [...i, ...A], E = r === "compact";
   return /* @__PURE__ */ U("div", { className: ne("flex flex-col h-full w-full", w), children: [
     /* @__PURE__ */ h("div", { className: ne("mb-5 flex flex-col gap-4", E ? "py-1" : "py-2"), children: /* @__PURE__ */ U(
       "div",

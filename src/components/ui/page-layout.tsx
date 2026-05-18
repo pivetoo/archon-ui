@@ -113,19 +113,6 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
       })
     }
 
-    if (onEdit) {
-      defaultActions.push({
-        key: "edit",
-        label: editLabel ?? t("pageLayout.action.edit"),
-        icon: <Edit className="h-4 w-4" />,
-        variant: "ghost",
-        onClick: () => onEdit(),
-        disabled: needsSingleSelection,
-        tooltip: editTooltip,
-        testId: "crud-edit-button"
-      })
-    }
-
     if (onDelete) {
       defaultActions.push({
         key: "delete",
@@ -136,6 +123,19 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         disabled: needsAnySelection,
         tooltip: deleteTooltip,
         testId: "crud-delete-button"
+      })
+    }
+
+    if (onEdit) {
+      defaultActions.push({
+        key: "edit",
+        label: editLabel ?? t("pageLayout.action.edit"),
+        icon: <Edit className="h-4 w-4" />,
+        variant: "ghost",
+        onClick: () => onEdit(),
+        disabled: needsSingleSelection,
+        tooltip: editTooltip,
+        testId: "crud-edit-button"
       })
     }
 
@@ -151,7 +151,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     }
   }
 
-  const allActions = [...defaultActions, ...actions]
+  const allActions = [...actions, ...defaultActions]
   const isCompact = density === "compact"
 
   return (
