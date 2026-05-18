@@ -93,16 +93,6 @@ function buildErrorDescription(apiError: ApiError, t: (key: string) => string): 
 
 function getErrorTitle(apiError: ApiError, t: (key: string) => string): string {
   const hasValidationMessages = getValidationMessages(apiError).length > 0
-  const normalizedMessage = apiError.message?.trim()
-
-  if (normalizedMessage) {
-    if (normalizedMessage.toLowerCase() === 'validation failed.') {
-      return t("validation.failed")
-    }
-
-    return normalizedMessage
-  }
-
   return hasValidationMessages ? t("validation.failed") : t("common.error.title")
 }
 

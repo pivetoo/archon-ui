@@ -30650,8 +30650,8 @@ function gte(e, t) {
 `);
 }
 function vte(e, t) {
-  const n = ZP(e).length > 0, r = e.message?.trim();
-  return r ? r.toLowerCase() === "validation failed." ? t("validation.failed") : r : t(n ? "validation.failed" : "common.error.title");
+  const n = ZP(e).length > 0;
+  return t(n ? "validation.failed" : "common.error.title");
 }
 function Ene(e = {}) {
   const { t } = to(), [n, r] = Dt({
