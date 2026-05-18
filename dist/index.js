@@ -7047,7 +7047,7 @@ class m7 {
     if (t.response) {
       const { status: n, data: r } = t.response;
       let o = r.message || r.title, a = r.errors;
-      if (!a && typeof r == "object" && !o) {
+      if (a && typeof a == "object" && !Array.isArray(a) && "type" in a && "title" in a && "status" in a && (a = void 0), !a && typeof r == "object" && !o) {
         const i = Object.keys(r);
         if (i.length > 0 && i.every((c) => Array.isArray(r[c]))) {
           a = r;

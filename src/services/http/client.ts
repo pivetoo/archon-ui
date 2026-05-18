@@ -196,6 +196,13 @@ class HttpClient {
       let message = data.message || data.title
       let errors = data.errors
 
+      // ProblemDetails (RFC 7807) carrega type/title/status pra debugging HTTP,
+      // nao sao mensagens de validacao pro usuario. Descartar pra nao vazar no toast.
+      if (errors && typeof errors === "object" && !Array.isArray(errors)
+          && "type" in errors && "title" in errors && "status" in errors) {
+        errors = undefined
+      }
+
       if (!errors && typeof data === "object" && !message) {
         const keys = Object.keys(data)
         const isValidationError = keys.length > 0 && keys.every((key) => Array.isArray(data[key]))
