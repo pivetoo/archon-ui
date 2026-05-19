@@ -63,6 +63,11 @@ function getValidationMessages(error: ApiError): string[] {
 }
 
 function buildErrorDescription(apiError: ApiError, t: (key: string) => string): string {
+  if (apiError.status === 403) {
+    const message = apiError.message?.trim()
+    return message && message.toLowerCase() !== 'forbidden' ? message : t("common.error.forbidden.description")
+  }
+
   const validationMessages = getValidationMessages(apiError)
 
   if (validationMessages.length === 0) {
@@ -92,6 +97,9 @@ function buildErrorDescription(apiError: ApiError, t: (key: string) => string): 
 }
 
 function getErrorTitle(apiError: ApiError, t: (key: string) => string): string {
+  if (apiError.status === 403) {
+    return t("common.error.forbidden.title")
+  }
   const hasValidationMessages = getValidationMessages(apiError).length > 0
   return hasValidationMessages ? t("validation.failed") : t("common.error.title")
 }

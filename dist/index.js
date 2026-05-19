@@ -30642,6 +30642,10 @@ function ZP(e) {
   return [];
 }
 function gte(e, t) {
+  if (e.status === 403) {
+    const s = e.message?.trim();
+    return s && s.toLowerCase() !== "forbidden" ? s : t("common.error.forbidden.description");
+  }
   const n = ZP(e);
   if (n.length === 0)
     return e.message;
@@ -30650,6 +30654,8 @@ function gte(e, t) {
 `);
 }
 function vte(e, t) {
+  if (e.status === 403)
+    return t("common.error.forbidden.title");
   const n = ZP(e).length > 0;
   return t(n ? "validation.failed" : "common.error.title");
 }
