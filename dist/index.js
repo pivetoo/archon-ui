@@ -13318,7 +13318,7 @@ const N4 = x.forwardRef(
                       "button",
                       {
                         onClick: () => {
-                          c && !Y.read && c(Y.id);
+                          c && c(Y.id);
                         },
                         className: ne(
                           "w-full flex items-start gap-3 px-4 py-3 transition-colors hover:bg-accent dark:hover:bg-accent/80 border-b border-border/50 last:border-0 text-left",

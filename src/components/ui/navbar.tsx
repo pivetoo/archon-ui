@@ -346,7 +346,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                           <button
                             key={notification.id}
                             onClick={() => {
-                              if (onNotificationRead && !notification.read) {
+                              if (onNotificationRead) {
                                 onNotificationRead(notification.id)
                               }
                             }}
