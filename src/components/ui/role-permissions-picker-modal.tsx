@@ -252,15 +252,16 @@ export function RolePermissionsPickerModal({
                                   <Badge variant="outline" className={actionInfo.className}>
                                     {actionInfo.label}
                                   </Badge>
-                                  <span className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-medium" title={resource.action || resource.name}>
-                                    {resource.action || resource.name}
+                                  <span
+                                    className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-medium"
+                                    title={resource.action || resource.name}
+                                  >
+                                    {resource.description || resource.action || resource.name}
                                   </span>
                                 </div>
-                                {resource.description ? (
-                                  <p className="text-xs text-muted-foreground" title={resource.description}>
-                                    {resource.description}
-                                  </p>
-                                ) : null}
+                                <p className="text-xs text-muted-foreground/70" title={resource.action || resource.name}>
+                                  {resource.action || resource.name}
+                                </p>
                               </div>
                             </label>
                           )
