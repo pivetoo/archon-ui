@@ -30642,10 +30642,8 @@ function ZP(e) {
   return [];
 }
 function gte(e, t) {
-  if (e.status === 403) {
-    const s = e.message?.trim();
-    return s && s.toLowerCase() !== "forbidden" ? s : t("common.error.forbidden.description");
-  }
+  if (e.status === 403)
+    return t("common.error.forbidden.description");
   const n = ZP(e);
   if (n.length === 0)
     return e.message;

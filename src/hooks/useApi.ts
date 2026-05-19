@@ -64,8 +64,7 @@ function getValidationMessages(error: ApiError): string[] {
 
 function buildErrorDescription(apiError: ApiError, t: (key: string) => string): string {
   if (apiError.status === 403) {
-    const message = apiError.message?.trim()
-    return message && message.toLowerCase() !== 'forbidden' ? message : t("common.error.forbidden.description")
+    return t("common.error.forbidden.description")
   }
 
   const validationMessages = getValidationMessages(apiError)
