@@ -22,6 +22,7 @@ export declare interface AccessResource {
     systemApplicationId: number;
     name: string;
     description: string;
+    area: string;
     controller: string;
     action: string;
     httpMethod: string;

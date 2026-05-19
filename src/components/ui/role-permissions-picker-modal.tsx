@@ -76,24 +76,26 @@ export function RolePermissionsPickerModal({
   const filteredGroups = React.useMemo(() => {
     const groups = new Map<string, AccessResource[]>()
     for (const resource of resources) {
-      const list = groups.get(resource.controller) ?? []
+      const key = resource.area?.trim() || resource.controller
+      const list = groups.get(key) ?? []
       list.push(resource)
-      groups.set(resource.controller, list)
+      groups.set(key, list)
     }
 
     return Array.from(groups.entries())
-      .map(([controller, list]) => ({
-        title: controller,
+      .map(([groupTitle, list]) => ({
+        title: groupTitle,
         resources: list
           .filter((resource) => {
             if (!normalizedSearch) {
               return true
             }
-            const haystack = `${resource.name} ${resource.controller} ${resource.action} ${resource.route} ${resource.description}`.toLowerCase()
+            const haystack = `${resource.name} ${resource.area ?? ''} ${resource.controller} ${resource.action} ${resource.route} ${resource.description}`.toLowerCase()
             return haystack.includes(normalizedSearch)
           })
           .sort((a, b) => a.name.localeCompare(b.name)),
       }))
+      .sort((a, b) => a.title.localeCompare(b.title))
       .filter((group) => group.resources.length > 0)
       .sort((a, b) => a.title.localeCompare(b.title))
   }, [normalizedSearch, resources])

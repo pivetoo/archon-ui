@@ -29145,13 +29145,13 @@ function Wee({
   }, p = i.trim().toLowerCase(), g = x.useMemo(() => {
     const C = /* @__PURE__ */ new Map();
     for (const k of n) {
-      const A = C.get(k.controller) ?? [];
-      A.push(k), C.set(k.controller, A);
+      const A = k.area?.trim() || k.controller, E = C.get(A) ?? [];
+      E.push(k), C.set(A, E);
     }
     return Array.from(C.entries()).map(([k, A]) => ({
       title: k,
-      resources: A.filter((E) => p ? `${E.name} ${E.controller} ${E.action} ${E.route} ${E.description}`.toLowerCase().includes(p) : !0).sort((E, L) => E.name.localeCompare(L.name))
-    })).filter((k) => k.resources.length > 0).sort((k, A) => k.title.localeCompare(A.title));
+      resources: A.filter((E) => p ? `${E.name} ${E.area ?? ""} ${E.controller} ${E.action} ${E.route} ${E.description}`.toLowerCase().includes(p) : !0).sort((E, L) => E.name.localeCompare(L.name))
+    })).sort((k, A) => k.title.localeCompare(A.title)).filter((k) => k.resources.length > 0).sort((k, A) => k.title.localeCompare(A.title));
   }, [p, n]), m = (C, k) => {
     l((A) => k ? A.includes(C) ? A : [...A, C] : A.filter((E) => E !== C));
   }, v = (C, k) => {
