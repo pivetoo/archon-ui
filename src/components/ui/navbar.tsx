@@ -91,6 +91,26 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
     const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false)
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = React.useState(false)
     const [isNotificationMenuOpen, setIsNotificationMenuOpen] = React.useState(false)
+    const notificationContainerRef = React.useRef<HTMLDivElement>(null)
+
+    React.useEffect(() => {
+      if (!isNotificationMenuOpen) return
+      const handlePointerDown = (event: MouseEvent) => {
+        const node = notificationContainerRef.current
+        if (node && !node.contains(event.target as Node)) {
+          setIsNotificationMenuOpen(false)
+        }
+      }
+      const handleKey = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') setIsNotificationMenuOpen(false)
+      }
+      document.addEventListener('mousedown', handlePointerDown)
+      document.addEventListener('keydown', handleKey)
+      return () => {
+        document.removeEventListener('mousedown', handlePointerDown)
+        document.removeEventListener('keydown', handleKey)
+      }
+    }, [isNotificationMenuOpen])
     const [isModuleSwitcherOpen, setIsModuleSwitcherOpen] = React.useState(false)
     const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false)
     const supportedCultures: Array<{ value: ArchonCulture; label: string }> = [
@@ -270,7 +290,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           )}
 
           {notifications && notifications.length >= 0 && (
-            <div className="relative" data-tour="notifications-bell">
+            <div ref={notificationContainerRef} className="relative" data-tour="notifications-bell">
               <button
                 onClick={() => setIsNotificationMenuOpen(!isNotificationMenuOpen)}
                 className="relative p-2 rounded-sm transition-all hover:bg-accent dark:hover:bg-accent/80 text-muted-foreground hover:text-foreground active:scale-95"
@@ -290,10 +310,6 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
 
               {isNotificationMenuOpen && (
                 <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setIsNotificationMenuOpen(false)}
-                  />
                   <div className="absolute right-0 top-full mt-2 w-96 bg-popover border border-border rounded-lg shadow-lg z-50 max-h-[32rem] flex flex-col">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-border">
                       <div>
@@ -380,19 +396,6 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                       )}
                     </div>
 
-                    {onViewAllNotifications && notifications.length > 0 && (
-                      <div className="border-t border-border p-2">
-                        <button
-                          onClick={() => {
-                            onViewAllNotifications()
-                            setIsNotificationMenuOpen(false)
-                          }}
-                          className="w-full text-center py-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors hover:bg-accent dark:hover:bg-accent/80 rounded-md"
-                        >
-                          {translate("nav.notifications.viewAll")}
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </>
               )}
