@@ -116,13 +116,23 @@ export function DataTable<T = any>({
     return column.render ? column.render(value, record, index) : ((value as React.ReactNode) || "-")
   }
 
-  const cardTappable = !!onRowClick || !!onRowDoubleClick
-  const handleCardTap = (record: T) => {
-    if (onRowClick) {
+  // No card (mobile): tocar no corpo seleciona o registro (habilita a toolbar);
+  // quando ha detalhe (onRowDoubleClick) e o corpo nao abre detalhe, a seta abre.
+  const handleCardBodyClick = (record: T) => {
+    if (isSelectable && onSelectionChange) {
+      onSelectionChange(isRowSelected(record) ? [] : [record])
+    } else if (onRowClick) {
       onRowClick(record)
     } else if (onRowDoubleClick) {
       onRowDoubleClick(record)
     }
+  }
+  const cardBodyTappable = isSelectable || !!onRowClick || !!onRowDoubleClick
+  const showCardDetailArrow = !!onRowDoubleClick && (isSelectable || !!onRowClick)
+
+  const resolveLabel = (key: string, fallback: string): string => {
+    const value = t(key)
+    return value === key ? fallback : value
   }
 
   const totalPages = Math.ceil(effectiveTotalCount / pageSize) || 1
@@ -455,11 +465,11 @@ export function DataTable<T = any>({
               return (
                 <div
                   key={key}
-                  onClick={() => handleCardTap(record)}
+                  onClick={() => handleCardBodyClick(record)}
                   data-state={selected ? "selected" : ""}
                   className={cn(
                     "rounded-xl border border-border/70 bg-card p-3.5 transition-colors",
-                    cardTappable && "cursor-pointer active:scale-[0.99] active:bg-accent",
+                    cardBodyTappable && "cursor-pointer active:scale-[0.99] active:bg-accent",
                     selected && "border-secondary/50 bg-[hsl(var(--secondary)/0.12)]"
                   )}
                 >
@@ -488,8 +498,18 @@ export function DataTable<T = any>({
                         </div>
                       )}
                     </div>
-                    {cardTappable && (
-                      <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground/40" />
+                    {showCardDetailArrow && (
+                      <button
+                        type="button"
+                        aria-label={resolveLabel("common.action.openDetails", "Abrir detalhes")}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          onRowDoubleClick?.(record)
+                        }}
+                        className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
                     )}
                   </div>
                 </div>
