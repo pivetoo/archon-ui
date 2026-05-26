@@ -20,7 +20,7 @@ const ModalOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-[200] bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -31,15 +31,18 @@ ModalOverlay.displayName = DialogPrimitive.Overlay.displayName
 const modalContentVariants = cva(
   [
     "fixed z-[201] flex flex-col bg-background shadow-lg duration-200 overflow-y-auto",
-    // mobile: tela cheia — !w-full sobrescreve inline style width:95vw dos modais
-    "inset-0 !w-full rounded-none p-4 gap-3",
+    // mobile: bottom-sheet sobe de baixo — !w-full sobrescreve inline style width:95vw dos modais
+    "inset-x-0 bottom-0 !w-full max-h-[90vh] rounded-t-2xl p-4 gap-3",
     // sm+: dialog centralizado flutuante
-    "sm:inset-auto sm:left-[50%] sm:top-[50%] sm:w-full sm:min-h-0 sm:max-h-[90vh]",
-    "sm:translate-x-[-50%] sm:translate-y-[-50%] sm:rounded-lg sm:border sm:p-6 sm:gap-4",
+    "sm:inset-auto sm:left-[50%] sm:top-[50%] sm:w-full sm:min-h-0 sm:max-h-[90vh] sm:rounded-xl",
+    "sm:translate-x-[-50%] sm:translate-y-[-50%] sm:border sm:p-6 sm:gap-4",
     // animações
     "data-[state=open]:animate-in data-[state=closed]:animate-out",
     "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-    "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+    // mobile: desliza de baixo
+    "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+    // desktop: pop centralizado com leve zoom
+    "sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:zoom-in-95",
     "sm:data-[state=closed]:slide-out-to-left-1/2 sm:data-[state=closed]:slide-out-to-top-[48%]",
     "sm:data-[state=open]:slide-in-from-left-1/2 sm:data-[state=open]:slide-in-from-top-[48%]",
   ].join(" "),
@@ -79,10 +82,11 @@ const ModalContent = React.forwardRef<
       className={cn(modalContentVariants({ size }), className)}
       {...props}
     >
+      <div aria-hidden className="mx-auto -mt-1 mb-1 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/25 sm:hidden" />
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+      <DialogPrimitive.Close className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
         <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
+        <span className="sr-only">Fechar</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </ModalPortal>
@@ -91,11 +95,13 @@ ModalContent.displayName = DialogPrimitive.Content.displayName
 
 const ModalHeader = ({
   className,
+  bordered = false,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+}: React.HTMLAttributes<HTMLDivElement> & { bordered?: boolean }) => (
   <div
     className={cn(
       "flex shrink-0 flex-col space-y-1.5 text-center sm:text-left",
+      bordered && "border-b border-border pb-3",
       className
     )}
     {...props}
@@ -119,11 +125,13 @@ ModalBody.displayName = "ModalBody"
 
 const ModalFooter = ({
   className,
+  bordered = false,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+}: React.HTMLAttributes<HTMLDivElement> & { bordered?: boolean }) => (
   <div
     className={cn(
       "flex shrink-0 flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      bordered && "border-t border-border pt-3",
       className
     )}
     {...props}
