@@ -55,12 +55,28 @@ export interface SheetContentProps
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, ...props }, ref) => (
+>(({ side = "right", className, children, onOpenAutoFocus, ...props }, ref) => {
+  const handleOpenAutoFocus = (event: Event) => {
+    if (onOpenAutoFocus) {
+      onOpenAutoFocus(event)
+      return
+    }
+    // No mobile, evitar focar o primeiro input ao abrir (abriria o teclado).
+    const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches
+    if (isMobile) {
+      event.preventDefault()
+      const content = event.currentTarget as HTMLElement | null
+      content?.focus({ preventScroll: true })
+    }
+  }
+
+  return (
   <SheetPortal>
     <SheetOverlay />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(sheetVariants({ side }), className)}
+      onOpenAutoFocus={handleOpenAutoFocus}
       {...props}
     >
       {side !== "top" && (
@@ -73,7 +89,8 @@ const SheetContent = React.forwardRef<
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </SheetPortal>
-))
+  )
+})
 SheetContent.displayName = DialogPrimitive.Content.displayName
 
 const SheetHeader = ({
