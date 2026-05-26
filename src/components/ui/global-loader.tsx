@@ -6,15 +6,6 @@ export interface GlobalLoaderProps {
   className?: string
 }
 
-const triangleStyle: React.CSSProperties = {
-  width: 0,
-  height: 0,
-  borderLeft: "8px solid transparent",
-  borderRight: "8px solid transparent",
-  borderBottom: "14px solid currentColor",
-  animation: "globalLoaderPulse 1.4s ease-in-out infinite",
-}
-
 const GlobalLoader: React.FC<GlobalLoaderProps> = ({ isVisible, className }) => {
   if (!isVisible) return null
 
@@ -26,16 +17,32 @@ const GlobalLoader: React.FC<GlobalLoaderProps> = ({ isVisible, className }) => 
       )}
     >
       <style>{`
-        @keyframes globalLoaderPulse {
-          0%, 80%, 100% { transform: scale(0.4); opacity: 0.3; }
-          40% { transform: scale(1); opacity: 1; }
+        @keyframes globalLoaderSpin {
+          to { transform: rotate(1turn); }
+        }
+        .global-loader-ring {
+          position: relative;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: conic-gradient(from 0deg, hsl(var(--secondary) / 0) 0deg, hsl(var(--primary)) 250deg, hsl(var(--secondary)) 360deg);
+          -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 calc(100% - 4px));
+                  mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 calc(100% - 4px));
+          animation: globalLoaderSpin 0.9s cubic-bezier(0.76, 0.05, 0.24, 0.95) infinite;
+        }
+        .global-loader-ring::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 50%;
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          background: hsl(var(--secondary));
+          transform: translateX(-50%);
         }
       `}</style>
-      <div className="text-primary" style={{ position: "relative", width: 44, height: 38 }}>
-        <div style={{ ...triangleStyle, position: "absolute", top: 0, left: 14, animationDelay: "0s" }} />
-        <div style={{ ...triangleStyle, position: "absolute", bottom: 0, left: 0, animationDelay: "0.16s" }} />
-        <div style={{ ...triangleStyle, position: "absolute", bottom: 0, right: 0, animationDelay: "0.32s" }} />
-      </div>
+      <div className="global-loader-ring" />
     </div>
   )
 }
