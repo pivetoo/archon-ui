@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Bell, ChevronDown, ChevronLeft, LogOut, Moon, Sun, Menu, Check, UserRound } from "lucide-react"
+import { Bell, ChevronDown, LogOut, Moon, Sun, Menu, Check, UserRound } from "lucide-react"
 import { cn, getInitials } from "../../lib/utils"
 import { getApiBaseURL } from "../../services/http/client"
 import { Breadcrumb } from "./breadcrumb"
@@ -493,11 +493,11 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                             <LanguageFlag culture={i18n.culture} />
                             <span>{translate("nav.language")}</span>
                           </div>
-                          <ChevronLeft className={cn("h-4 w-4 text-muted-foreground transition-transform", isLanguageMenuOpen && "-rotate-90")} />
+                          <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", isLanguageMenuOpen && "rotate-180")} />
                         </button>
 
                         {isLanguageMenuOpen && (
-                          <div className="absolute right-full top-0 mr-2 w-56 rounded-md border border-border bg-popover py-1 shadow-lg">
+                          <div className="mt-1 border-t border-border/60 bg-muted/30">
                             {supportedCultures.map((culture) => (
                               <button
                                 key={culture.value}
@@ -508,7 +508,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                                   setIsUserMenuOpen(false)
                                 }}
                                 className={cn(
-                                  "w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80",
+                                  "w-full flex items-center justify-between gap-3 py-2.5 pl-11 pr-4 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80",
                                   i18n.culture === culture.value && "text-primary"
                                 )}
                               >
