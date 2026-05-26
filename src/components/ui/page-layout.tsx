@@ -1,8 +1,9 @@
 import * as React from "react"
-import { Eye, Plus, Edit, Trash2, RefreshCw } from "lucide-react"
+import { Eye, Plus, Edit, Trash2, RefreshCw, MoreHorizontal } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { useI18n } from "../../i18n"
 import { Button } from "./button"
+import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "./dropdown"
 
 export interface PageAction {
   key: string
@@ -13,6 +14,8 @@ export interface PageAction {
   disabled?: boolean
   tooltip?: string
   testId?: string
+  // No mobile, mantem o botao visivel em vez de colapsar no menu "Acoes".
+  primary?: boolean
 }
 
 export interface PageLayoutProps {
@@ -146,13 +149,47 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         icon: <Plus className="h-4 w-4" />,
         variant: "secondary",
         onClick: onAdd,
-        testId: "crud-add-button"
+        testId: "crud-add-button",
+        primary: true
       })
     }
   }
 
   const allActions = [...actions, ...defaultActions]
   const isCompact = density === "compact"
+
+  // No mobile, colapsa as acoes em um menu "Acoes" quando ha muitas; mantem as marcadas como primary visiveis.
+  const hasOverflow = allActions.length > 2
+  const mobilePrimaryActions = hasOverflow ? allActions.filter((a) => a.primary) : allActions
+  const mobileOverflowActions = hasOverflow ? allActions.filter((a) => !a.primary) : []
+
+  const renderActionButton = (action: PageAction, extraClassName?: string) => {
+    const button = (
+      <Button
+        key={action.key}
+        data-testid={action.testId}
+        variant={action.variant || "outline"}
+        size="sm"
+        onClick={action.onClick}
+        disabled={action.disabled}
+        title={!action.disabled ? action.tooltip : undefined}
+        className={cn("gap-2 rounded-lg px-3.5", extraClassName)}
+      >
+        {action.icon}
+        {action.label}
+      </Button>
+    )
+
+    if (action.disabled && action.tooltip) {
+      return (
+        <span key={action.key} title={action.tooltip} className="inline-flex cursor-not-allowed">
+          {button}
+        </span>
+      )
+    }
+
+    return button
+  }
 
   return (
     <div className={cn("flex flex-col h-full w-full", className)}>
@@ -205,36 +242,47 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
             </div>
 
             {(allActions.length > 0 || actionsSlot) && (
-              <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto xl:justify-end">
-                {actionsSlot}
-                {allActions.map((action) => {
-                  const button = (
-                    <Button
-                      key={action.key}
-                      data-testid={action.testId}
-                      variant={action.variant || "outline"}
-                      size="sm"
-                      onClick={action.onClick}
-                      disabled={action.disabled}
-                      title={!action.disabled ? action.tooltip : undefined}
-                      className="gap-2 rounded-lg px-3.5"
-                    >
-                      {action.icon}
-                      {action.label}
-                    </Button>
-                  )
+              <>
+                {/* Desktop: acoes inline */}
+                <div className="hidden w-full flex-wrap items-center gap-2 xl:flex xl:w-auto xl:justify-end">
+                  {actionsSlot}
+                  {allActions.map((action) => renderActionButton(action))}
+                </div>
 
-                  if (action.disabled && action.tooltip) {
-                    return (
-                      <span key={action.key} title={action.tooltip} className="inline-flex cursor-not-allowed">
-                        {button}
-                      </span>
-                    )
-                  }
-
-                  return button
-                })}
-              </div>
+                {/* Mobile/tablet: acoes primarias visiveis + menu de overflow */}
+                <div className="flex w-full items-center gap-2 xl:hidden">
+                  {actionsSlot}
+                  {mobilePrimaryActions.map((action) => renderActionButton(action, "flex-1"))}
+                  {mobileOverflowActions.length > 0 && (
+                    <Dropdown>
+                      <DropdownTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className={cn("gap-2 rounded-lg px-3.5", mobilePrimaryActions.length === 0 && "flex-1")}
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                          {resolveTooltip("pageLayout.action.more", "Ações")}
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownContent align="end" className="min-w-[12rem]">
+                        {mobileOverflowActions.map((action) => (
+                          <DropdownItem
+                            key={action.key}
+                            data-testid={action.testId}
+                            disabled={action.disabled}
+                            onSelect={() => action.onClick()}
+                            className={cn("gap-2", action.variant === "danger" && "text-destructive focus:text-destructive")}
+                          >
+                            {action.icon}
+                            {action.label}
+                          </DropdownItem>
+                        ))}
+                      </DropdownContent>
+                    </Dropdown>
+                  )}
+                </div>
+              </>
             )}
           </div>
 
