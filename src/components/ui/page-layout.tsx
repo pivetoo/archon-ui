@@ -294,7 +294,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         </div>
       </div>
 
-      <div className="overflow-auto">
+      <div className="overflow-x-hidden overflow-y-auto">
         {children}
       </div>
     </div>
