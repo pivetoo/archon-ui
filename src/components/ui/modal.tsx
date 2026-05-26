@@ -32,9 +32,9 @@ const modalContentVariants = cva(
   [
     "fixed z-[201] flex flex-col bg-background shadow-lg duration-200 overflow-y-auto",
     // mobile: bottom-sheet sobe de baixo — !w-full sobrescreve inline style width:95vw dos modais
-    "inset-x-0 bottom-0 !w-full max-h-[90vh] rounded-t-2xl p-4 gap-3",
+    "inset-x-0 bottom-0 !w-full max-h-[90dvh] rounded-t-2xl p-4 gap-3",
     // sm+: dialog centralizado flutuante
-    "sm:inset-auto sm:left-[50%] sm:top-[50%] sm:w-full sm:min-h-0 sm:max-h-[90vh] sm:rounded-xl",
+    "sm:inset-auto sm:left-[50%] sm:top-[50%] sm:w-full sm:min-h-0 sm:max-h-[90dvh] sm:rounded-xl",
     "sm:translate-x-[-50%] sm:translate-y-[-50%] sm:border sm:p-6 sm:gap-4",
     // animações
     "data-[state=open]:animate-in data-[state=closed]:animate-out",

@@ -33,13 +33,13 @@ const sheetVariants = cva(
   {
     variants: {
       side: {
-        top: "inset-x-0 top-0 max-h-[85vh] border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
+        top: "inset-x-0 top-0 max-h-[85dvh] border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
         bottom:
-          "inset-x-0 bottom-0 max-h-[85vh] border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+          "inset-x-0 bottom-0 max-h-[85dvh] border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
         // mobile: bottom-sheet (sobe de baixo); sm+: painel lateral
-        left: "inset-x-0 bottom-0 max-h-[90vh] w-full rounded-t-2xl border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:inset-y-0 sm:inset-x-auto sm:bottom-auto sm:left-0 sm:h-full sm:max-h-none sm:w-[85vw] sm:max-w-sm sm:rounded-t-none sm:border-t-0 sm:border-r sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=closed]:slide-out-to-left sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:slide-in-from-left",
+        left: "inset-x-0 bottom-0 max-h-[90dvh] w-full rounded-t-2xl border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:inset-y-0 sm:inset-x-auto sm:bottom-auto sm:left-0 sm:h-full sm:max-h-none sm:w-[85vw] sm:max-w-sm sm:rounded-t-none sm:border-t-0 sm:border-r sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=closed]:slide-out-to-left sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:slide-in-from-left",
         right:
-          "inset-x-0 bottom-0 max-h-[90vh] w-full rounded-t-2xl border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:inset-y-0 sm:inset-x-auto sm:bottom-auto sm:right-0 sm:h-full sm:max-h-none sm:w-[85vw] sm:max-w-sm sm:rounded-t-none sm:border-t-0 sm:border-l sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=closed]:slide-out-to-right sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:slide-in-from-right",
+          "inset-x-0 bottom-0 max-h-[90dvh] w-full rounded-t-2xl border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:inset-y-0 sm:inset-x-auto sm:bottom-auto sm:right-0 sm:h-full sm:max-h-none sm:w-[85vw] sm:max-w-sm sm:rounded-t-none sm:border-t-0 sm:border-l sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=closed]:slide-out-to-right sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:slide-in-from-right",
       },
     },
     defaultVariants: {
