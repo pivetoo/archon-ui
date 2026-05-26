@@ -74,12 +74,29 @@ export interface ModalContentProps
 const ModalContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   ModalContentProps
->(({ className, children, size, ...props }, ref) => (
+>(({ className, children, size, onOpenAutoFocus, ...props }, ref) => {
+  const handleOpenAutoFocus = (event: Event) => {
+    if (onOpenAutoFocus) {
+      onOpenAutoFocus(event)
+      return
+    }
+    // No mobile, evitar focar o primeiro input ao abrir (abriria o teclado).
+    // Mantem o foco no proprio container para preservar o focus-trap e leitores de tela.
+    const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches
+    if (isMobile) {
+      event.preventDefault()
+      const content = event.currentTarget as HTMLElement | null
+      content?.focus({ preventScroll: true })
+    }
+  }
+
+  return (
   <ModalPortal>
     <ModalOverlay />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(modalContentVariants({ size }), className)}
+      onOpenAutoFocus={handleOpenAutoFocus}
       {...props}
     >
       <div aria-hidden className="mx-auto -mt-1 mb-1 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/25 sm:hidden" />
@@ -90,7 +107,8 @@ const ModalContent = React.forwardRef<
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </ModalPortal>
-))
+  )
+})
 ModalContent.displayName = DialogPrimitive.Content.displayName
 
 const ModalHeader = ({
