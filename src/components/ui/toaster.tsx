@@ -7,8 +7,9 @@ export function Toaster() {
   return (
     <ToastProvider>
       {toasts.map(function ({ id, title, description, action, ...props }) {
+        const duration = props.duration ?? (props.variant === "destructive" ? 10000 : 5000)
         return (
-          <Toast key={id} {...props}>
+          <Toast key={id} {...props} duration={duration}>
             {title && <ToastTitle>{title}</ToastTitle>}
             {description && (
               <ToastDescription>{description}</ToastDescription>

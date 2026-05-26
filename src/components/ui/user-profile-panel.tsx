@@ -72,7 +72,7 @@ export function UserProfilePanel({
     : t("profile.value.notDefined")
 
   return (
-    <SheetContent side="right" className={cn("w-full overflow-y-auto sm:max-w-2xl", className)}>
+    <SheetContent side="right" className={cn("w-full max-w-none overflow-y-auto sm:max-w-2xl", className)}>
       <SheetHeader className="space-y-2 border-b border-border pb-4">
         <SheetTitle>{t("profile.title")}</SheetTitle>
         <SheetDescription>{t("profile.description")}</SheetDescription>
