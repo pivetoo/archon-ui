@@ -20,6 +20,10 @@ export interface DataTableColumn<T = any> {
   sortable?: boolean
   width?: string | number
   hiddenBelow?: 'sm' | 'md' | 'lg'
+  // No layout de card (mobile): coluna-titulo do card.
+  primary?: boolean
+  // No layout de card (mobile): renderiza no canto superior direito (ex.: badge de status).
+  cardTag?: boolean
 }
 
 export interface DataTableProps<T = any> {
@@ -41,6 +45,8 @@ export interface DataTableProps<T = any> {
   page?: number
   onPageChange?: (page: number) => void
   onPageSizeChange?: (pageSize: number) => void
+  // Abaixo de md, renderiza cada registro como card empilhado (default). false mantem a tabela com scroll horizontal.
+  mobileCards?: boolean
 }
 
 interface SelectionBox {
@@ -69,6 +75,7 @@ export function DataTable<T = any>({
   page: controlledPage,
   onPageChange,
   onPageSizeChange,
+  mobileCards = true,
 }: DataTableProps<T>) {
   const { t } = useI18n()
   const isSelectable = selectable !== undefined ? selectable : !!onSelectionChange
@@ -97,6 +104,26 @@ export function DataTable<T = any>({
   }
   const getHiddenClass = (col: DataTableColumn<T>) =>
     col.hiddenBelow ? hiddenBelowMap[col.hiddenBelow] : undefined
+
+  const primaryColumn = columns.find((c) => c.primary) ?? columns[0]
+  const tagColumn = columns.find((c) => c.cardTag)
+  const cardBodyColumns = columns.filter(
+    (c) => c !== primaryColumn && c !== tagColumn && !c.hiddenBelow
+  )
+
+  const renderCellValue = (column: DataTableColumn<T>, record: T, index: number): React.ReactNode => {
+    const value = column.dataIndex ? record[column.dataIndex] : undefined
+    return column.render ? column.render(value, record, index) : ((value as React.ReactNode) || "-")
+  }
+
+  const cardTappable = !!onRowClick || !!onRowDoubleClick
+  const handleCardTap = (record: T) => {
+    if (onRowClick) {
+      onRowClick(record)
+    } else if (onRowDoubleClick) {
+      onRowDoubleClick(record)
+    }
+  }
 
   const totalPages = Math.ceil(effectiveTotalCount / pageSize) || 1
   const startIndex = (currentPage - 1) * pageSize
@@ -300,7 +327,7 @@ export function DataTable<T = any>({
     <div className={cn("flex flex-col overflow-hidden rounded-lg border border-border/70 bg-background shadow-sm", className)}>
       <div
         ref={containerRef}
-        className="relative"
+        className={cn("relative", mobileCards && "hidden md:block")}
         onClick={handleTableClick}
         onMouseDown={handleMouseDown}
       >
@@ -398,6 +425,79 @@ export function DataTable<T = any>({
           </TableBody>
         </Table>
       </div>
+
+      {mobileCards && (
+        <div className="flex flex-col gap-2.5 p-3 md:hidden">
+          {loading ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={`card-skeleton-${i}`} className="rounded-xl border border-border/70 p-3.5">
+                <div className="mb-3 h-4 w-2/3 animate-pulse rounded bg-muted" />
+                <div className="grid grid-cols-2 gap-3">
+                  {Array.from({ length: 4 }).map((__, j) => (
+                    <div key={j} className="h-3 animate-pulse rounded bg-muted" />
+                  ))}
+                </div>
+              </div>
+            ))
+          ) : data.length === 0 ? (
+            <div className="mx-auto flex max-w-sm flex-col items-center gap-2 px-4 py-12 text-center">
+              <div className="rounded-2xl border border-border/70 bg-muted/35 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                {t("common.state.noResults")}
+              </div>
+              <div className="text-base font-medium text-foreground">{resolvedEmptyText}</div>
+              <div className="text-sm text-muted-foreground">{t("common.state.adjustFilters")}</div>
+            </div>
+          ) : (
+            paginatedData.map((record, index) => {
+              const key = getRowKey(record)
+              const selected = isRowSelected(record)
+
+              return (
+                <div
+                  key={key}
+                  onClick={() => handleCardTap(record)}
+                  data-state={selected ? "selected" : ""}
+                  className={cn(
+                    "rounded-xl border border-border/70 bg-card p-3.5 transition-colors",
+                    cardTappable && "cursor-pointer active:scale-[0.99] active:bg-accent",
+                    selected && "border-secondary/50 bg-[hsl(var(--secondary)/0.12)]"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 text-[15px] font-semibold leading-tight">
+                          {renderCellValue(primaryColumn, record, index)}
+                        </div>
+                        {tagColumn && (
+                          <div className="shrink-0">{renderCellValue(tagColumn, record, index)}</div>
+                        )}
+                      </div>
+                      {cardBodyColumns.length > 0 && (
+                        <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2.5">
+                          {cardBodyColumns.map((column) => (
+                            <div key={column.key} className="min-w-0">
+                              <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                                {column.title}
+                              </div>
+                              <div className="truncate text-sm font-medium">
+                                {renderCellValue(column, record, index)}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    {cardTappable && (
+                      <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground/40" />
+                    )}
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+      )}
 
       {data.length > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border/70 bg-muted/20 px-4 py-3">
