@@ -36,9 +36,10 @@ const sheetVariants = cva(
         top: "inset-x-0 top-0 max-h-[85vh] border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
         bottom:
           "inset-x-0 bottom-0 max-h-[85vh] border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
-        left: "inset-y-0 left-0 h-full w-[85vw] max-w-sm border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left",
+        // mobile: bottom-sheet (sobe de baixo); sm+: painel lateral
+        left: "inset-x-0 bottom-0 max-h-[90vh] w-full rounded-t-2xl border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:inset-y-0 sm:inset-x-auto sm:bottom-auto sm:left-0 sm:h-full sm:max-h-none sm:w-[85vw] sm:max-w-sm sm:rounded-t-none sm:border-t-0 sm:border-r sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=closed]:slide-out-to-left sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:slide-in-from-left",
         right:
-          "inset-y-0 right-0 h-full w-[85vw] max-w-sm border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
+          "inset-x-0 bottom-0 max-h-[90vh] w-full rounded-t-2xl border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom sm:inset-y-0 sm:inset-x-auto sm:bottom-auto sm:right-0 sm:h-full sm:max-h-none sm:w-[85vw] sm:max-w-sm sm:rounded-t-none sm:border-t-0 sm:border-l sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=closed]:slide-out-to-right sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=open]:slide-in-from-right",
       },
     },
     defaultVariants: {
@@ -62,8 +63,11 @@ const SheetContent = React.forwardRef<
       className={cn(sheetVariants({ side }), className)}
       {...props}
     >
+      {side !== "top" && (
+        <div aria-hidden className="mx-auto -mt-1 mb-1 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/25 sm:hidden" />
+      )}
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+      <DialogPrimitive.Close className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
         <X className="h-4 w-4" />
         <span className="sr-only">Fechar</span>
       </DialogPrimitive.Close>
