@@ -522,7 +522,7 @@ export function DataTable<T = any>({
       {data.length > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border/70 bg-muted/20 px-4 py-3">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <label htmlFor={pageSizeSelectId}>{t("common.table.rowsPerPage")}</label>
+            <label htmlFor={pageSizeSelectId} className="hidden sm:inline">{t("common.table.rowsPerPage")}</label>
             <select
               id={pageSizeSelectId}
               name="pageSize"
@@ -551,7 +551,7 @@ export function DataTable<T = any>({
               size="sm"
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
-              className="h-9 w-9 rounded-md p-0"
+              className="hidden h-9 w-9 rounded-md p-0 sm:inline-flex"
             >
               <ChevronsLeft className="h-4 w-4" />
             </Button>
@@ -581,7 +581,7 @@ export function DataTable<T = any>({
               size="sm"
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
-              className="h-9 w-9 rounded-md p-0"
+              className="hidden h-9 w-9 rounded-md p-0 sm:inline-flex"
             >
               <ChevronsRight className="h-4 w-4" />
             </Button>
