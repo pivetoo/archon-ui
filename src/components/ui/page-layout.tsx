@@ -243,23 +243,23 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
 
             {(allActions.length > 0 || actionsSlot) && (
               <>
-                {/* Desktop: acoes inline */}
-                <div className="hidden w-full flex-wrap items-center gap-2 xl:flex xl:w-auto xl:justify-end">
+                {/* Desktop/notebook (>=lg): acoes inline */}
+                <div className="hidden w-full flex-wrap items-center gap-2 lg:flex lg:w-auto lg:justify-end">
                   {actionsSlot}
                   {allActions.map((action) => renderActionButton(action))}
                 </div>
 
-                {/* Mobile/tablet: acoes primarias visiveis + menu de overflow */}
-                <div className="flex w-full items-center gap-2 xl:hidden">
+                {/* Mobile/tablet (<lg): acoes primarias visiveis + menu de overflow */}
+                <div className="flex w-full items-center gap-2 md:justify-end lg:hidden">
                   {actionsSlot}
-                  {mobilePrimaryActions.map((action) => renderActionButton(action, "flex-1"))}
+                  {mobilePrimaryActions.map((action) => renderActionButton(action, "flex-1 md:flex-none"))}
                   {mobileOverflowActions.length > 0 && (
                     <Dropdown>
                       <DropdownTrigger asChild>
                         <Button
                           variant="outline"
                           size="sm"
-                          className={cn("gap-2 rounded-lg px-3.5", mobilePrimaryActions.length === 0 && "flex-1")}
+                          className={cn("gap-2 rounded-lg px-3.5", mobilePrimaryActions.length === 0 && "flex-1 md:flex-none")}
                         >
                           <MoreHorizontal className="h-4 w-4" />
                           {resolveTooltip("pageLayout.action.more", "Ações")}

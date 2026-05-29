@@ -252,10 +252,11 @@ export declare interface ButtonProps extends React_2.ButtonHTMLAttributes<HTMLBu
     fullWidth?: boolean;
     icon?: React_2.ReactNode;
     iconPosition?: "left" | "right";
+    tooltip?: string;
 }
 
 export declare const buttonVariants: (props?: ({
-    variant?: "primary" | "secondary" | "success" | "error" | "danger" | "warning" | "info" | "outline" | "outline-secondary" | "outline-primary" | "outline-success" | "outline-warning" | "outline-danger" | "ghost" | "text" | "link" | "dark" | null | undefined;
+    variant?: "link" | "text" | "primary" | "secondary" | "success" | "error" | "danger" | "warning" | "info" | "outline" | "outline-secondary" | "outline-primary" | "outline-success" | "outline-warning" | "outline-danger" | "ghost" | "dark" | null | undefined;
     size?: "sm" | "md" | "lg" | "icon" | null | undefined;
 } & ClassProp) | undefined) => string;
 
@@ -367,7 +368,7 @@ export declare interface CreateUserInContractPayload {
     roleId: number;
 }
 
-export declare function DataTable<T = any>({ columns, data, loading, rowKey, selectable, selectedRows, onSelectionChange, onRowClick, onRowDoubleClick, className, emptyText, dragSelect, pageSize: initialPageSize, pageSizeOptions, totalCount, page: controlledPage, onPageChange, onPageSizeChange, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T = any>({ columns, data, loading, rowKey, selectable, selectedRows, onSelectionChange, onRowClick, onRowDoubleClick, className, emptyText, dragSelect, pageSize: initialPageSize, pageSizeOptions, totalCount, page: controlledPage, onPageChange, onPageSizeChange, mobileCards, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T = any> {
     key: string;
@@ -377,6 +378,8 @@ export declare interface DataTableColumn<T = any> {
     sortable?: boolean;
     width?: string | number;
     hiddenBelow?: 'sm' | 'md' | 'lg';
+    primary?: boolean;
+    cardTag?: boolean;
 }
 
 export declare function DataTablePreview<T = any>({ columns, data, rowKey, selectedRow, onRowSelect, renderDetail, renderPagination, className, tableClassName, detailClassName, gridRatio, }: DataTablePreviewProps<T>): JSX.Element;
@@ -422,6 +425,7 @@ export declare interface DataTableProps<T = any> {
     page?: number;
     onPageChange?: (page: number) => void;
     onPageSizeChange?: (pageSize: number) => void;
+    mobileCards?: boolean;
 }
 
 export declare const Dropdown: React_2.FC<DropdownMenuPrimitive.DropdownMenuProps>;
@@ -462,6 +466,15 @@ export declare const DropdownSubTrigger: React_2.ForwardRefExoticComponent<Omit<
 } & React_2.RefAttributes<HTMLDivElement>>;
 
 export declare const DropdownTrigger: React_2.ForwardRefExoticComponent<DropdownMenuPrimitive.DropdownMenuTriggerProps & React_2.RefAttributes<HTMLButtonElement>>;
+
+export declare const EmptyState: React_2.ForwardRefExoticComponent<EmptyStateProps & React_2.RefAttributes<HTMLDivElement>>;
+
+export declare interface EmptyStateProps extends Omit<React_2.HTMLAttributes<HTMLDivElement>, "title"> {
+    icon?: React_2.ReactNode;
+    title: React_2.ReactNode;
+    description?: React_2.ReactNode;
+    action?: React_2.ReactNode;
+}
 
 export declare function FilterDropdown({ label, value, options, onChange, clearLabel, allValue, }: FilterDropdownProps): JSX.Element;
 
@@ -519,6 +532,21 @@ export declare interface FilterSection {
     onChange: (value: string) => void;
     /** Texto do placeholder/all option. Default: "Todos". */
     allLabel?: string;
+}
+
+export declare const FormField: {
+    ({ label, htmlFor, required, error, helperText, className, children }: FormFieldProps): JSX.Element;
+    displayName: string;
+};
+
+export declare interface FormFieldProps {
+    label?: React_2.ReactNode;
+    htmlFor?: string;
+    required?: boolean;
+    error?: string;
+    helperText?: string;
+    className?: string;
+    children: React_2.ReactNode;
 }
 
 export declare const getApiBaseURL: () => string;
@@ -667,18 +695,22 @@ export declare interface ModalContentProps extends React_2.ComponentPropsWithout
 }
 
 declare const modalContentVariants: (props?: ({
-    size?: "sm" | "md" | "lg" | "form" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full" | null | undefined;
+    size?: "form" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 export declare const ModalDescription: React_2.ForwardRefExoticComponent<Omit<DialogPrimitive.DialogDescriptionProps & React_2.RefAttributes<HTMLParagraphElement>, "ref"> & React_2.RefAttributes<HTMLParagraphElement>>;
 
 export declare const ModalFooter: {
-    ({ className, ...props }: React_2.HTMLAttributes<HTMLDivElement>): JSX.Element;
+    ({ className, bordered, ...props }: React_2.HTMLAttributes<HTMLDivElement> & {
+        bordered?: boolean;
+    }): JSX.Element;
     displayName: string;
 };
 
 export declare const ModalHeader: {
-    ({ className, ...props }: React_2.HTMLAttributes<HTMLDivElement>): JSX.Element;
+    ({ className, bordered, ...props }: React_2.HTMLAttributes<HTMLDivElement> & {
+        bordered?: boolean;
+    }): JSX.Element;
     displayName: string;
 };
 
@@ -778,6 +810,7 @@ export declare interface PageAction {
     disabled?: boolean;
     tooltip?: string;
     testId?: string;
+    primary?: boolean;
 }
 
 export declare interface PagedRequest {
@@ -1026,7 +1059,7 @@ export declare const SheetTitle: React_2.ForwardRefExoticComponent<Omit<DialogPr
 export declare const SheetTrigger: React_2.ForwardRefExoticComponent<DialogPrimitive.DialogTriggerProps & React_2.RefAttributes<HTMLButtonElement>>;
 
 declare const sheetVariants: (props?: ({
-    side?: "left" | "right" | "top" | "bottom" | null | undefined;
+    side?: "top" | "right" | "bottom" | "left" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 export declare const Sidebar: React_2.ForwardRefExoticComponent<SidebarProps & React_2.RefAttributes<HTMLDivElement>>;
@@ -1090,6 +1123,8 @@ export declare interface SidebarProps extends React_2.HTMLAttributes<HTMLDivElem
     mobileWidth?: number;
 }
 
+export declare function Skeleton({ className, ...props }: React_2.HTMLAttributes<HTMLDivElement>): JSX.Element;
+
 declare interface State {
     toasts: ToasterToast[];
 }
@@ -1142,6 +1177,13 @@ declare interface TabsListProps extends React_2.ComponentPropsWithoutRef<typeof 
 export declare const TabsTrigger: React_2.ForwardRefExoticComponent<Omit<TabsPrimitive.TabsTriggerProps & React_2.RefAttributes<HTMLButtonElement>, "ref"> & React_2.RefAttributes<HTMLButtonElement>>;
 
 export declare type TabsVariant = "default" | "underline";
+
+export declare const Textarea: React_2.ForwardRefExoticComponent<TextareaProps & React_2.RefAttributes<HTMLTextAreaElement>>;
+
+export declare interface TextareaProps extends React_2.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    error?: boolean;
+    helperText?: string;
+}
 
 declare interface ThemeContextType {
     isDark: boolean;
