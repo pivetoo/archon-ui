@@ -249,10 +249,9 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                   {allActions.map((action) => renderActionButton(action))}
                 </div>
 
-                {/* Mobile/tablet (<lg): acoes primarias visiveis + menu de overflow */}
+                {/* Mobile/tablet (<lg): menu de overflow a esquerda, acoes primarias (Novo) a direita */}
                 <div className="flex w-full items-center gap-2 md:justify-end lg:hidden">
                   {actionsSlot}
-                  {mobilePrimaryActions.map((action) => renderActionButton(action, action.primary ? "flex-1 md:flex-none" : undefined))}
                   {mobileOverflowActions.length > 0 && (
                     <Dropdown>
                       <DropdownTrigger asChild>
@@ -281,6 +280,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                       </DropdownContent>
                     </Dropdown>
                   )}
+                  {mobilePrimaryActions.map((action) => renderActionButton(action, action.primary ? "flex-1 md:flex-none" : undefined))}
                 </div>
               </>
             )}

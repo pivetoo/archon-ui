@@ -28233,7 +28233,6 @@ const gne = ({
               ] }),
               /* @__PURE__ */ D("div", { className: "flex w-full items-center gap-2 md:justify-end lg:hidden", children: [
                 a,
-                $.map((Y) => G(Y, Y.primary ? "flex-1 md:flex-none" : void 0)),
                 q.length > 0 && /* @__PURE__ */ D(PM, { children: [
                   /* @__PURE__ */ h(IM, { asChild: !0, children: /* @__PURE__ */ D(
                     vt,
@@ -28261,7 +28260,8 @@ const gne = ({
                     },
                     Y.key
                   )) })
-                ] })
+                ] }),
+                $.map((Y) => G(Y, Y.primary ? "flex-1 md:flex-none" : void 0))
               ] })
             ] })
           ] }),
