@@ -302,13 +302,12 @@ const RouteButton: React.FC<{ route: NavRoute; active: boolean; colorKey: NavMod
 
 export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePath, onRouteClick, onCollapse }) => {
   const colors = MODULE_COLORS[module.color]
-  const initialExpanded = React.useMemo(() => {
-    const map: Record<string, boolean> = {}
-    module.subGroups?.forEach((g) => { map[g.label] = true })
-    return map
-  }, [module])
-  const [expanded, setExpanded] = React.useState<Record<string, boolean>>(initialExpanded)
-  React.useEffect(() => { setExpanded(initialExpanded) }, [initialExpanded])
+  const [openState, setOpenState] = React.useState<Record<string, boolean>>({})
+  const isGroupOpen = (label: string) => openState[`${module.key}::${label}`] ?? true
+  const toggleGroup = (label: string) => {
+    const stateKey = `${module.key}::${label}`
+    setOpenState((prev) => ({ ...prev, [stateKey]: !(prev[stateKey] ?? true) }))
+  }
 
   const isRouteActive = (route: NavRoute) => activeRoutePath != null && routeMatches(route.path, activeRoutePath)
 
@@ -338,12 +337,12 @@ export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePat
         ))}
 
         {module.subGroups?.map((group) => {
-          const isOpen = expanded[group.label] !== false
+          const isOpen = isGroupOpen(group.label)
           return (
             <div key={group.label} className="mb-3">
               <button
                 type="button"
-                onClick={() => setExpanded((prev) => ({ ...prev, [group.label]: !isOpen }))}
+                onClick={() => toggleGroup(group.label)}
                 aria-expanded={isOpen}
                 className="w-full flex items-center justify-between px-3 py-1 mb-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
               >
