@@ -99,6 +99,7 @@ export function useModuleNav(modules: ModuleNavConfig) {
 
   const openModule = useMemo(() => modules.find((m) => m.key === openModuleKey) ?? null, [modules, openModuleKey])
   const panelOpen = !collapsed && !!openModule && !isSingleRouteModule(openModule)
+  const highlightedModuleKey = panelOpen ? openModuleKey : activeModuleKey
 
-  return { activeModuleKey, activeRoutePath, openModule, panelOpen, collapsed, setCollapsed, toggleCollapsed, handleModuleClick, navigate }
+  return { activeModuleKey, activeRoutePath, highlightedModuleKey, openModule, panelOpen, collapsed, setCollapsed, toggleCollapsed, handleModuleClick, navigate }
 }

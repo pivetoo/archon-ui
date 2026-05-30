@@ -153,7 +153,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             <>
               <ModuleRail
                 modules={moduleNav!}
-                activeModuleKey={mn.activeModuleKey}
+                activeModuleKey={mn.highlightedModuleKey}
                 onModuleClick={mn.handleModuleClick}
                 brand={logo}
               />

@@ -1408,6 +1408,7 @@ export declare const useI18n: () => I18nContextValue;
 export declare function useModuleNav(modules: ModuleNavConfig): {
     activeModuleKey: string | null;
     activeRoutePath: string | null;
+    highlightedModuleKey: string | null;
     openModule: NavModule | null;
     panelOpen: boolean;
     collapsed: boolean;
