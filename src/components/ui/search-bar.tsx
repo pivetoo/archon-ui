@@ -46,7 +46,7 @@ const SearchBar = React.forwardRef<HTMLInputElement, SearchBarProps>(
           value={value ?? ""}
           onChange={(event) => onChange?.(event.target.value)}
           placeholder={placeholder}
-          className="pl-9 focus-visible:border-secondary focus-visible:ring-[3px] focus-visible:ring-secondary/20"
+          className="pl-9 caret-secondary focus-visible:border-secondary focus-visible:ring-[3px] focus-visible:ring-secondary/20"
           {...props}
         />
       </div>

@@ -54,6 +54,8 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, items, o
     else if (e.key === "Escape") { e.preventDefault(); onClose() }
   }
 
+  const kbd = "inline-flex h-[18px] min-w-[18px] items-center justify-center rounded border border-border bg-card px-1 font-mono text-[10px] text-muted-foreground"
+
   return (
     <div className="fixed inset-0 z-[200] flex items-start justify-center pt-[12vh] px-4" role="dialog" aria-modal="true">
       <div className="fixed inset-0 bg-black/40" onClick={onClose} />
@@ -65,7 +67,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, items, o
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={placeholder}
-            className="flex-1 bg-transparent py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none"
+            className="flex-1 bg-transparent py-3.5 text-sm text-foreground placeholder:text-muted-foreground caret-secondary outline-none"
           />
           <kbd className="text-[10px] font-mono text-muted-foreground border border-border rounded px-1.5 py-0.5">ESC</kbd>
         </div>
@@ -90,6 +92,10 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, items, o
               </button>
             ))
           )}
+        </div>
+        <div className="flex items-center gap-4 border-t border-border bg-muted/40 px-4 py-2.5 text-[11px] text-muted-foreground">
+          <span className="flex items-center gap-1.5"><kbd className={kbd}>↑</kbd><kbd className={kbd}>↓</kbd>navegar</span>
+          <span className="flex items-center gap-1.5"><kbd className={kbd}>↵</kbd>abrir</span>
         </div>
       </div>
     </div>
