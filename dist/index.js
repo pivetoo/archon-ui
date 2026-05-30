@@ -12485,17 +12485,17 @@ const cv = y.forwardRef(
       onClick: a,
       "aria-label": s["aria-label"] ?? n ?? "Buscar",
       className: J(
-        "group relative flex h-9 items-center rounded-md border border-input bg-background pl-9 pr-3 text-left text-sm text-muted-foreground shadow-sm transition-colors hover:bg-accent dark:hover:bg-accent/80 focus-visible:border-secondary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-secondary/20",
+        "relative flex h-9 items-center rounded-[10px] border border-input bg-background pl-9 pr-3 text-left text-sm text-muted-foreground shadow-sm transition-colors hover:bg-accent dark:hover:bg-accent/80 focus-visible:border-secondary focus-visible:outline-none",
         r
       ),
       children: [
-        /* @__PURE__ */ f(Zg, { className: "pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-visible:text-secondary" }),
+        /* @__PURE__ */ f(Zg, { className: "pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" }),
         /* @__PURE__ */ f("span", { className: "flex-1 truncate", children: n ?? "Buscar…" }),
         i && /* @__PURE__ */ f("kbd", { className: "ml-2 flex-shrink-0 rounded border border-border px-1.5 py-0.5 font-mono text-[10px]", children: i })
       ]
     }
-  ) : /* @__PURE__ */ I("div", { className: J("group relative w-full", r), children: [
-    /* @__PURE__ */ f(Zg, { className: "pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-secondary" }),
+  ) : /* @__PURE__ */ I("div", { className: J("relative w-full", r), children: [
+    /* @__PURE__ */ f(Zg, { className: "pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" }),
     /* @__PURE__ */ f(
       Dt,
       {
@@ -12503,7 +12503,7 @@ const cv = y.forwardRef(
         value: e ?? "",
         onChange: (l) => t?.(l.target.value),
         placeholder: n,
-        className: "pl-9 caret-secondary focus-visible:border-secondary focus-visible:ring-[3px] focus-visible:ring-secondary/20",
+        className: "rounded-[10px] pl-9 focus-visible:border-secondary focus-visible:ring-0",
         ...s
       }
     )
@@ -28268,7 +28268,7 @@ const H5 = ({ open: e, onClose: t, items: n, onSelect: r, placeholder: o = "Busc
             value: a,
             onChange: (g) => i(g.target.value),
             placeholder: o,
-            className: "flex-1 bg-transparent py-3.5 text-sm text-foreground placeholder:text-muted-foreground caret-secondary outline-none"
+            className: "flex-1 bg-transparent py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none"
           }
         ),
         /* @__PURE__ */ f("kbd", { className: "text-[10px] font-mono text-muted-foreground border border-border rounded px-1.5 py-0.5", children: "ESC" })

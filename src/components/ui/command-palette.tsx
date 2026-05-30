@@ -67,7 +67,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, items, o
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={placeholder}
-            className="flex-1 bg-transparent py-3.5 text-sm text-foreground placeholder:text-muted-foreground caret-secondary outline-none"
+            className="flex-1 bg-transparent py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none"
           />
           <kbd className="text-[10px] font-mono text-muted-foreground border border-border rounded px-1.5 py-0.5">ESC</kbd>
         </div>
