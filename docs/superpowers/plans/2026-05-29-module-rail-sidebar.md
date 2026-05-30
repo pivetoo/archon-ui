@@ -205,9 +205,9 @@ export function useModuleNav(modules: ModuleNavConfig) {
   const toggleCollapsed = useCallback(() => setCollapsed(!collapsed), [collapsed, setCollapsed])
 
   const handleModuleClick = useCallback((moduleKey: string) => {
-    const module = modules.find((m) => m.key === moduleKey)
-    if (!module) return
-    const routes = moduleRoutes(module)
+    const navModule = modules.find((m) => m.key === moduleKey)
+    if (!navModule) return
+    const routes = moduleRoutes(navModule)
     if (routes.length === 1) {
       navigate(routes[0].path)
       return
