@@ -7,6 +7,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { JSX } from 'react/jsx-runtime';
 import { LucideProps } from 'lucide-react';
+import { NavigateFunction } from 'react-router';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
 import * as React_2 from 'react';
@@ -96,6 +97,8 @@ export declare interface AppLayoutProps {
     };
     menuItems?: SidebarItemData[];
     menuGroups?: SidebarGroup[];
+    navMode?: NavMode;
+    moduleNav?: ModuleNavConfig;
     initialCollapsed?: boolean;
     onLogout?: () => void;
     notifications?: NotificationItem[];
@@ -428,6 +431,10 @@ export declare interface DataTableProps<T = any> {
     mobileCards?: boolean;
 }
 
+export declare function deriveActiveModuleKey(modules: ModuleNavConfig, pathname: string): string | null;
+
+export declare function deriveActiveRoutePath(modules: ModuleNavConfig, pathname: string): string | null;
+
 export declare const Dropdown: React_2.FC<DropdownMenuPrimitive.DropdownMenuProps>;
 
 export declare const DropdownCheckboxItem: React_2.ForwardRefExoticComponent<Omit<DropdownMenuPrimitive.DropdownMenuCheckboxItemProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
@@ -626,6 +633,8 @@ export declare interface InputProps extends React_2.InputHTMLAttributes<HTMLInpu
     helperText?: string;
 }
 
+export declare function isSingleRouteModule(module: NavModule): boolean;
+
 export declare const LanguageFlag: React_2.FC<LanguageFlagProps>;
 
 export declare interface LanguageFlagProps {
@@ -728,10 +737,45 @@ export declare interface Module {
     icon?: React_2.ReactNode;
 }
 
+export declare type ModuleNavConfig = NavModule[];
+
+export declare const ModuleNavMobile: React_2.FC<ModuleNavMobileProps>;
+
+export declare interface ModuleNavMobileProps {
+    modules: ModuleNavConfig;
+    activeModuleKey: string | null;
+    activeRoutePath: string | null;
+    isOpen: boolean;
+    onClose: () => void;
+    onRouteClick: (path: string) => void;
+    brand?: React_2.ReactNode;
+}
+
+export declare const ModulePanel: React_2.FC<ModulePanelProps>;
+
+export declare interface ModulePanelProps {
+    module: NavModule;
+    activeRoutePath: string | null;
+    onRouteClick: (path: string) => void;
+    onCollapse: () => void;
+}
+
+export declare const ModuleRail: React_2.FC<ModuleRailProps>;
+
+export declare interface ModuleRailProps {
+    modules: ModuleNavConfig;
+    activeModuleKey: string | null;
+    onModuleClick: (key: string) => void;
+    brand?: React_2.ReactNode;
+}
+
+export declare function moduleRoutes(module: NavModule): NavRoute[];
+
 export declare const Navbar: React_2.ForwardRefExoticComponent<NavbarProps & React_2.RefAttributes<HTMLElement>>;
 
 export declare interface NavbarProps extends React_2.HTMLAttributes<HTMLElement> {
     isCollapsed?: boolean;
+    leftOffset?: number;
     isMobile?: boolean;
     onMobileMenuToggle?: () => void;
     breadcrumbs?: BreadcrumbItem[];
@@ -765,6 +809,30 @@ export declare interface NavigationConfig {
     basePath?: string;
     items?: SidebarItemData[];
     groups?: SidebarGroup[];
+}
+
+export declare type NavMode = 'flat' | 'module-rail';
+
+export declare interface NavModule {
+    key: string;
+    label: string;
+    icon: React_2.ReactNode;
+    group: 'op' | 'sys';
+    routes?: NavRoute[];
+    subGroups?: NavSubGroup[];
+}
+
+export declare interface NavRoute {
+    key: string;
+    label: string;
+    path: string;
+    icon: React_2.ReactNode;
+    badge?: number;
+}
+
+export declare interface NavSubGroup {
+    label: string;
+    routes: NavRoute[];
 }
 
 export declare interface NotificationItem {
@@ -947,6 +1015,8 @@ export declare interface RequestState<T = unknown> {
 export declare interface RevokeRefreshTokenRequest {
     refreshToken: string;
 }
+
+export declare function routeMatches(routePath: string, pathname: string): boolean;
 
 export declare function SearchableSelect({ value, onValueChange, options, placeholder, searchPlaceholder, disabled, onSearch, }: SearchableSelectProps): JSX.Element;
 
@@ -1334,6 +1404,18 @@ export declare const useFormErrors: () => {
 export declare const useGlobalLoader: () => GlobalLoaderContextType;
 
 export declare const useI18n: () => I18nContextValue;
+
+export declare function useModuleNav(modules: ModuleNavConfig): {
+    activeModuleKey: string | null;
+    activeRoutePath: string | null;
+    openModule: NavModule | null;
+    panelOpen: boolean;
+    collapsed: boolean;
+    setCollapsed: (value: boolean) => void;
+    toggleCollapsed: () => void;
+    handleModuleClick: (moduleKey: string) => void;
+    navigate: NavigateFunction;
+};
 
 export declare function useNotifications(options?: UseNotificationsOptions): UseNotificationsReturn;
 

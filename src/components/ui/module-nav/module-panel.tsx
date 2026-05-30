@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '../../../lib/utils'
-import { MODULE_COLORS } from './module-colors'
 import type { NavModule, NavRoute } from './types'
 import { routeMatches } from '../../../hooks/useModuleNav'
 
@@ -12,8 +11,7 @@ export interface ModulePanelProps {
   onCollapse: () => void
 }
 
-const RouteButton: React.FC<{ route: NavRoute; active: boolean; colorKey: NavModule['color']; onClick: () => void }> = ({ route, active, colorKey, onClick }) => {
-  const colors = MODULE_COLORS[colorKey]
+const RouteButton: React.FC<{ route: NavRoute; active: boolean; onClick: () => void }> = ({ route, active, onClick }) => {
   return (
     <button
       type="button"
@@ -22,11 +20,11 @@ const RouteButton: React.FC<{ route: NavRoute; active: boolean; colorKey: NavMod
       className={cn(
         'relative flex w-full items-center gap-3 rounded-md px-3 py-2 my-0.5 text-sm font-medium transition-colors text-muted-foreground',
         'hover:bg-accent dark:hover:bg-accent/80 hover:text-foreground',
-        active && cn(colors.activeBg, colors.activeText, 'font-semibold')
+        active && 'bg-primary/10 text-primary font-semibold'
       )}
     >
-      {active && <span className={cn('absolute left-0 top-0 bottom-0 w-[3px] rounded-r', colors.bar)} />}
-      <span className={cn('flex items-center justify-center w-5 h-5 flex-shrink-0', active && colors.icon)}>{route.icon}</span>
+      {active && <span className="absolute left-0 top-0 bottom-0 w-[3px] rounded-r bg-primary" />}
+      <span className={cn('flex items-center justify-center w-5 h-5 flex-shrink-0', active && 'text-primary')}>{route.icon}</span>
       <span className="flex-1 text-left whitespace-nowrap overflow-hidden text-ellipsis">{route.label}</span>
       {route.badge != null && route.badge > 0 && (
         <span className="ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
@@ -38,7 +36,6 @@ const RouteButton: React.FC<{ route: NavRoute; active: boolean; colorKey: NavMod
 }
 
 export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePath, onRouteClick, onCollapse }) => {
-  const colors = MODULE_COLORS[module.color]
   const [openState, setOpenState] = React.useState<Record<string, boolean>>({})
   const isGroupOpen = (label: string) => openState[`${module.key}::${label}`] ?? true
   const toggleGroup = (label: string) => {
@@ -55,7 +52,7 @@ export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePat
     >
       <div className="flex items-center justify-between min-h-[60px] px-4 border-b border-border/60">
         <div className="flex items-center gap-2.5 min-w-0">
-          <span className={cn('flex items-center justify-center w-7 h-7 rounded-md', colors.activeBg, colors.icon)}>{module.icon}</span>
+          <span className="flex items-center justify-center w-7 h-7 rounded-md bg-primary/10 text-primary">{module.icon}</span>
           <span className="font-semibold text-base text-foreground tracking-tight truncate">{module.label}</span>
         </div>
         <button
@@ -70,7 +67,7 @@ export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePat
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden p-2 scrollbar-hide">
         {module.routes?.map((route) => (
-          <RouteButton key={route.key} route={route} active={isRouteActive(route)} colorKey={module.color} onClick={() => onRouteClick(route.path)} />
+          <RouteButton key={route.key} route={route} active={isRouteActive(route)} onClick={() => onRouteClick(route.path)} />
         ))}
 
         {module.subGroups?.map((group) => {
@@ -87,7 +84,7 @@ export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePat
                 {isOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
               </button>
               {isOpen && group.routes.map((route) => (
-                <RouteButton key={route.key} route={route} active={isRouteActive(route)} colorKey={module.color} onClick={() => onRouteClick(route.path)} />
+                <RouteButton key={route.key} route={route} active={isRouteActive(route)} onClick={() => onRouteClick(route.path)} />
               ))}
             </div>
           )

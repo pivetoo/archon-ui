@@ -16,6 +16,8 @@
 
 ---
 
+> **Revisão 2026-05-30:** a feature de cor por módulo foi removida depois da execução (a pedido do usuário). `ModuleColor`/`module-colors.ts` foram apagados; tudo usa `primary`; o tile ativo do rail virou preenchido (`bg-primary/10`, sem barra lateral). Os blocos de código abaixo que citam `color`/`MODULE_COLORS` refletem a versão original; o código atual diverge.
+
 ## File Structure
 
 `archon-ui` (`src/`):

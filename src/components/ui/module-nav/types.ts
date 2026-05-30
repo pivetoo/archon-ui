@@ -1,7 +1,5 @@
 import type * as React from 'react'
 
-export type ModuleColor = 'primary' | 'cyan' | 'purple' | 'green' | 'muted'
-
 export interface NavRoute {
   key: string
   label: string
@@ -19,7 +17,6 @@ export interface NavModule {
   key: string
   label: string
   icon: React.ReactNode
-  color: ModuleColor
   group: 'op' | 'sys'
   routes?: NavRoute[]
   subGroups?: NavSubGroup[]

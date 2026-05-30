@@ -4,6 +4,8 @@ Data: 2026-05-29
 Status: aprovado (direção), pronto para plano de implementação
 Origem: handoff de design `Sidebar Navigation Prototype.html` (Claude Design) + decisão de produto do Kanvas
 
+> **Revisão 2026-05-30:** removida a feature de cor por módulo (a pedido do usuário). Toda a navegação por módulos usa apenas `primary`; o módulo ativo no rail virou um tile preenchido com `bg-primary/10` + `text-primary` (sem a barra `|` lateral), igual ao estado ativo do Geral. As menções a "cor por módulo" nas seções 2.4 e 8 ficam como registro histórico.
+
 ## 1. Contexto e objetivo
 
 Hoje o `archon-ui` tem uma `Sidebar` plana: colapsa/descolapsa, mas todas as seções/rotas ficam visíveis ao mesmo tempo. Consumida por 3 sistemas (`IdentityManagement`, `IntegrationPlatform`, `AgencyCampaign`/Kanvas) via `AppLayout` + `menuGroups`.
