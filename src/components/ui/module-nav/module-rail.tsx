@@ -27,7 +27,7 @@ const RailModule: React.FC<{ module: NavModule; active: boolean; onClick: () => 
         <span className="w-5 h-5 flex items-center justify-center">{module.icon}</span>
         {hasBadge && <span className="absolute top-1.5 right-1.5 w-[7px] h-[7px] rounded-full bg-destructive border-[1.5px] border-card" />}
       </button>
-      <span className="pointer-events-none absolute left-[56px] top-2.5 z-50 hidden group-hover:block group-focus-within:block whitespace-nowrap rounded-md bg-foreground px-2.5 py-1 text-xs font-semibold text-background shadow-md">
+      <span className="pointer-events-none absolute left-[56px] top-2.5 z-50 hidden group-hover:block whitespace-nowrap rounded-md bg-foreground px-2.5 py-1 text-xs font-semibold text-background shadow-md">
         {module.label}
       </span>
     </div>
@@ -38,7 +38,7 @@ export const ModuleRail: React.FC<ModuleRailProps> = ({ modules, activeModuleKey
   const opModules = modules.filter((m) => m.group === 'op')
   const sysModules = modules.filter((m) => m.group === 'sys')
   return (
-    <aside className="fixed left-0 top-0 h-screen w-[64px] bg-card border-r border-border flex flex-col items-center z-40 shadow-sm">
+    <aside data-module-nav className="fixed left-0 top-0 h-screen w-[64px] bg-card border-r border-border flex flex-col items-center z-40 shadow-sm">
       <div className="min-h-[60px] w-full flex items-center justify-center border-b border-border/60">
         {brand}
       </div>

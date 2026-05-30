@@ -47,6 +47,7 @@ export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePat
 
   return (
     <nav
+      data-module-nav
       className="fixed left-[64px] top-0 h-screen w-[232px] bg-card border-r border-border flex flex-col z-40 shadow-sm transition-all duration-300"
       aria-label={module.label}
     >

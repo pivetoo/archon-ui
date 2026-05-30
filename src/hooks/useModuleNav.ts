@@ -86,11 +86,16 @@ export function useModuleNav(modules: ModuleNavConfig) {
     const routes = moduleRoutes(navModule)
     if (routes.length === 1) {
       navigate(routes[0].path)
+      setCollapsed(true)
       return
     }
-    setOpenModuleKey(moduleKey)
-    setCollapsed(false)
-  }, [modules, navigate, setCollapsed])
+    if (!collapsed && openModuleKey === moduleKey) {
+      setCollapsed(true)
+    } else {
+      setOpenModuleKey(moduleKey)
+      setCollapsed(false)
+    }
+  }, [modules, navigate, collapsed, openModuleKey, setCollapsed])
 
   const openModule = useMemo(() => modules.find((m) => m.key === openModuleKey) ?? null, [modules, openModuleKey])
   const panelOpen = !collapsed && !!openModule && !isSingleRouteModule(openModule)

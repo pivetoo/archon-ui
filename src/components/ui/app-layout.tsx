@@ -125,6 +125,18 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     }
   }, [isMobile, isMobileMenuOpen])
 
+  React.useEffect(() => {
+    if (!useRail || isMobile || !mn.panelOpen) return
+    const handleOutsidePointer = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null
+      if (target && !target.closest('[data-module-nav]')) {
+        mn.setCollapsed(true)
+      }
+    }
+    document.addEventListener('mousedown', handleOutsidePointer)
+    return () => document.removeEventListener('mousedown', handleOutsidePointer)
+  }, [useRail, isMobile, mn.panelOpen, mn.setCollapsed])
+
   // offset do conteudo: flat usa 64/220; module-rail usa 64 (so rail) ou 296 (64 rail + 232 painel)
   const leftWidth = isMobile ? 0 : (useRail ? (mn.panelOpen ? 296 : 64) : (isCollapsed ? 64 : 220))
 
