@@ -1,8 +1,7 @@
 import * as React from "react"
-import { Search } from "lucide-react"
 import { useI18n } from "../../i18n"
 import { cn } from "../../lib/utils"
-import { Input } from "./input"
+import { SearchBar } from "./search-bar"
 
 export interface TableToolbarProps {
   summary?: React.ReactNode
@@ -35,15 +34,12 @@ export function TableToolbar({
       <div className="flex min-w-0 flex-1 flex-col gap-3 md:flex-row md:items-center">
         {onSearchChange && (
           <div className="flex w-full items-center gap-2 md:max-w-sm">
-            <div className="relative flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={searchValue ?? ""}
-                onChange={(event) => onSearchChange(event.target.value)}
-                placeholder={searchPlaceholder ?? t("common.action.search")}
-                className="pl-9"
-              />
-            </div>
+            <SearchBar
+              value={searchValue}
+              onChange={onSearchChange}
+              placeholder={searchPlaceholder ?? t("common.action.search")}
+              className="flex-1"
+            />
 
             {rightSlot}
           </div>

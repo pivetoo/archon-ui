@@ -1,10 +1,11 @@
 import * as React from "react"
-import { Bell, ChevronDown, Menu, Check, Search } from "lucide-react"
+import { Bell, ChevronDown, Menu, Check } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Breadcrumb } from "./breadcrumb"
 import type { BreadcrumbItem } from "./breadcrumb"
 import { useOptionalI18n } from "../../i18n"
 import { UserMenu } from "./user-menu"
+import { SearchBar } from "./search-bar"
 
 export interface NotificationItem {
   id: string
@@ -260,16 +261,14 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
 
         <div className="flex items-center gap-3 flex-shrink-0 ml-2">
           {showSearch && onSearchClick && (
-            <button
-              type="button"
-              onClick={onSearchClick}
+            <SearchBar
+              asButton
+              onButtonClick={onSearchClick}
+              placeholder="Buscar…"
+              hotkeyHint="Espaço"
               aria-label="Buscar"
-              className="hidden md:flex items-center gap-2.5 w-56 px-3 py-2 rounded-md bg-muted/60 hover:bg-muted text-muted-foreground transition-colors"
-            >
-              <Search className="h-4 w-4 flex-shrink-0" />
-              <span className="flex-1 text-left text-sm">Buscar…</span>
-              <kbd className="text-[10px] font-mono border border-border rounded px-1.5 py-0.5">Espaço</kbd>
-            </button>
+              className="hidden w-56 md:flex"
+            />
           )}
 
           {actions}

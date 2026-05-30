@@ -1057,6 +1057,20 @@ declare interface SearchableSelectProps {
     onSearch?: (term: string) => Promise<SearchableSelectOption[]>;
 }
 
+export declare const SearchBar: React_2.ForwardRefExoticComponent<SearchBarProps & React_2.RefAttributes<HTMLInputElement>>;
+
+export declare interface SearchBarProps {
+    value?: string;
+    onChange?: (value: string) => void;
+    placeholder?: string;
+    className?: string;
+    autoFocus?: boolean;
+    "aria-label"?: string;
+    asButton?: boolean;
+    onButtonClick?: () => void;
+    hotkeyHint?: string;
+}
+
 export declare const Select: React_2.FC<SelectPrimitive.SelectProps>;
 
 export declare const SelectContent: React_2.ForwardRefExoticComponent<Omit<SelectPrimitive.SelectContentProps & React_2.RefAttributes<HTMLDivElement>, "ref"> & React_2.RefAttributes<HTMLDivElement>>;
