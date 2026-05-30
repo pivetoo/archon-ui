@@ -26,6 +26,7 @@ export interface Module {
 
 export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   isCollapsed?: boolean
+  leftOffset?: number
   isMobile?: boolean
   onMobileMenuToggle?: () => void
   breadcrumbs?: BreadcrumbItem[]
@@ -62,6 +63,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
     {
       className,
       isCollapsed = false,
+      leftOffset,
       isMobile = false,
       onMobileMenuToggle,
       breadcrumbs = [],
@@ -205,7 +207,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           className
         )}
         style={{
-          left: isMobile ? "0" : (isCollapsed ? "64px" : "220px"),
+          left: isMobile ? "0" : (leftOffset != null ? `${leftOffset}px` : (isCollapsed ? "64px" : "220px")),
         }}
         {...props}
       >

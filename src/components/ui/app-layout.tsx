@@ -1,11 +1,19 @@
 import * as React from "react"
-import { cn } from "../../lib/utils"
 import { Sidebar } from "../ui/sidebar"
 import { Navbar, type Module, type NotificationItem } from "../ui/navbar"
 import type { SidebarItemData, SidebarGroup, SidebarHeaderMode } from "../ui/sidebar"
 import type { BreadcrumbItem } from "../ui/breadcrumb"
+import { ModuleRail } from "../ui/module-nav/module-rail"
+import { ModulePanel } from "../ui/module-nav/module-panel"
+import { ModuleNavMobile } from "../ui/module-nav/module-nav-mobile"
+import type { ModuleNavConfig } from "../ui/module-nav/types"
+import { useModuleNav } from "../../hooks/useModuleNav"
 
 export type { BreadcrumbItem, SidebarItemData, SidebarGroup, SidebarHeaderMode, Module }
+
+export type NavMode = 'flat' | 'module-rail'
+
+const EMPTY_MODULE_NAV: ModuleNavConfig = []
 
 export interface AppLayoutProps {
   title: string
@@ -25,6 +33,8 @@ export interface AppLayoutProps {
   }
   menuItems?: SidebarItemData[]
   menuGroups?: SidebarGroup[]
+  navMode?: NavMode
+  moduleNav?: ModuleNavConfig
   initialCollapsed?: boolean
   onLogout?: () => void
   notifications?: NotificationItem[]
@@ -55,6 +65,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   user,
   menuItems = [],
   menuGroups = [],
+  navMode = 'flat',
+  moduleNav,
   initialCollapsed = true,
   onLogout,
   notifications,
@@ -81,6 +93,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [isCollapsed, setIsCollapsed] = React.useState(initialCollapsed)
   const [isMobile, setIsMobile] = React.useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
+
+  const useRail = navMode === 'module-rail' && !!moduleNav && moduleNav.length > 0
+  const mn = useModuleNav(moduleNav ?? EMPTY_MODULE_NAV)
 
   React.useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 1023px)")
@@ -110,31 +125,74 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     }
   }, [isMobile, isMobileMenuOpen])
 
+  // offset do conteudo: flat usa 64/220; module-rail usa 64 (so rail) ou 296 (64 rail + 232 painel)
+  const leftWidth = isMobile ? 0 : (useRail ? (mn.panelOpen ? 296 : 64) : (isCollapsed ? 64 : 220))
+
+  const handleRouteClick = (path: string) => {
+    mn.navigate(path)
+    setIsMobileMenuOpen(false)
+  }
+
   return (
     <div className="relative min-h-screen bg-background">
-      <Sidebar
-        title={title}
-        titleStyle={titleStyle}
-        titleClassName={titleClassName}
-        subtitle={subtitle}
-        logo={logo}
-        items={menuItems}
-        groups={menuGroups}
-        isCollapsed={isCollapsed}
-        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
-        onLogout={onLogout}
-        onLogoClick={onLogoClick}
-        companyLogo={companyLogo}
-        headerMode={headerMode}
-        headerLogo={headerLogo}
-        headerLogoCollapsed={headerLogoCollapsed}
-        isMobile={isMobile}
-        isMobileOpen={isMobileMenuOpen}
-        onMobileClose={() => setIsMobileMenuOpen(false)}
-      />
+      {useRail ? (
+        <>
+          {!isMobile && (
+            <>
+              <ModuleRail
+                modules={moduleNav!}
+                activeModuleKey={mn.activeModuleKey}
+                onModuleClick={mn.handleModuleClick}
+                brand={logo}
+              />
+              {mn.panelOpen && mn.openModule && (
+                <ModulePanel
+                  module={mn.openModule}
+                  activeRoutePath={mn.activeRoutePath}
+                  onRouteClick={(path) => mn.navigate(path)}
+                  onCollapse={() => mn.setCollapsed(true)}
+                />
+              )}
+            </>
+          )}
+          {isMobile && (
+            <ModuleNavMobile
+              modules={moduleNav!}
+              activeModuleKey={mn.activeModuleKey}
+              activeRoutePath={mn.activeRoutePath}
+              isOpen={isMobileMenuOpen}
+              onClose={() => setIsMobileMenuOpen(false)}
+              onRouteClick={handleRouteClick}
+              brand={logo}
+            />
+          )}
+        </>
+      ) : (
+        <Sidebar
+          title={title}
+          titleStyle={titleStyle}
+          titleClassName={titleClassName}
+          subtitle={subtitle}
+          logo={logo}
+          items={menuItems}
+          groups={menuGroups}
+          isCollapsed={isCollapsed}
+          onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
+          onLogout={onLogout}
+          onLogoClick={onLogoClick}
+          companyLogo={companyLogo}
+          headerMode={headerMode}
+          headerLogo={headerLogo}
+          headerLogoCollapsed={headerLogoCollapsed}
+          isMobile={isMobile}
+          isMobileOpen={isMobileMenuOpen}
+          onMobileClose={() => setIsMobileMenuOpen(false)}
+        />
+      )}
 
       <Navbar
         isCollapsed={isCollapsed}
+        leftOffset={leftWidth}
         isMobile={isMobile}
         onMobileMenuToggle={() => setIsMobileMenuOpen((prev) => !prev)}
         breadcrumbs={breadcrumbs}
@@ -153,9 +211,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         onMarkAllAsRead={onMarkAllAsRead}
         onClearAllNotifications={onClearAllNotifications}
         onViewAllNotifications={onViewAllNotifications}
-        modules={modules}
-        currentModule={currentModule}
-        onModuleChange={onModuleChange}
+        modules={useRail ? undefined : modules}
+        currentModule={useRail ? undefined : currentModule}
+        onModuleChange={useRail ? undefined : onModuleChange}
         profilePath={profilePath}
         onProfileNavigate={onProfileNavigate}
         onAvatarUpload={onAvatarUpload}
@@ -163,10 +221,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       />
 
       <main
-        className={cn(
-          "transition-all duration-300 pt-[52px] min-h-screen",
-          isMobile ? "ml-0" : (isCollapsed ? "ml-[64px]" : "ml-[220px]")
-        )}
+        className="transition-all duration-300 pt-[52px] min-h-screen"
+        style={{ marginLeft: leftWidth }}
       >
         <div className="w-full h-full p-3 sm:p-6">
           {children}

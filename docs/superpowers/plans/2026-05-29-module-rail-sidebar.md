@@ -608,7 +608,6 @@ Substituir o conteúdo de `app-layout.tsx` por:
 
 ```tsx
 import * as React from "react"
-import { cn } from "../../lib/utils"
 import { Sidebar } from "../ui/sidebar"
 import { Navbar, type Module, type NotificationItem } from "../ui/navbar"
 import type { SidebarItemData, SidebarGroup, SidebarHeaderMode } from "../ui/sidebar"
@@ -735,6 +734,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     }
   }, [isMobile, isMobileMenuOpen])
 
+  // offset do conteudo: flat usa 64/220; module-rail usa 64 (so rail) ou 296 (64 rail + 232 painel)
   const leftWidth = isMobile ? 0 : (useRail ? (mn.panelOpen ? 296 : 64) : (isCollapsed ? 64 : 220))
 
   const handleRouteClick = (path: string) => {
