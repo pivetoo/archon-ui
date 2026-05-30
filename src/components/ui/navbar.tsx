@@ -268,7 +268,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
             >
               <Search className="h-4 w-4 flex-shrink-0" />
               <span className="flex-1 text-left text-sm">Buscar…</span>
-              <kbd className="text-[10px] font-mono border border-border rounded px-1.5 py-0.5">⌘K</kbd>
+              <kbd className="text-[10px] font-mono border border-border rounded px-1.5 py-0.5">Espaço</kbd>
             </button>
           )}
 

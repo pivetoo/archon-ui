@@ -13523,7 +13523,7 @@ const U4 = y.forwardRef(
                 children: [
                   /* @__PURE__ */ f(mv, { className: "h-4 w-4 flex-shrink-0" }),
                   /* @__PURE__ */ f("span", { className: "flex-1 text-left text-sm", children: "Buscar…" }),
-                  /* @__PURE__ */ f("kbd", { className: "text-[10px] font-mono border border-border rounded px-1.5 py-0.5", children: "⌘K" })
+                  /* @__PURE__ */ f("kbd", { className: "text-[10px] font-mono border border-border rounded px-1.5 py-0.5", children: "Espaço" })
                 ]
               }
             ),
@@ -28321,7 +28321,9 @@ const nte = [], Pne = ({
   }, [V, U, X.panelOpen, X.setCollapsed]), y.useEffect(() => {
     if (!V) return;
     const ee = (P) => {
-      (P.metaKey || P.ctrlKey) && (P.key === "k" || P.key === "K") && (P.preventDefault(), te(!0));
+      if (P.key !== " " && P.code !== "Space" || P.metaKey || P.ctrlKey || P.altKey) return;
+      const W = document.activeElement;
+      W && W !== document.body || document.querySelector('[role="dialog"]') || (P.preventDefault(), te(!0));
     };
     return document.addEventListener("keydown", ee), () => document.removeEventListener("keydown", ee);
   }, [V]);

@@ -146,10 +146,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   React.useEffect(() => {
     if (!useRail) return
     const onKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && (event.key === 'k' || event.key === 'K')) {
-        event.preventDefault()
-        setSearchOpen(true)
-      }
+      // Espaco abre a busca, mas so quando nada esta focado (fora de input/botao/link)
+      // e nenhum dialog esta aberto, para nao roubar o espaco de digitacao ou rolagem.
+      if (event.key !== ' ' && event.code !== 'Space') return
+      if (event.metaKey || event.ctrlKey || event.altKey) return
+      const active = document.activeElement
+      if (active && active !== document.body) return
+      if (document.querySelector('[role="dialog"]')) return
+      event.preventDefault()
+      setSearchOpen(true)
     }
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
