@@ -417,10 +417,10 @@ const RailModule: React.FC<{ module: NavModule; active: boolean; onClick: () => 
         )}
       >
         <span className="w-5 h-5 flex items-center justify-center">{module.icon}</span>
-        {active && <span className={cn('absolute -left-2.5 top-2.5 w-[3px] h-[22px] rounded', colors.bar)} />}
+        {active && <span className={cn('absolute -left-2.5 top-[11px] w-[3px] h-[22px] rounded', colors.bar)} />}
         {hasBadge && <span className="absolute top-1.5 right-1.5 w-[7px] h-[7px] rounded-full bg-destructive border-[1.5px] border-card" />}
       </button>
-      <span className="pointer-events-none absolute left-[56px] top-2.5 z-50 hidden group-hover:block whitespace-nowrap rounded-md bg-foreground px-2.5 py-1 text-xs font-semibold text-background shadow-md">
+      <span className="pointer-events-none absolute left-[56px] top-2.5 z-50 hidden group-hover:block group-focus-within:block whitespace-nowrap rounded-md bg-foreground px-2.5 py-1 text-xs font-semibold text-background shadow-md">
         {module.label}
       </span>
     </div>
