@@ -28059,7 +28059,7 @@ const lk = ({ module: e, active: t, onClick: n }) => {
 }, U5 = ({ modules: e, activeModuleKey: t, onModuleClick: n, brand: r }) => {
   const o = e.filter((i) => i.group === "op"), a = e.filter((i) => i.group === "sys");
   return /* @__PURE__ */ O("aside", { "data-module-nav": !0, className: "fixed left-0 top-0 h-screen w-[64px] bg-card border-r border-border flex flex-col items-center z-40 shadow-sm", children: [
-    /* @__PURE__ */ h("div", { className: "min-h-[60px] w-full flex items-center justify-center border-b border-border/60", children: r }),
+    /* @__PURE__ */ h("div", { className: "min-h-[60px] w-full flex items-center justify-center", children: r }),
     /* @__PURE__ */ h("div", { className: "pt-3 w-full flex flex-col items-center gap-1.5", children: o.map((i) => /* @__PURE__ */ h(lk, { module: i, active: i.key === t, onClick: () => n(i.key) }, i.key)) }),
     a.length > 0 && /* @__PURE__ */ h("div", { className: "w-7 h-px bg-border my-2.5" }),
     /* @__PURE__ */ h("div", { className: "w-full flex flex-col items-center gap-1.5", children: a.map((i) => /* @__PURE__ */ h(lk, { module: i, active: i.key === t, onClick: () => n(i.key) }, i.key)) }),
@@ -28190,7 +28190,7 @@ const W5 = ({ modules: e, activeModuleKey: t, activeRoutePath: n, isOpen: r, onC
       {
         className: J("fixed left-0 top-0 h-screen w-[280px] bg-card flex flex-col z-[120] shadow-sm transition-transform duration-300", r ? "translate-x-0" : "-translate-x-full"),
         children: [
-          /* @__PURE__ */ h("div", { className: "min-h-[60px] flex items-center px-4 border-b border-border/60", children: i }),
+          /* @__PURE__ */ h("div", { className: "min-h-[60px] flex items-center px-4", children: i }),
           /* @__PURE__ */ h("div", { className: "flex-1 overflow-y-auto scrollbar-hide", children: e.map(u) })
         ]
       }

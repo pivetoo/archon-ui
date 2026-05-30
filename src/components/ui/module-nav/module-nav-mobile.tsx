@@ -68,7 +68,7 @@ export const ModuleNavMobile: React.FC<ModuleNavMobileProps> = ({ modules, activ
       <aside
         className={cn('fixed left-0 top-0 h-screen w-[280px] bg-card flex flex-col z-[120] shadow-sm transition-transform duration-300', isOpen ? 'translate-x-0' : '-translate-x-full')}
       >
-        <div className="min-h-[60px] flex items-center px-4 border-b border-border/60">{brand}</div>
+        <div className="min-h-[60px] flex items-center px-4">{brand}</div>
         <div className="flex-1 overflow-y-auto scrollbar-hide">
           {modules.map(renderModule)}
         </div>
