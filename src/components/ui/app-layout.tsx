@@ -7,7 +7,9 @@ import { ModuleRail } from "../ui/module-nav/module-rail"
 import { ModulePanel } from "../ui/module-nav/module-panel"
 import { ModuleNavMobile } from "../ui/module-nav/module-nav-mobile"
 import type { ModuleNavConfig } from "../ui/module-nav/types"
-import { useModuleNav } from "../../hooks/useModuleNav"
+import { useModuleNav, moduleRoutes } from "../../hooks/useModuleNav"
+import { UserMenu } from "../ui/user-menu"
+import { CommandPalette, type CommandPaletteItem } from "../ui/command-palette"
 
 export type { BreadcrumbItem, SidebarItemData, SidebarGroup, SidebarHeaderMode, Module }
 
@@ -93,9 +95,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [isCollapsed, setIsCollapsed] = React.useState(initialCollapsed)
   const [isMobile, setIsMobile] = React.useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
+  const [searchOpen, setSearchOpen] = React.useState(false)
 
   const useRail = navMode === 'module-rail' && !!moduleNav && moduleNav.length > 0
   const mn = useModuleNav(moduleNav ?? EMPTY_MODULE_NAV)
+  const commandItems = React.useMemo<CommandPaletteItem[]>(() => (
+    (moduleNav ?? []).flatMap((m) => moduleRoutes(m).map((r) => ({ key: r.key, label: r.label, path: r.path, moduleLabel: m.label, icon: r.icon })))
+  ), [moduleNav])
 
   React.useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 1023px)")
@@ -137,6 +143,18 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     return () => document.removeEventListener('mousedown', handleOutsidePointer)
   }, [useRail, isMobile, mn.panelOpen, mn.setCollapsed])
 
+  React.useEffect(() => {
+    if (!useRail) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && (event.key === 'k' || event.key === 'K')) {
+        event.preventDefault()
+        setSearchOpen(true)
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [useRail])
+
   // offset do conteudo: flat usa 64/220; module-rail usa 64 (so rail) ou 296 (64 rail + 232 painel)
   const leftWidth = isMobile ? 0 : (useRail ? (mn.panelOpen ? 296 : 64) : (isCollapsed ? 64 : 220))
 
@@ -156,6 +174,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 activeModuleKey={mn.highlightedModuleKey}
                 onModuleClick={mn.handleModuleClick}
                 brand={logo}
+                footer={
+                  <UserMenu
+                    placement="rail"
+                    user={user}
+                    onLogout={onLogout}
+                    profilePath={profilePath}
+                    onProfileNavigate={onProfileNavigate}
+                    onAvatarUpload={onAvatarUpload}
+                  />
+                }
               />
               {mn.panelOpen && mn.openModule && (
                 <ModulePanel
@@ -226,6 +254,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         modules={useRail ? undefined : modules}
         currentModule={useRail ? undefined : currentModule}
         onModuleChange={useRail ? undefined : onModuleChange}
+        hideUserMenu={useRail}
+        showSearch={useRail}
+        onSearchClick={() => setSearchOpen(true)}
         profilePath={profilePath}
         onProfileNavigate={onProfileNavigate}
         onAvatarUpload={onAvatarUpload}
@@ -240,6 +271,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           {children}
         </div>
       </main>
+
+      {useRail && (
+        <CommandPalette
+          open={searchOpen}
+          onClose={() => setSearchOpen(false)}
+          items={commandItems}
+          onSelect={(path) => { mn.navigate(path); setSearchOpen(false) }}
+        />
+      )}
     </div>
   )
 }

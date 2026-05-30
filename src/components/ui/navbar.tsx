@@ -1,13 +1,10 @@
 import * as React from "react"
-import { Bell, ChevronDown, LogOut, Moon, Sun, Menu, Check, UserRound } from "lucide-react"
-import { cn, getInitials } from "../../lib/utils"
-import { getApiBaseURL } from "../../services/http/client"
+import { Bell, ChevronDown, Menu, Check, Search } from "lucide-react"
+import { cn } from "../../lib/utils"
 import { Breadcrumb } from "./breadcrumb"
 import type { BreadcrumbItem } from "./breadcrumb"
-import { useTheme } from "./use-theme"
-import { useOptionalI18n, type ArchonCulture } from "../../i18n"
-import { LanguageFlag } from "./language-flag"
-import { UserProfileModal } from "./user-profile-modal"
+import { useOptionalI18n } from "../../i18n"
+import { UserMenu } from "./user-menu"
 
 export interface NotificationItem {
   id: string
@@ -46,6 +43,9 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   onClearAllNotifications?: () => void
   onViewAllNotifications?: () => void
   userMenuTrigger?: React.ReactNode
+  hideUserMenu?: boolean
+  showSearch?: boolean
+  onSearchClick?: () => void
   actions?: React.ReactNode
   modules?: Module[]
   currentModule?: string
@@ -75,6 +75,9 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       onClearAllNotifications,
       onViewAllNotifications,
       userMenuTrigger,
+      hideUserMenu = false,
+      showSearch = false,
+      onSearchClick,
       actions,
       modules,
       currentModule,
@@ -87,11 +90,8 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
     },
     ref
   ) => {
-    const { isDark, toggleDark } = useTheme()
     const i18n = useOptionalI18n()
     const translate = React.useCallback((key: string) => i18n?.t(key) ?? key, [i18n])
-    const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false)
-    const [isLanguageMenuOpen, setIsLanguageMenuOpen] = React.useState(false)
     const [isNotificationMenuOpen, setIsNotificationMenuOpen] = React.useState(false)
     const notificationContainerRef = React.useRef<HTMLDivElement>(null)
 
@@ -114,29 +114,6 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       }
     }, [isNotificationMenuOpen])
     const [isModuleSwitcherOpen, setIsModuleSwitcherOpen] = React.useState(false)
-    const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false)
-    const supportedCultures: Array<{ value: ArchonCulture; label: string }> = [
-      { value: "pt-BR", label: "Português" },
-      { value: "en-US", label: "English" },
-      { value: "es-AR", label: "Español" },
-    ]
-
-    const renderAvatar = () => {
-      if (user?.avatarUrl) {
-        const baseUrl = getApiBaseURL().replace('/api', '')
-        const fullUrl = user.avatarUrl.startsWith('http')
-          ? user.avatarUrl
-          : `${baseUrl}${user.avatarUrl}`
-        return (
-          <img
-            src={fullUrl}
-            alt={user.name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        )
-      }
-      return getInitials(user?.name || '')
-    }
 
     const unreadCount = notifications.filter(n => !n.read).length
     const hasNotifications = unreadCount > 0
@@ -199,7 +176,6 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
     }
     return (
-      <>
       <nav
         ref={ref}
         className={cn(
@@ -282,7 +258,20 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           )}
         </div>
 
-        <div className="flex items-center gap-4 flex-shrink-0 ml-2">
+        <div className="flex items-center gap-3 flex-shrink-0 ml-2">
+          {showSearch && onSearchClick && (
+            <button
+              type="button"
+              onClick={onSearchClick}
+              aria-label="Buscar"
+              className="hidden md:flex items-center gap-2.5 w-56 px-3 py-2 rounded-md bg-muted/60 hover:bg-muted text-muted-foreground transition-colors"
+            >
+              <Search className="h-4 w-4 flex-shrink-0" />
+              <span className="flex-1 text-left text-sm">Buscar…</span>
+              <kbd className="text-[10px] font-mono border border-border rounded px-1.5 py-0.5">⌘K</kbd>
+            </button>
+          )}
+
           {actions}
 
           {companyName && (
@@ -406,159 +395,20 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
 
           {userMenuTrigger}
 
-          {user && !userMenuTrigger && (
-            <div className="relative">
-              <button
-                onClick={() => {
-                  setIsUserMenuOpen(!isUserMenuOpen)
-                  setIsLanguageMenuOpen(false)
-                }}
-                className="flex items-center gap-3 bg-transparent border-0 py-1 px-2.5 pr-2.5 rounded-md transition-all hover:bg-accent dark:hover:bg-accent/80 active:scale-[0.98]"
-              >
-                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground text-xs font-semibold overflow-hidden border-2 border-background">
-                  {renderAvatar()}
-                </div>
-                <div className="hidden md:flex flex-col items-start">
-                  <span className="text-sm font-semibold text-foreground leading-tight">
-                    {user.name}
-                  </span>
-                  <span className="text-xs text-muted-foreground leading-tight font-medium">
-                    {user.role}
-                  </span>
-                </div>
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
-              </button>
-
-              {isUserMenuOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => {
-                      setIsUserMenuOpen(false)
-                    }}
-                  />
-                  <div className="absolute right-0 top-full mt-2 w-64 bg-popover border border-border rounded-md shadow-lg z-50 py-2">
-                    <div className="px-4 py-3 border-b border-border">
-                      <p className="text-sm font-semibold">{user.name}</p>
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
-                    </div>
-
-                    <div className="py-1">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsUserMenuOpen(false)
-                          if (profilePath && onProfileNavigate) {
-                            onProfileNavigate(profilePath)
-                          } else {
-                            setIsProfileModalOpen(true)
-                          }
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
-                      >
-                        <UserRound className="h-4 w-4" />
-                        {translate("nav.profile")}
-                      </button>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        toggleDark()
-                      }}
-                      className="w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
-                    >
-                      <div className="flex items-center gap-3">
-                        {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-                        <span>{translate(isDark ? "nav.theme.dark" : "nav.theme.light")}</span>
-                      </div>
-                      <div className={cn(
-                        "relative w-9 h-5 rounded-full transition-colors",
-                        isDark ? "bg-primary" : "bg-muted"
-                      )}>
-                        <div className={cn(
-                          "absolute top-0.5 w-4 h-4 rounded-full bg-background transition-transform",
-                          isDark ? "left-[18px]" : "left-0.5"
-                        )} />
-                      </div>
-                    </button>
-
-                    {i18n && (
-                      <div className="relative py-1">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsLanguageMenuOpen((current) => !current)
-                          }}
-                          className="w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
-                        >
-                          <div className="flex items-center gap-3">
-                            <LanguageFlag culture={i18n.culture} />
-                            <span>{translate("nav.language")}</span>
-                          </div>
-                          <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", isLanguageMenuOpen && "rotate-180")} />
-                        </button>
-
-                        {isLanguageMenuOpen && (
-                          <div className="mt-1 border-t border-border/60 bg-muted/30">
-                            {supportedCultures.map((culture) => (
-                              <button
-                                key={culture.value}
-                                type="button"
-                                onClick={() => {
-                                  void i18n.setCulture(culture.value)
-                                  setIsLanguageMenuOpen(false)
-                                  setIsUserMenuOpen(false)
-                                }}
-                                className={cn(
-                                  "w-full flex items-center justify-between gap-3 py-2.5 pl-11 pr-4 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80",
-                                  i18n.culture === culture.value && "text-primary"
-                                )}
-                              >
-                                <div className="flex items-center gap-3">
-                                  <LanguageFlag culture={culture.value} />
-                                  <span>{culture.label}</span>
-                                </div>
-                                {i18n.culture === culture.value && (
-                                  <Check className="h-4 w-4" />
-                                )}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="border-t border-border my-1" />
-
-                    <div className="py-1">
-                      <button
-                        onClick={() => {
-                          setIsLanguageMenuOpen(false)
-                          setIsUserMenuOpen(false)
-                          onLogout?.()
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80 text-destructive"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        {translate("nav.logout")}
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
+          {user && !userMenuTrigger && !hideUserMenu && (
+            <UserMenu
+              placement="navbar"
+              user={user}
+              onLogout={onLogout}
+              profilePath={profilePath}
+              onProfileNavigate={onProfileNavigate}
+              onAvatarUpload={onAvatarUpload}
+            />
           )}
         </div>
       </nav>
-
-      <UserProfileModal
-        open={isProfileModalOpen}
-        onOpenChange={setIsProfileModalOpen}
-        onAvatarUpload={onAvatarUpload}
-      />
-    </>
-  )
-}
+    )
+  }
 )
 Navbar.displayName = "Navbar"
 

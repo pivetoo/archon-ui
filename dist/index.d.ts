@@ -308,6 +308,24 @@ export declare const Checkbox: React_2.ForwardRefExoticComponent<Omit<CheckboxPr
 
 export declare function cn(...inputs: ClassValue[]): string;
 
+export declare const CommandPalette: React_2.FC<CommandPaletteProps>;
+
+export declare interface CommandPaletteItem {
+    key: string;
+    label: string;
+    path: string;
+    moduleLabel: string;
+    icon?: React_2.ReactNode;
+}
+
+export declare interface CommandPaletteProps {
+    open: boolean;
+    onClose: () => void;
+    items: CommandPaletteItem[];
+    onSelect: (path: string) => void;
+    placeholder?: string;
+}
+
 export declare const ConfirmModal: React_2.ForwardRefExoticComponent<ConfirmModalProps & React_2.RefAttributes<HTMLDivElement>>;
 
 export declare interface ConfirmModalProps {
@@ -767,6 +785,7 @@ export declare interface ModuleRailProps {
     activeModuleKey: string | null;
     onModuleClick: (key: string) => void;
     brand?: React_2.ReactNode;
+    footer?: React_2.ReactNode;
 }
 
 export declare function moduleRoutes(module: NavModule): NavRoute[];
@@ -795,6 +814,9 @@ export declare interface NavbarProps extends React_2.HTMLAttributes<HTMLElement>
     onClearAllNotifications?: () => void;
     onViewAllNotifications?: () => void;
     userMenuTrigger?: React_2.ReactNode;
+    hideUserMenu?: boolean;
+    showSearch?: boolean;
+    onSearchClick?: () => void;
     actions?: React_2.ReactNode;
     modules?: Module[];
     currentModule?: string;
@@ -1457,6 +1479,29 @@ export declare interface User {
     name: string;
     avatarUrl?: string;
     isActive?: boolean;
+    lastLoginAt?: string;
+}
+
+export declare const UserMenu: React_2.ForwardRefExoticComponent<UserMenuProps & React_2.RefAttributes<HTMLDivElement>>;
+
+export declare type UserMenuPlacement = 'navbar' | 'rail';
+
+export declare interface UserMenuProps {
+    user: UserMenuUser;
+    placement?: UserMenuPlacement;
+    onLogout?: () => void;
+    profilePath?: string;
+    onProfileNavigate?: (path: string) => void;
+    onAvatarUpload?: (file: File) => Promise<string>;
+}
+
+export declare interface UserMenuUser {
+    name: string;
+    email: string;
+    username?: string;
+    role?: string;
+    avatarUrl?: string;
+    preferredLanguage?: string;
     lastLoginAt?: string;
 }
 

@@ -8,6 +8,7 @@ export interface ModuleRailProps {
   activeModuleKey: string | null
   onModuleClick: (key: string) => void
   brand?: React.ReactNode
+  footer?: React.ReactNode
 }
 
 const RailModule: React.FC<{ module: NavModule; active: boolean; onClick: () => void }> = ({ module, active, onClick }) => {
@@ -34,7 +35,7 @@ const RailModule: React.FC<{ module: NavModule; active: boolean; onClick: () => 
   )
 }
 
-export const ModuleRail: React.FC<ModuleRailProps> = ({ modules, activeModuleKey, onModuleClick, brand }) => {
+export const ModuleRail: React.FC<ModuleRailProps> = ({ modules, activeModuleKey, onModuleClick, brand, footer }) => {
   const opModules = modules.filter((m) => m.group === 'op')
   const sysModules = modules.filter((m) => m.group === 'sys')
   return (
@@ -54,6 +55,7 @@ export const ModuleRail: React.FC<ModuleRailProps> = ({ modules, activeModuleKey
         ))}
       </div>
       <div className="flex-1" />
+      {footer && <div className="w-full flex justify-center pb-3">{footer}</div>}
     </aside>
   )
 }
