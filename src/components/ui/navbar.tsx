@@ -260,6 +260,12 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
         </div>
 
         <div className="flex items-center gap-3 flex-shrink-0 ml-2">
+          {companyName && (
+            <span className="text-sm font-medium text-muted-foreground hidden md:block">
+              {companyName}
+            </span>
+          )}
+
           {showSearch && onSearchClick && (
             <SearchBar
               asButton
@@ -272,12 +278,6 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           )}
 
           {actions}
-
-          {companyName && (
-            <span className="text-sm font-medium text-muted-foreground hidden md:block">
-              {companyName}
-            </span>
-          )}
 
           {notifications && notifications.length >= 0 && (
             <div ref={notificationContainerRef} className="relative" data-tour="notifications-bell">
