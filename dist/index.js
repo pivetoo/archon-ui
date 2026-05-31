@@ -13543,6 +13543,7 @@ const qN = y.forwardRef(
             a && a.length > 0 && /* @__PURE__ */ f("div", { className: "hidden sm:block min-w-0 overflow-hidden", children: /* @__PURE__ */ f(FN, { items: a }) })
           ] }),
           /* @__PURE__ */ I("div", { className: "flex items-center gap-3 flex-shrink-0 ml-2", children: [
+            s && /* @__PURE__ */ f("span", { className: "text-sm font-medium text-muted-foreground hidden md:block", children: s }),
             m && b && /* @__PURE__ */ f(
               cv,
               {
@@ -13555,7 +13556,6 @@ const qN = y.forwardRef(
               }
             ),
             x,
-            s && /* @__PURE__ */ f("span", { className: "text-sm font-medium text-muted-foreground hidden md:block", children: s }),
             c && c.length >= 0 && /* @__PURE__ */ I("div", { ref: $, className: "relative", "data-tour": "notifications-bell", children: [
               /* @__PURE__ */ I(
                 "button",
