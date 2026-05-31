@@ -13652,7 +13652,6 @@ const H3 = v.forwardRef(
             a && a.length > 0 && /* @__PURE__ */ f("div", { className: "hidden sm:block min-w-0 overflow-hidden", children: /* @__PURE__ */ f(W3, { items: a }) })
           ] }),
           /* @__PURE__ */ I("div", { className: "flex items-center gap-3 flex-shrink-0 ml-2", children: [
-            s && /* @__PURE__ */ f("span", { className: "text-sm font-medium text-muted-foreground hidden md:block", children: s }),
             p && b && /* @__PURE__ */ f(
               cv,
               {
@@ -13664,6 +13663,7 @@ const H3 = v.forwardRef(
                 className: "hidden w-56 md:flex"
               }
             ),
+            s && /* @__PURE__ */ f("span", { className: "text-sm font-medium text-muted-foreground hidden md:block", children: s }),
             y,
             l && l.length >= 0 && /* @__PURE__ */ I("div", { ref: E, className: "relative", "data-tour": "notifications-bell", children: [
               /* @__PURE__ */ I(

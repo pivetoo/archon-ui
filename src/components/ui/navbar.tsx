@@ -263,12 +263,6 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
         </div>
 
         <div className="flex items-center gap-3 flex-shrink-0 ml-2">
-          {companyName && (
-            <span className="text-sm font-medium text-muted-foreground hidden md:block">
-              {companyName}
-            </span>
-          )}
-
           {showSearch && onSearchClick && (
             <SearchBar
               asButton
@@ -278,6 +272,12 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
               aria-label="Buscar"
               className="hidden w-56 md:flex"
             />
+          )}
+
+          {companyName && (
+            <span className="text-sm font-medium text-muted-foreground hidden md:block">
+              {companyName}
+            </span>
           )}
 
           {actions}
