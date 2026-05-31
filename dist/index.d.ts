@@ -817,6 +817,7 @@ export declare interface NavbarProps extends React_2.HTMLAttributes<HTMLElement>
     hideUserMenu?: boolean;
     showSearch?: boolean;
     onSearchClick?: () => void;
+    showSettings?: boolean;
     actions?: React_2.ReactNode;
     modules?: Module[];
     currentModule?: string;
@@ -1100,6 +1101,12 @@ export declare const setGlobalLoaderContext: (context: any) => void;
 export declare const setIdentityManagementURL: (url: string) => void;
 
 export declare const setRequestLanguage: (language: string) => void;
+
+export declare const SettingsMenu: React_2.ForwardRefExoticComponent<SettingsMenuProps & React_2.RefAttributes<HTMLDivElement>>;
+
+export declare interface SettingsMenuProps {
+    onLogout?: () => void;
+}
 
 export declare function setTranslationMessages(messages: Record<string, string>): void;
 

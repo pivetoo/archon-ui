@@ -262,6 +262,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         hideUserMenu={useRail}
         showSearch={useRail}
         onSearchClick={() => setSearchOpen(true)}
+        showSettings={useRail}
         profilePath={profilePath}
         onProfileNavigate={onProfileNavigate}
         onAvatarUpload={onAvatarUpload}

@@ -6,6 +6,7 @@ import type { BreadcrumbItem } from "./breadcrumb"
 import { useOptionalI18n } from "../../i18n"
 import { UserMenu } from "./user-menu"
 import { SearchBar } from "./search-bar"
+import { SettingsMenu } from "./settings-menu"
 
 export interface NotificationItem {
   id: string
@@ -47,6 +48,7 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   hideUserMenu?: boolean
   showSearch?: boolean
   onSearchClick?: () => void
+  showSettings?: boolean
   actions?: React.ReactNode
   modules?: Module[]
   currentModule?: string
@@ -79,6 +81,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       hideUserMenu = false,
       showSearch = false,
       onSearchClick,
+      showSettings = false,
       actions,
       modules,
       currentModule,
@@ -390,6 +393,10 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                 </>
               )}
             </div>
+          )}
+
+          {showSettings && (
+            <SettingsMenu onLogout={onLogout} />
           )}
 
           {userMenuTrigger}
