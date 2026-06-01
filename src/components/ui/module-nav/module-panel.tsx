@@ -17,7 +17,7 @@ const RouteButton: React.FC<{ route: NavRoute; active: boolean; onClick: () => v
       aria-current={active ? 'page' : undefined}
       className={cn(
         'flex w-full items-center gap-3 rounded-md px-3 py-2 my-0.5 text-sm font-medium transition-colors text-muted-foreground',
-        'hover:bg-accent dark:hover:bg-accent/80 hover:text-foreground',
+        !active && 'hover:bg-accent dark:hover:bg-accent/80 hover:text-foreground',
         active && 'bg-primary/10 text-primary font-semibold'
       )}
     >

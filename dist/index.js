@@ -28217,7 +28217,7 @@ const dk = ({ route: e, active: t, onClick: n }) => /* @__PURE__ */ I(
     "aria-current": t ? "page" : void 0,
     className: X(
       "flex w-full items-center gap-3 rounded-md px-3 py-2 my-0.5 text-sm font-medium transition-colors text-muted-foreground",
-      "hover:bg-accent dark:hover:bg-accent/80 hover:text-foreground",
+      !t && "hover:bg-accent dark:hover:bg-accent/80 hover:text-foreground",
       t && "bg-primary/10 text-primary font-semibold"
     ),
     children: [
@@ -28299,7 +28299,8 @@ const K5 = ({ modules: e, activeModuleKey: t, activeRoutePath: n, isOpen: r, onC
           onClick: () => c(b.path),
           "aria-current": d(b) ? "page" : void 0,
           className: X(
-            "w-full flex items-center gap-3 pl-12 pr-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent dark:hover:bg-accent/80 transition-colors",
+            "w-full flex items-center gap-3 pl-12 pr-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors",
+            !d(b) && "hover:bg-accent dark:hover:bg-accent/80",
             d(b) && "bg-primary/10 text-primary font-semibold"
           ),
           children: [

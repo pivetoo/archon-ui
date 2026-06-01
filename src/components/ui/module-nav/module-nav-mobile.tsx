@@ -45,7 +45,8 @@ export const ModuleNavMobile: React.FC<ModuleNavMobileProps> = ({ modules, activ
                 onClick={() => handleRoute(route.path)}
                 aria-current={isRouteActive(route) ? 'page' : undefined}
                 className={cn(
-                  'w-full flex items-center gap-3 pl-12 pr-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent dark:hover:bg-accent/80 transition-colors',
+                  'w-full flex items-center gap-3 pl-12 pr-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors',
+                  !isRouteActive(route) && 'hover:bg-accent dark:hover:bg-accent/80',
                   isRouteActive(route) && 'bg-primary/10 text-primary font-semibold'
                 )}
               >
