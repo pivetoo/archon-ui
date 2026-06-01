@@ -1594,13 +1594,14 @@ export declare interface UserProfileUser {
     lastLoginAt?: string;
 }
 
-export declare function UsersManagementPage({ title, subtitle, className, initialTab, }: UsersManagementPageProps): JSX.Element;
+export declare function UsersManagementPage({ title, subtitle, className, initialTab, hideTabs, }: UsersManagementPageProps): JSX.Element;
 
 export declare interface UsersManagementPageProps {
     title?: string;
     subtitle?: string;
     className?: string;
     initialTab?: ActiveTab;
+    hideTabs?: boolean;
 }
 
 export declare class UsersManagementService {

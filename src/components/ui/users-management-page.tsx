@@ -34,6 +34,7 @@ export interface UsersManagementPageProps {
   subtitle?: string
   className?: string
   initialTab?: ActiveTab
+  hideTabs?: boolean
 }
 
 type ActiveTab = "users" | "roles"
@@ -75,6 +76,7 @@ export function UsersManagementPage({
   subtitle = "Gerencie usuários e perfis do contrato ativo",
   className,
   initialTab = "users",
+  hideTabs = false,
 }: UsersManagementPageProps) {
   const { isRoot } = usePermissions()
   const { toast } = useToast()
@@ -463,18 +465,20 @@ export function UsersManagementPage({
             setSelectedRole(null)
           }}
         >
-          <TabsList variant="underline" className="mb-4">
-            <TabsTrigger value="users">
-              <Users className="h-4 w-4" />
-              Usuários
-              <TabsBadge>{users.length}</TabsBadge>
-            </TabsTrigger>
-            <TabsTrigger value="roles">
-              <ShieldCheck className="h-4 w-4" />
-              Perfis
-              <TabsBadge>{roles.length}</TabsBadge>
-            </TabsTrigger>
-          </TabsList>
+          {!hideTabs && (
+            <TabsList variant="underline" className="mb-4">
+              <TabsTrigger value="users">
+                <Users className="h-4 w-4" />
+                Usuários
+                <TabsBadge>{users.length}</TabsBadge>
+              </TabsTrigger>
+              <TabsTrigger value="roles">
+                <ShieldCheck className="h-4 w-4" />
+                Perfis
+                <TabsBadge>{roles.length}</TabsBadge>
+              </TabsTrigger>
+            </TabsList>
+          )}
 
           <TabsContent value="users">
             <DataTable
