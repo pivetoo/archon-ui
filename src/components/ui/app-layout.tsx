@@ -201,7 +201,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   module={mn.openModule}
                   activeRoutePath={mn.activeRoutePath}
                   onRouteClick={(path) => mn.navigate(path)}
-                  onCollapse={() => mn.setCollapsed(true)}
                 />
               )}
             </>

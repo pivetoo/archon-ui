@@ -779,7 +779,6 @@ export declare interface ModulePanelProps {
     module: NavModule;
     activeRoutePath: string | null;
     onRouteClick: (path: string) => void;
-    onCollapse: () => void;
 }
 
 export declare const ModuleRail: React_2.FC<ModuleRailProps>;

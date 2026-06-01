@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '../../../lib/utils'
 import type { NavModule, NavRoute } from './types'
 import { routeMatches } from '../../../hooks/useModuleNav'
@@ -8,7 +8,6 @@ export interface ModulePanelProps {
   module: NavModule
   activeRoutePath: string | null
   onRouteClick: (path: string) => void
-  onCollapse: () => void
 }
 
 const RouteButton: React.FC<{ route: NavRoute; active: boolean; onClick: () => void }> = ({ route, active, onClick }) => {
@@ -34,7 +33,7 @@ const RouteButton: React.FC<{ route: NavRoute; active: boolean; onClick: () => v
   )
 }
 
-export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePath, onRouteClick, onCollapse }) => {
+export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePath, onRouteClick }) => {
   const [openState, setOpenState] = React.useState<Record<string, boolean>>({})
   const isGroupOpen = (label: string) => openState[`${module.key}::${label}`] ?? true
   const toggleGroup = (label: string) => {
@@ -50,19 +49,11 @@ export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePat
       className="fixed left-[64px] top-0 h-screen w-[232px] bg-card border-r border-border flex flex-col z-40 shadow-sm transition-all duration-300"
       aria-label={module.label}
     >
-      <div className="flex items-center justify-between min-h-[60px] px-4 border-b border-border/60">
+      <div className="flex items-center min-h-[60px] px-4 border-b border-border/60">
         <div className="flex items-center gap-2.5 min-w-0">
           <span className="flex items-center justify-center w-7 h-7 rounded-md bg-primary/10 text-primary">{module.icon}</span>
           <span className="font-semibold text-base text-foreground tracking-tight truncate">{module.label}</span>
         </div>
-        <button
-          type="button"
-          onClick={onCollapse}
-          aria-label="Recolher menu lateral"
-          className="w-6 h-6 rounded-sm border border-border bg-card flex items-center justify-center text-muted-foreground hover:bg-accent dark:hover:bg-accent/80 transition-colors"
-        >
-          <ChevronLeft className="w-3.5 h-3.5" />
-        </button>
       </div>
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden p-2 scrollbar-hide">
