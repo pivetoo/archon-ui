@@ -2,7 +2,6 @@ import * as React from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '../../../lib/utils'
 import type { NavModule, NavRoute } from './types'
-import { routeMatches } from '../../../hooks/useModuleNav'
 
 export interface ModulePanelProps {
   module: NavModule
@@ -41,7 +40,7 @@ export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePat
     setOpenState((prev) => ({ ...prev, [stateKey]: !(prev[stateKey] ?? true) }))
   }
 
-  const isRouteActive = (route: NavRoute) => activeRoutePath != null && routeMatches(route.path, activeRoutePath)
+  const isRouteActive = (route: NavRoute) => activeRoutePath != null && route.path === activeRoutePath
 
   return (
     <nav

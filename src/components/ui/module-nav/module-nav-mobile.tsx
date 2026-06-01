@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '../../../lib/utils'
-import { moduleRoutes, routeMatches } from '../../../hooks/useModuleNav'
+import { moduleRoutes } from '../../../hooks/useModuleNav'
 import type { ModuleNavConfig, NavModule, NavRoute } from './types'
 
 export interface ModuleNavMobileProps {
@@ -19,7 +19,7 @@ export const ModuleNavMobile: React.FC<ModuleNavMobileProps> = ({ modules, activ
   React.useEffect(() => { setExpandedKey(activeModuleKey) }, [activeModuleKey])
 
   const handleRoute = (path: string) => { onRouteClick(path); onClose() }
-  const isRouteActive = (route: NavRoute) => activeRoutePath != null && routeMatches(route.path, activeRoutePath)
+  const isRouteActive = (route: NavRoute) => activeRoutePath != null && route.path === activeRoutePath
 
   const renderModule = (module: NavModule) => {
     const routes = moduleRoutes(module)
