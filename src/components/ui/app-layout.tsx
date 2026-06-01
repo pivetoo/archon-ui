@@ -52,6 +52,7 @@ export interface AppLayoutProps {
   onProfileNavigate?: (path: string) => void
   onAvatarUpload?: (file: File) => Promise<string>
   onAvatarRemove?: () => Promise<void>
+  onUpdateProfile?: React.ComponentProps<typeof UserMenu>['onUpdateProfile']
   onLogoClick?: () => void
   companyLogo?: string
   headerMode?: SidebarHeaderMode
@@ -85,6 +86,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onProfileNavigate,
   onAvatarUpload,
   onAvatarRemove,
+  onUpdateProfile,
   onLogoClick,
   companyLogo,
   headerMode,
@@ -190,6 +192,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     onProfileNavigate={onProfileNavigate}
                     onAvatarUpload={onAvatarUpload}
                     onAvatarRemove={onAvatarRemove}
+                    onUpdateProfile={onUpdateProfile}
                   />
                 }
               />
@@ -270,6 +273,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         onProfileNavigate={onProfileNavigate}
         onAvatarUpload={onAvatarUpload}
         onAvatarRemove={onAvatarRemove}
+        onUpdateProfile={onUpdateProfile}
         onLogout={onLogout}
       />
 

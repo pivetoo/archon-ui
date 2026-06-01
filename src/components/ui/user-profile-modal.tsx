@@ -10,14 +10,26 @@ import { Button } from "./button"
 import { Input } from "./input"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs"
 
+export interface ProfileUpdatePayload {
+  name: string
+}
+
+export interface ProfileUpdateResult {
+  name?: string
+  username?: string
+  email?: string
+  avatarUrl?: string
+}
+
 interface UserProfileModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onAvatarUpload?: (file: File) => Promise<string>
   onAvatarRemove?: () => Promise<void>
+  onUpdateProfile?: (payload: ProfileUpdatePayload) => Promise<ProfileUpdateResult>
 }
 
-export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarRemove }: UserProfileModalProps) {
+export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarRemove, onUpdateProfile }: UserProfileModalProps) {
   const { user, updateUser } = useAuth()
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [activeTab, setActiveTab] = React.useState("profile")
@@ -85,17 +97,19 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarR
         finalAvatarUrl = undefined
       }
 
-      const updated = await ProfileService.updateProfile({
-        id: user.id,
-        name,
-        avatarUrl: finalAvatarUrl,
-        isActive: user.isActive ?? true,
-      })
+      const updated = onUpdateProfile
+        ? await onUpdateProfile({ name })
+        : await ProfileService.updateProfile({
+            id: user.id,
+            name,
+            avatarUrl: finalAvatarUrl,
+            isActive: user.isActive ?? true,
+          })
 
       updateUser({
-        name: updated.name,
-        username: updated.username,
-        email: updated.email,
+        name: updated.name ?? name,
+        username: updated.username ?? user.username,
+        email: updated.email ?? user.email,
         avatarUrl: finalAvatarUrl,
       })
 

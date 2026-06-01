@@ -114,6 +114,7 @@ export declare interface AppLayoutProps {
     onProfileNavigate?: (path: string) => void;
     onAvatarUpload?: (file: File) => Promise<string>;
     onAvatarRemove?: () => Promise<void>;
+    onUpdateProfile?: React_2.ComponentProps<typeof UserMenu>['onUpdateProfile'];
     onLogoClick?: () => void;
     companyLogo?: string;
     headerMode?: SidebarHeaderMode;
@@ -828,6 +829,7 @@ export declare interface NavbarProps extends React_2.HTMLAttributes<HTMLElement>
     onLogout?: () => void;
     onAvatarUpload?: (file: File) => Promise<string>;
     onAvatarRemove?: () => Promise<void>;
+    onUpdateProfile?: React_2.ComponentProps<typeof UserMenu>['onUpdateProfile'];
 }
 
 export declare interface NavigationConfig {
@@ -995,6 +997,17 @@ export declare const PopoverTrigger: React_2.ForwardRefExoticComponent<PopoverPr
 export declare class ProfileService {
     static updateProfile(request: UpdateProfileRequest): Promise<User>;
     static changePassword(payload: ChangePasswordPayload): Promise<void>;
+}
+
+export declare interface ProfileUpdatePayload {
+    name: string;
+}
+
+export declare interface ProfileUpdateResult {
+    name?: string;
+    username?: string;
+    email?: string;
+    avatarUrl?: string;
 }
 
 export declare const ProtectedRoute: default_2.FC<ProtectedRouteProps>;
@@ -1517,6 +1530,7 @@ export declare interface UserMenuProps {
     onProfileNavigate?: (path: string) => void;
     onAvatarUpload?: (file: File) => Promise<string>;
     onAvatarRemove?: () => Promise<void>;
+    onUpdateProfile?: React_2.ComponentProps<typeof UserProfileModal>['onUpdateProfile'];
 }
 
 export declare interface UserMenuUser {
@@ -1529,13 +1543,14 @@ export declare interface UserMenuUser {
     lastLoginAt?: string;
 }
 
-export declare function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarRemove }: UserProfileModalProps): JSX.Element;
+export declare function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarRemove, onUpdateProfile }: UserProfileModalProps): JSX.Element;
 
 declare interface UserProfileModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onAvatarUpload?: (file: File) => Promise<string>;
     onAvatarRemove?: () => Promise<void>;
+    onUpdateProfile?: (payload: ProfileUpdatePayload) => Promise<ProfileUpdateResult>;
 }
 
 export declare function UserProfilePage({ user, onEditProfile, onSaveProfile, onChangePassword, onManageSessions, className, }: UserProfilePageProps): JSX.Element;
