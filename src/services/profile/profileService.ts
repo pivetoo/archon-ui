@@ -48,35 +48,7 @@ export class ProfileService {
       { headers: getHeaders() }
     )
 
-    const updatedUser = unwrapResponse<User>(updateResponse)
-    const currentAvatarUrl = updatedUser.avatarUrl ?? null
-    const nextAvatarUrl = request.avatarUrl?.trim() ? request.avatarUrl.trim() : null
-
-    if (currentAvatarUrl === nextAvatarUrl) {
-      return updatedUser
-    }
-
-    if (nextAvatarUrl) {
-      await axios.put(
-        `${baseUrl}/users/${request.id}/avatar`,
-        nextAvatarUrl,
-        { headers: getHeaders() }
-      )
-
-      return {
-        ...updatedUser,
-        avatarUrl: nextAvatarUrl,
-      }
-    }
-
-    await axios.delete(`${baseUrl}/users/${request.id}/avatar`, {
-      headers: getHeaders(),
-    })
-
-    return {
-      ...updatedUser,
-      avatarUrl: undefined,
-    }
+    return unwrapResponse<User>(updateResponse)
   }
 
   static async changePassword(payload: ChangePasswordPayload): Promise<void> {

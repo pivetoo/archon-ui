@@ -26,10 +26,11 @@ export interface UserMenuProps {
   profilePath?: string
   onProfileNavigate?: (path: string) => void
   onAvatarUpload?: (file: File) => Promise<string>
+  onAvatarRemove?: () => Promise<void>
 }
 
 const UserMenu = React.forwardRef<HTMLDivElement, UserMenuProps>(
-  ({ user, placement = 'navbar', onLogout, profilePath, onProfileNavigate, onAvatarUpload }, ref) => {
+  ({ user, placement = 'navbar', onLogout, profilePath, onProfileNavigate, onAvatarUpload, onAvatarRemove }, ref) => {
     const { isDark, toggleDark } = useTheme()
     const i18n = useOptionalI18n()
     const translate = React.useCallback((key: string) => i18n?.t(key) ?? key, [i18n])
@@ -177,7 +178,7 @@ const UserMenu = React.forwardRef<HTMLDivElement, UserMenuProps>(
           </>
         )}
 
-        <UserProfileModal open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen} onAvatarUpload={onAvatarUpload} />
+        <UserProfileModal open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen} onAvatarUpload={onAvatarUpload} onAvatarRemove={onAvatarRemove} />
       </div>
     )
   }

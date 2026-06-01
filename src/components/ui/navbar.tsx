@@ -57,6 +57,7 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   onProfileNavigate?: (path: string) => void
   onLogout?: () => void
   onAvatarUpload?: (file: File) => Promise<string>
+  onAvatarRemove?: () => Promise<void>
 }
 
 export type { BreadcrumbItem }
@@ -90,6 +91,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       onProfileNavigate,
       onLogout,
       onAvatarUpload,
+      onAvatarRemove,
       ...props
     },
     ref
@@ -409,6 +411,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
               profilePath={profilePath}
               onProfileNavigate={onProfileNavigate}
               onAvatarUpload={onAvatarUpload}
+              onAvatarRemove={onAvatarRemove}
             />
           )}
         </div>

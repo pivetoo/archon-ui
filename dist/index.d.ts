@@ -113,6 +113,7 @@ export declare interface AppLayoutProps {
     profilePath?: string;
     onProfileNavigate?: (path: string) => void;
     onAvatarUpload?: (file: File) => Promise<string>;
+    onAvatarRemove?: () => Promise<void>;
     onLogoClick?: () => void;
     companyLogo?: string;
     headerMode?: SidebarHeaderMode;
@@ -826,6 +827,7 @@ export declare interface NavbarProps extends React_2.HTMLAttributes<HTMLElement>
     onProfileNavigate?: (path: string) => void;
     onLogout?: () => void;
     onAvatarUpload?: (file: File) => Promise<string>;
+    onAvatarRemove?: () => Promise<void>;
 }
 
 export declare interface NavigationConfig {
@@ -1514,6 +1516,7 @@ export declare interface UserMenuProps {
     profilePath?: string;
     onProfileNavigate?: (path: string) => void;
     onAvatarUpload?: (file: File) => Promise<string>;
+    onAvatarRemove?: () => Promise<void>;
 }
 
 export declare interface UserMenuUser {
@@ -1526,12 +1529,13 @@ export declare interface UserMenuUser {
     lastLoginAt?: string;
 }
 
-export declare function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserProfileModalProps): JSX.Element;
+export declare function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarRemove }: UserProfileModalProps): JSX.Element;
 
 declare interface UserProfileModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onAvatarUpload?: (file: File) => Promise<string>;
+    onAvatarRemove?: () => Promise<void>;
 }
 
 export declare function UserProfilePage({ user, onEditProfile, onSaveProfile, onChangePassword, onManageSessions, className, }: UserProfilePageProps): JSX.Element;

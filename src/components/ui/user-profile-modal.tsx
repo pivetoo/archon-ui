@@ -14,9 +14,10 @@ interface UserProfileModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onAvatarUpload?: (file: File) => Promise<string>
+  onAvatarRemove?: () => Promise<void>
 }
 
-export function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserProfileModalProps) {
+export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarRemove }: UserProfileModalProps) {
   const { user, updateUser } = useAuth()
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [activeTab, setActiveTab] = React.useState("profile")
@@ -75,9 +76,13 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserPro
     setIsSaving(true)
     try {
       let finalAvatarUrl: string | undefined = avatarPreview ?? undefined
+      const removedAvatar = !!user.avatarUrl && !avatarFile && !avatarPreview
 
       if (avatarFile && onAvatarUpload) {
         finalAvatarUrl = await onAvatarUpload(avatarFile)
+      } else if (removedAvatar && onAvatarRemove) {
+        await onAvatarRemove()
+        finalAvatarUrl = undefined
       }
 
       const updated = await ProfileService.updateProfile({
@@ -91,7 +96,7 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload }: UserPro
         name: updated.name,
         username: updated.username,
         email: updated.email,
-        avatarUrl: updated.avatarUrl,
+        avatarUrl: finalAvatarUrl,
       })
 
       toast({ variant: "success", title: "Perfil atualizado", description: "Suas informações foram salvas com sucesso." })
