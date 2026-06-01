@@ -63,6 +63,8 @@ export declare interface ActiveSession {
     isCurrent: boolean;
 }
 
+declare type ActiveTab = "users" | "roles";
+
 export declare interface ApiError {
     message: string;
     status: number;
@@ -1592,12 +1594,13 @@ export declare interface UserProfileUser {
     lastLoginAt?: string;
 }
 
-export declare function UsersManagementPage({ title, subtitle, className, }: UsersManagementPageProps): JSX.Element;
+export declare function UsersManagementPage({ title, subtitle, className, initialTab, }: UsersManagementPageProps): JSX.Element;
 
 export declare interface UsersManagementPageProps {
     title?: string;
     subtitle?: string;
     className?: string;
+    initialTab?: ActiveTab;
 }
 
 export declare class UsersManagementService {

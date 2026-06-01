@@ -33,6 +33,7 @@ export interface UsersManagementPageProps {
   title?: string
   subtitle?: string
   className?: string
+  initialTab?: ActiveTab
 }
 
 type ActiveTab = "users" | "roles"
@@ -73,11 +74,16 @@ export function UsersManagementPage({
   title = "Controle de Acesso",
   subtitle = "Gerencie usuários e perfis do contrato ativo",
   className,
+  initialTab = "users",
 }: UsersManagementPageProps) {
   const { isRoot } = usePermissions()
   const { toast } = useToast()
 
-  const [activeTab, setActiveTab] = React.useState<ActiveTab>("users")
+  const [activeTab, setActiveTab] = React.useState<ActiveTab>(initialTab)
+
+  React.useEffect(() => {
+    setActiveTab(initialTab)
+  }, [initialTab])
   const [users, setUsers] = React.useState<ContractUser[]>([])
   const [roles, setRoles] = React.useState<ContractRole[]>([])
   const [accessResources, setAccessResources] = React.useState<AccessResource[]>([])
