@@ -28,11 +28,10 @@ export interface UserMenuProps {
   onAvatarUpload?: (file: File) => Promise<string>
   onAvatarRemove?: () => Promise<void>
   onUpdateProfile?: React.ComponentProps<typeof UserProfileModal>['onUpdateProfile']
-  menuExtraItems?: Array<{ key: string; label: string; icon?: React.ReactNode; onClick: () => void }>
 }
 
 const UserMenu = React.forwardRef<HTMLDivElement, UserMenuProps>(
-  ({ user, placement = 'navbar', onLogout, profilePath, onProfileNavigate, onAvatarUpload, onAvatarRemove, onUpdateProfile, menuExtraItems }, ref) => {
+  ({ user, placement = 'navbar', onLogout, profilePath, onProfileNavigate, onAvatarUpload, onAvatarRemove, onUpdateProfile }, ref) => {
     const { isDark, toggleDark } = useTheme()
     const i18n = useOptionalI18n()
     const translate = React.useCallback((key: string) => i18n?.t(key) ?? key, [i18n])
@@ -115,22 +114,6 @@ const UserMenu = React.forwardRef<HTMLDivElement, UserMenuProps>(
                   {translate("nav.profile")}
                 </button>
               </div>
-
-              {menuExtraItems && menuExtraItems.length > 0 && (
-                <div className="py-1">
-                  {menuExtraItems.map((item) => (
-                    <button
-                      key={item.key}
-                      type="button"
-                      onClick={() => { setIsOpen(false); item.onClick() }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
-                    >
-                      {item.icon}
-                      <span>{item.label}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
 
               <button
                 type="button"

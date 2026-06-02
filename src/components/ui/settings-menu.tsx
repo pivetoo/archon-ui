@@ -7,9 +7,10 @@ import { LanguageFlag } from "./language-flag"
 
 export interface SettingsMenuProps {
   onLogout?: () => void
+  menuExtraItems?: Array<{ key: string; label: string; icon?: React.ReactNode; onClick: () => void }>
 }
 
-const SettingsMenu = React.forwardRef<HTMLDivElement, SettingsMenuProps>(({ onLogout }, ref) => {
+const SettingsMenu = React.forwardRef<HTMLDivElement, SettingsMenuProps>(({ onLogout, menuExtraItems }, ref) => {
   const { isDark, toggleDark } = useTheme()
   const i18n = useOptionalI18n()
   const translate = React.useCallback((key: string) => i18n?.t(key) ?? key, [i18n])
@@ -36,6 +37,23 @@ const SettingsMenu = React.forwardRef<HTMLDivElement, SettingsMenuProps>(({ onLo
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
           <div className="absolute right-0 top-full mt-2 w-60 bg-popover border border-border rounded-md shadow-lg z-50 py-2">
+            {menuExtraItems && menuExtraItems.length > 0 && (
+              <>
+                {menuExtraItems.map((item) => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => { setIsOpen(false); item.onClick() }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent dark:hover:bg-accent/80"
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </button>
+                ))}
+                <div className="border-t border-border my-1" />
+              </>
+            )}
+
             <button
               type="button"
               onClick={() => toggleDark()}
