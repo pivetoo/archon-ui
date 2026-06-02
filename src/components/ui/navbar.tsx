@@ -59,6 +59,7 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   onAvatarUpload?: (file: File) => Promise<string>
   onAvatarRemove?: () => Promise<void>
   onUpdateProfile?: React.ComponentProps<typeof UserMenu>['onUpdateProfile']
+  menuExtraItems?: React.ComponentProps<typeof UserMenu>['menuExtraItems']
 }
 
 export type { BreadcrumbItem }
@@ -94,6 +95,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       onAvatarUpload,
       onAvatarRemove,
       onUpdateProfile,
+      menuExtraItems,
       ...props
     },
     ref
@@ -415,6 +417,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
               onAvatarUpload={onAvatarUpload}
               onAvatarRemove={onAvatarRemove}
               onUpdateProfile={onUpdateProfile}
+              menuExtraItems={menuExtraItems}
             />
           )}
         </div>

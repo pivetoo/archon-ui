@@ -117,6 +117,7 @@ export declare interface AppLayoutProps {
     onAvatarUpload?: (file: File) => Promise<string>;
     onAvatarRemove?: () => Promise<void>;
     onUpdateProfile?: React_2.ComponentProps<typeof UserMenu>['onUpdateProfile'];
+    menuExtraItems?: React_2.ComponentProps<typeof UserMenu>['menuExtraItems'];
     onLogoClick?: () => void;
     companyLogo?: string;
     headerMode?: SidebarHeaderMode;
@@ -831,6 +832,7 @@ export declare interface NavbarProps extends React_2.HTMLAttributes<HTMLElement>
     onAvatarUpload?: (file: File) => Promise<string>;
     onAvatarRemove?: () => Promise<void>;
     onUpdateProfile?: React_2.ComponentProps<typeof UserMenu>['onUpdateProfile'];
+    menuExtraItems?: React_2.ComponentProps<typeof UserMenu>['menuExtraItems'];
 }
 
 export declare interface NavigationConfig {
@@ -1532,6 +1534,12 @@ export declare interface UserMenuProps {
     onAvatarUpload?: (file: File) => Promise<string>;
     onAvatarRemove?: () => Promise<void>;
     onUpdateProfile?: React_2.ComponentProps<typeof UserProfileModal>['onUpdateProfile'];
+    menuExtraItems?: Array<{
+        key: string;
+        label: string;
+        icon?: React_2.ReactNode;
+        onClick: () => void;
+    }>;
 }
 
 export declare interface UserMenuUser {
