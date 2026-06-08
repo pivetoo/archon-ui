@@ -1064,6 +1064,7 @@ export declare function SearchableSelect({ value, onValueChange, options, placeh
 export declare interface SearchableSelectOption {
     value: string;
     label: string;
+    iconUrl?: string;
 }
 
 declare interface SearchableSelectProps {

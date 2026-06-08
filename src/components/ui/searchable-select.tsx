@@ -5,6 +5,7 @@ import { Input } from './input'
 export interface SearchableSelectOption {
   value: string
   label: string
+  iconUrl?: string
 }
 
 interface SearchableSelectProps {
@@ -45,9 +46,11 @@ export function SearchableSelect({
     ? activeOptions
     : activeOptions.filter((opt) => opt.label.toLowerCase().includes(search.toLowerCase()))
 
-  const selectedLabel = activeOptions.find((opt) => opt.value === (value ?? ''))?.label
-    ?? options.find((opt) => opt.value === (value ?? ''))?.label
-    ?? placeholder
+  const selectedOption = activeOptions.find((opt) => opt.value === (value ?? ''))
+    ?? options.find((opt) => opt.value === (value ?? ''))
+
+  const selectedLabel = selectedOption?.label ?? placeholder
+  const selectedIconUrl = selectedOption?.iconUrl
 
   useEffect(() => {
     if (!hasAsyncSearch) return
@@ -77,7 +80,14 @@ export function SearchableSelect({
   return (
     <Select value={safeValue} onValueChange={(v) => { setSearch(''); setAsyncOptions(null); onValueChange(v === EMPTY_SENTINEL ? '' : v) }} disabled={disabled}>
       <SelectTrigger>
-        <SelectValue placeholder={placeholder}>{selectedLabel}</SelectValue>
+        <SelectValue placeholder={placeholder}>
+          {selectedIconUrl ? (
+            <span className="flex items-center gap-1.5">
+              <img src={selectedIconUrl} alt="" className="h-4 w-4 rounded-sm object-contain shrink-0" />
+              {selectedLabel}
+            </span>
+          ) : selectedLabel}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent className="w-[var(--radix-select-trigger-width)]">
         <div className="px-2 pt-2 pb-1">
@@ -97,7 +107,12 @@ export function SearchableSelect({
           ) : (
             filteredOptions.map((opt) => (
               <SelectItem key={opt.value} value={opt.value ? opt.value : EMPTY_SENTINEL}>
-                {opt.label}
+                {opt.iconUrl ? (
+                  <span className="flex items-center gap-1.5">
+                    <img src={opt.iconUrl} alt="" className="h-4 w-4 rounded-sm object-contain shrink-0" />
+                    {opt.label}
+                  </span>
+                ) : opt.label}
               </SelectItem>
             ))
           )}
