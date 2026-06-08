@@ -105,9 +105,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   const useRail = navMode === 'module-rail' && !!moduleNav && moduleNav.length > 0
   const mn = useModuleNav(moduleNav ?? EMPTY_MODULE_NAV)
-  const commandItems = React.useMemo<CommandPaletteItem[]>(() => (
-    (moduleNav ?? []).flatMap((m) => moduleRoutes(m).map((r) => ({ key: r.key, label: r.label, path: r.path, moduleLabel: m.label, icon: r.icon })))
-  ), [moduleNav])
+  const commandItems = React.useMemo<CommandPaletteItem[]>(() => {
+    const seen = new Set<string>()
+    return (moduleNav ?? []).flatMap((m) => moduleRoutes(m).map((r) => ({ key: r.key, label: r.label, path: r.path, moduleLabel: m.label, icon: r.icon }))).filter((item) => {
+      if (seen.has(item.key)) return false
+      seen.add(item.key)
+      return true
+    })
+  }, [moduleNav])
 
   React.useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 1023px)")
