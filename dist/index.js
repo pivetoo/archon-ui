@@ -30971,7 +30971,7 @@ const Ate = kte, Nte = Mte, Kne = Tte, pP = v.forwardRef(({ className: e, align:
   }
 ) }));
 pP.displayName = hP.displayName;
-const Ete = 4, Pte = 18, Ite = 22;
+const Ete = 4, Pte = 18, Ite = 14;
 function Ote(e) {
   return e.options.length === 0 || e.options.length > Ete ? !1 : e.options.reduce(
     (n, r) => Math.max(n, r.label.length),

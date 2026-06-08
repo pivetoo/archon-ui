@@ -40,7 +40,7 @@ export interface FilterPanelProps {
 // Quando tem muitas opcoes ou labels longas, renderiza como lista vertical com Check.
 const CHIPS_MAX_OPTIONS = 4
 const CHIPS_MAX_LABEL_LENGTH = 18
-const POPOVER_WIDE_THRESHOLD = 22
+const POPOVER_WIDE_THRESHOLD = 14
 
 function isChipsSection(section: FilterSection): boolean {
   if (section.options.length === 0) {
