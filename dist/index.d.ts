@@ -919,7 +919,7 @@ export declare interface PagedRequest {
 export declare const PageLayout: React_2.FC<PageLayoutProps>;
 
 export declare interface PageLayoutProps {
-    title: string;
+    title?: string;
     subtitle?: string;
     titleClassName?: string;
     density?: "default" | "compact";

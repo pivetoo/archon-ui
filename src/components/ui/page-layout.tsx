@@ -19,7 +19,7 @@ export interface PageAction {
 }
 
 export interface PageLayoutProps {
-  title: string
+  title?: string
   subtitle?: string
   titleClassName?: string
   density?: "default" | "compact"
@@ -191,9 +191,11 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     return button
   }
 
+  const hasHeader = !!(title || subtitle || allActions.length > 0 || actionsSlot || onRefresh || filtersSlot)
+
   return (
     <div className={cn("flex flex-col h-full w-full", className)}>
-      <div className={cn("mb-5 flex flex-col gap-4", isCompact ? "py-1" : "py-2")}>
+      {hasHeader && <div className={cn("mb-5 flex flex-col gap-4", isCompact ? "py-1" : "py-2")}>
         <div
           className={cn(
             "flex flex-col gap-4",
@@ -292,7 +294,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
             </div>
           )}
         </div>
-      </div>
+      </div>}
 
       <div className="overflow-x-hidden overflow-y-auto">
         {children}
