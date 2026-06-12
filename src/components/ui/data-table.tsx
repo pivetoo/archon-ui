@@ -334,7 +334,10 @@ export function DataTable<T = any>({
   }
 
   return (
-    <div className={cn("flex flex-col overflow-hidden rounded-lg border border-border/70 bg-background shadow-sm", className)}>
+    // No mobile (modo card) a moldura da tabela (borda + overflow-hidden + arredondamento) e dispensada:
+    // os cards viram uma lista solta na pagina. Isso evita o clip que cortava a borda lateral do card
+    // selecionado. A partir de md, a moldura volta para a tabela.
+    <div className={cn("flex flex-col md:overflow-hidden md:rounded-lg md:border md:border-border/70 md:bg-background md:shadow-sm", className)}>
       <div
         ref={containerRef}
         className={cn("relative", mobileCards && "hidden md:block")}
@@ -476,7 +479,7 @@ export function DataTable<T = any>({
                   <div className="flex items-center gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0 text-[15px] font-semibold leading-tight">
+                        <div className="min-w-0 break-words text-[15px] font-semibold leading-tight">
                           {renderCellValue(primaryColumn, record, index)}
                         </div>
                         {tagColumn && (

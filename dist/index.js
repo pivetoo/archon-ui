@@ -28918,191 +28918,196 @@ function fk({
       zIndex: 10
     };
   };
-  return /* @__PURE__ */ I("div", { className: K("flex flex-col overflow-hidden rounded-lg border border-border/70 bg-background shadow-sm", l), children: [
-    /* @__PURE__ */ I(
-      "div",
-      {
-        ref: S,
-        className: K("relative", y && "hidden md:block"),
-        onClick: Lt,
-        onMouseDown: Fe,
-        children: [
-          D && R && /* @__PURE__ */ f("div", { style: ct() }),
-          /* @__PURE__ */ I(L4, { children: [
-            /* @__PURE__ */ f($4, { children: /* @__PURE__ */ f(ts, { children: e.map((ee) => /* @__PURE__ */ f(
-              F4,
-              {
-                className: X(ee),
-                style: ee.width ? { width: ee.width } : void 0,
-                children: ee.title
-              },
-              ee.key
-            )) }) }),
-            /* @__PURE__ */ f(D4, { children: n ? Array.from({ length: 5 }).map((ee, ve) => /* @__PURE__ */ f(ts, { children: e.map((ye) => /* @__PURE__ */ f(ol, { className: X(ye), children: /* @__PURE__ */ f("div", { className: "h-4 animate-pulse rounded-full bg-muted" }) }, ye.key)) }, `skeleton-${ve}`)) : t.length === 0 ? /* @__PURE__ */ f(ts, { children: /* @__PURE__ */ f(
-              ol,
-              {
-                colSpan: e.length + (_ ? 1 : 0),
-                className: "py-14 text-center",
-                children: /* @__PURE__ */ I("div", { className: "mx-auto flex max-w-sm flex-col items-center gap-2 text-center", children: [
-                  /* @__PURE__ */ f("div", { className: "rounded-2xl border border-border/70 bg-muted/35 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground", children: w("common.state.noResults") }),
-                  /* @__PURE__ */ f("div", { className: "text-base font-medium text-foreground", children: H }),
-                  /* @__PURE__ */ f("div", { className: "text-sm text-muted-foreground", children: w("common.state.adjustFilters") })
-                ] })
-              }
-            ) }) : ie.map((ee, ve) => {
-              const ye = J(ee), Se = ge(ee);
-              return /* @__PURE__ */ f(
-                ts,
-                {
-                  ref: (be) => {
-                    be && C.current.set(ye, be);
-                  },
-                  "data-row": "true",
-                  "data-state": Se ? "selected" : "",
-                  onClick: (be) => {
-                    _ ? nt(ee, be) : s?.(ee);
-                  },
-                  onDoubleClick: () => c?.(ee),
-                  className: K(
-                    _ || s || c ? "cursor-pointer" : "",
-                    _ && "select-none",
-                    Se && "!bg-[hsl(var(--secondary)/0.22)] hover:!bg-[hsl(var(--secondary)/0.28)]"
-                  ),
-                  children: e.map((be) => {
-                    const ze = be.dataIndex ? ee[be.dataIndex] : void 0;
-                    return /* @__PURE__ */ f(ol, { className: X(be), children: be.render ? be.render(ze, ee, ve) : ze || "-" }, be.key);
-                  })
-                },
-                ye
-              );
-            }) })
-          ] })
-        ]
-      }
-    ),
-    y && /* @__PURE__ */ f("div", { className: "flex flex-col gap-2.5 p-3 md:hidden", children: n ? Array.from({ length: 5 }).map((ee, ve) => /* @__PURE__ */ I("div", { className: "rounded-xl border border-border/70 p-3.5", children: [
-      /* @__PURE__ */ f("div", { className: "mb-3 h-4 w-2/3 animate-pulse rounded bg-muted" }),
-      /* @__PURE__ */ f("div", { className: "grid grid-cols-2 gap-3", children: Array.from({ length: 4 }).map((ye, Se) => /* @__PURE__ */ f("div", { className: "h-3 animate-pulse rounded bg-muted" }, Se)) })
-    ] }, `card-skeleton-${ve}`)) : t.length === 0 ? /* @__PURE__ */ I("div", { className: "mx-auto flex max-w-sm flex-col items-center gap-2 px-4 py-12 text-center", children: [
-      /* @__PURE__ */ f("div", { className: "rounded-2xl border border-border/70 bg-muted/35 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground", children: w("common.state.noResults") }),
-      /* @__PURE__ */ f("div", { className: "text-base font-medium text-foreground", children: H }),
-      /* @__PURE__ */ f("div", { className: "text-sm text-muted-foreground", children: w("common.state.adjustFilters") })
-    ] }) : ie.map((ee, ve) => {
-      const ye = J(ee), Se = ge(ee);
-      return /* @__PURE__ */ f(
+  return (
+    // No mobile (modo card) a moldura da tabela (borda + overflow-hidden + arredondamento) e dispensada:
+    // os cards viram uma lista solta na pagina. Isso evita o clip que cortava a borda lateral do card
+    // selecionado. A partir de md, a moldura volta para a tabela.
+    /* @__PURE__ */ I("div", { className: K("flex flex-col md:overflow-hidden md:rounded-lg md:border md:border-border/70 md:bg-background md:shadow-sm", l), children: [
+      /* @__PURE__ */ I(
         "div",
         {
-          onClick: () => E(ee),
-          "data-state": Se ? "selected" : "",
-          className: K(
-            "rounded-xl border border-border/70 bg-card p-3.5 transition-colors",
-            W && "cursor-pointer active:scale-[0.99] active:bg-accent",
-            Se && "border-secondary/50 bg-[hsl(var(--secondary)/0.12)]"
-          ),
-          children: /* @__PURE__ */ I("div", { className: "flex items-center gap-3", children: [
-            /* @__PURE__ */ I("div", { className: "min-w-0 flex-1", children: [
-              /* @__PURE__ */ I("div", { className: "flex items-start justify-between gap-2", children: [
-                /* @__PURE__ */ f("div", { className: "min-w-0 text-[15px] font-semibold leading-tight", children: G(ae, ee, ve) }),
-                te && /* @__PURE__ */ f("div", { className: "shrink-0", children: G(te, ee, ve) })
-              ] }),
-              z.length > 0 && /* @__PURE__ */ f("div", { className: "mt-3 grid grid-cols-2 gap-x-3 gap-y-2.5", children: z.map((be) => /* @__PURE__ */ I("div", { className: "min-w-0", children: [
-                /* @__PURE__ */ f("div", { className: "text-[11px] uppercase tracking-wide text-muted-foreground", children: be.title }),
-                /* @__PURE__ */ f("div", { className: "truncate text-sm font-medium", children: G(be, ee, ve) })
-              ] }, be.key)) })
-            ] }),
-            B && /* @__PURE__ */ f(
-              "button",
-              {
-                type: "button",
-                "aria-label": k("common.action.openDetails", "Abrir detalhes"),
-                onClick: (be) => {
-                  be.stopPropagation(), c?.(ee);
+          ref: S,
+          className: K("relative", y && "hidden md:block"),
+          onClick: Lt,
+          onMouseDown: Fe,
+          children: [
+            D && R && /* @__PURE__ */ f("div", { style: ct() }),
+            /* @__PURE__ */ I(L4, { children: [
+              /* @__PURE__ */ f($4, { children: /* @__PURE__ */ f(ts, { children: e.map((ee) => /* @__PURE__ */ f(
+                F4,
+                {
+                  className: X(ee),
+                  style: ee.width ? { width: ee.width } : void 0,
+                  children: ee.title
                 },
-                className: "shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
-                children: /* @__PURE__ */ f(Ha, { className: "h-5 w-5" })
-              }
-            )
-          ] })
-        },
-        ye
-      );
-    }) }),
-    t.length > 0 && /* @__PURE__ */ I("div", { className: "flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border/70 bg-muted/20 px-4 py-3", children: [
-      /* @__PURE__ */ I("div", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: [
-        /* @__PURE__ */ f("label", { htmlFor: M, className: "hidden sm:inline", children: w("common.table.rowsPerPage") }),
-        /* @__PURE__ */ f(
-          "select",
+                ee.key
+              )) }) }),
+              /* @__PURE__ */ f(D4, { children: n ? Array.from({ length: 5 }).map((ee, ve) => /* @__PURE__ */ f(ts, { children: e.map((ye) => /* @__PURE__ */ f(ol, { className: X(ye), children: /* @__PURE__ */ f("div", { className: "h-4 animate-pulse rounded-full bg-muted" }) }, ye.key)) }, `skeleton-${ve}`)) : t.length === 0 ? /* @__PURE__ */ f(ts, { children: /* @__PURE__ */ f(
+                ol,
+                {
+                  colSpan: e.length + (_ ? 1 : 0),
+                  className: "py-14 text-center",
+                  children: /* @__PURE__ */ I("div", { className: "mx-auto flex max-w-sm flex-col items-center gap-2 text-center", children: [
+                    /* @__PURE__ */ f("div", { className: "rounded-2xl border border-border/70 bg-muted/35 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground", children: w("common.state.noResults") }),
+                    /* @__PURE__ */ f("div", { className: "text-base font-medium text-foreground", children: H }),
+                    /* @__PURE__ */ f("div", { className: "text-sm text-muted-foreground", children: w("common.state.adjustFilters") })
+                  ] })
+                }
+              ) }) : ie.map((ee, ve) => {
+                const ye = J(ee), Se = ge(ee);
+                return /* @__PURE__ */ f(
+                  ts,
+                  {
+                    ref: (be) => {
+                      be && C.current.set(ye, be);
+                    },
+                    "data-row": "true",
+                    "data-state": Se ? "selected" : "",
+                    onClick: (be) => {
+                      _ ? nt(ee, be) : s?.(ee);
+                    },
+                    onDoubleClick: () => c?.(ee),
+                    className: K(
+                      _ || s || c ? "cursor-pointer" : "",
+                      _ && "select-none",
+                      Se && "!bg-[hsl(var(--secondary)/0.22)] hover:!bg-[hsl(var(--secondary)/0.28)]"
+                    ),
+                    children: e.map((be) => {
+                      const ze = be.dataIndex ? ee[be.dataIndex] : void 0;
+                      return /* @__PURE__ */ f(ol, { className: X(be), children: be.render ? be.render(ze, ee, ve) : ze || "-" }, be.key);
+                    })
+                  },
+                  ye
+                );
+              }) })
+            ] })
+          ]
+        }
+      ),
+      y && /* @__PURE__ */ f("div", { className: "flex flex-col gap-2.5 p-3 md:hidden", children: n ? Array.from({ length: 5 }).map((ee, ve) => /* @__PURE__ */ I("div", { className: "rounded-xl border border-border/70 p-3.5", children: [
+        /* @__PURE__ */ f("div", { className: "mb-3 h-4 w-2/3 animate-pulse rounded bg-muted" }),
+        /* @__PURE__ */ f("div", { className: "grid grid-cols-2 gap-3", children: Array.from({ length: 4 }).map((ye, Se) => /* @__PURE__ */ f("div", { className: "h-3 animate-pulse rounded bg-muted" }, Se)) })
+      ] }, `card-skeleton-${ve}`)) : t.length === 0 ? /* @__PURE__ */ I("div", { className: "mx-auto flex max-w-sm flex-col items-center gap-2 px-4 py-12 text-center", children: [
+        /* @__PURE__ */ f("div", { className: "rounded-2xl border border-border/70 bg-muted/35 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground", children: w("common.state.noResults") }),
+        /* @__PURE__ */ f("div", { className: "text-base font-medium text-foreground", children: H }),
+        /* @__PURE__ */ f("div", { className: "text-sm text-muted-foreground", children: w("common.state.adjustFilters") })
+      ] }) : ie.map((ee, ve) => {
+        const ye = J(ee), Se = ge(ee);
+        return /* @__PURE__ */ f(
+          "div",
           {
-            id: M,
-            name: "pageSize",
-            "aria-label": w("common.table.rowsPerPage"),
-            value: Y,
-            onChange: (ee) => Ce(Number(ee.target.value)),
-            className: "h-9 rounded-md border border-input bg-background px-3 text-sm shadow-sm",
-            children: m.map((ee) => /* @__PURE__ */ f("option", { value: ee, children: ee }, ee))
-          }
-        )
-      ] }),
-      /* @__PURE__ */ f("div", { className: "flex items-center gap-1 text-sm text-muted-foreground", children: /* @__PURE__ */ I("span", { children: [
-        j + 1,
-        "-",
-        V,
-        " de ",
-        re
-      ] }) }),
-      /* @__PURE__ */ I("div", { className: "flex items-center gap-1", children: [
-        /* @__PURE__ */ f(
-          bt,
-          {
-            variant: "outline",
-            size: "sm",
-            onClick: () => oe(1),
-            disabled: q === 1,
-            className: "hidden h-9 w-9 rounded-md p-0 sm:inline-flex",
-            children: /* @__PURE__ */ f(YP, { className: "h-4 w-4" })
-          }
-        ),
-        /* @__PURE__ */ f(
-          bt,
-          {
-            variant: "outline",
-            size: "sm",
-            onClick: () => oe((ee) => Math.max(1, ee - 1)),
-            disabled: q === 1,
-            className: "h-9 w-9 rounded-md p-0",
-            children: /* @__PURE__ */ f(Mk, { className: "h-4 w-4" })
-          }
-        ),
-        /* @__PURE__ */ I("span", { className: "px-3 text-sm font-medium text-foreground", children: [
-          q,
-          " / ",
-          ne
+            onClick: () => E(ee),
+            "data-state": Se ? "selected" : "",
+            className: K(
+              "rounded-xl border border-border/70 bg-card p-3.5 transition-colors",
+              W && "cursor-pointer active:scale-[0.99] active:bg-accent",
+              Se && "border-secondary/50 bg-[hsl(var(--secondary)/0.12)]"
+            ),
+            children: /* @__PURE__ */ I("div", { className: "flex items-center gap-3", children: [
+              /* @__PURE__ */ I("div", { className: "min-w-0 flex-1", children: [
+                /* @__PURE__ */ I("div", { className: "flex items-start justify-between gap-2", children: [
+                  /* @__PURE__ */ f("div", { className: "min-w-0 break-words text-[15px] font-semibold leading-tight", children: G(ae, ee, ve) }),
+                  te && /* @__PURE__ */ f("div", { className: "shrink-0", children: G(te, ee, ve) })
+                ] }),
+                z.length > 0 && /* @__PURE__ */ f("div", { className: "mt-3 grid grid-cols-2 gap-x-3 gap-y-2.5", children: z.map((be) => /* @__PURE__ */ I("div", { className: "min-w-0", children: [
+                  /* @__PURE__ */ f("div", { className: "text-[11px] uppercase tracking-wide text-muted-foreground", children: be.title }),
+                  /* @__PURE__ */ f("div", { className: "truncate text-sm font-medium", children: G(be, ee, ve) })
+                ] }, be.key)) })
+              ] }),
+              B && /* @__PURE__ */ f(
+                "button",
+                {
+                  type: "button",
+                  "aria-label": k("common.action.openDetails", "Abrir detalhes"),
+                  onClick: (be) => {
+                    be.stopPropagation(), c?.(ee);
+                  },
+                  className: "shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
+                  children: /* @__PURE__ */ f(Ha, { className: "h-5 w-5" })
+                }
+              )
+            ] })
+          },
+          ye
+        );
+      }) }),
+      t.length > 0 && /* @__PURE__ */ I("div", { className: "flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border/70 bg-muted/20 px-4 py-3", children: [
+        /* @__PURE__ */ I("div", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: [
+          /* @__PURE__ */ f("label", { htmlFor: M, className: "hidden sm:inline", children: w("common.table.rowsPerPage") }),
+          /* @__PURE__ */ f(
+            "select",
+            {
+              id: M,
+              name: "pageSize",
+              "aria-label": w("common.table.rowsPerPage"),
+              value: Y,
+              onChange: (ee) => Ce(Number(ee.target.value)),
+              className: "h-9 rounded-md border border-input bg-background px-3 text-sm shadow-sm",
+              children: m.map((ee) => /* @__PURE__ */ f("option", { value: ee, children: ee }, ee))
+            }
+          )
         ] }),
-        /* @__PURE__ */ f(
-          bt,
-          {
-            variant: "outline",
-            size: "sm",
-            onClick: () => oe((ee) => Math.min(ne, ee + 1)),
-            disabled: q === ne,
-            className: "h-9 w-9 rounded-md p-0",
-            children: /* @__PURE__ */ f(Ha, { className: "h-4 w-4" })
-          }
-        ),
-        /* @__PURE__ */ f(
-          bt,
-          {
-            variant: "outline",
-            size: "sm",
-            onClick: () => oe(ne),
-            disabled: q === ne,
-            className: "hidden h-9 w-9 rounded-md p-0 sm:inline-flex",
-            children: /* @__PURE__ */ f(KP, { className: "h-4 w-4" })
-          }
-        )
+        /* @__PURE__ */ f("div", { className: "flex items-center gap-1 text-sm text-muted-foreground", children: /* @__PURE__ */ I("span", { children: [
+          j + 1,
+          "-",
+          V,
+          " de ",
+          re
+        ] }) }),
+        /* @__PURE__ */ I("div", { className: "flex items-center gap-1", children: [
+          /* @__PURE__ */ f(
+            bt,
+            {
+              variant: "outline",
+              size: "sm",
+              onClick: () => oe(1),
+              disabled: q === 1,
+              className: "hidden h-9 w-9 rounded-md p-0 sm:inline-flex",
+              children: /* @__PURE__ */ f(YP, { className: "h-4 w-4" })
+            }
+          ),
+          /* @__PURE__ */ f(
+            bt,
+            {
+              variant: "outline",
+              size: "sm",
+              onClick: () => oe((ee) => Math.max(1, ee - 1)),
+              disabled: q === 1,
+              className: "h-9 w-9 rounded-md p-0",
+              children: /* @__PURE__ */ f(Mk, { className: "h-4 w-4" })
+            }
+          ),
+          /* @__PURE__ */ I("span", { className: "px-3 text-sm font-medium text-foreground", children: [
+            q,
+            " / ",
+            ne
+          ] }),
+          /* @__PURE__ */ f(
+            bt,
+            {
+              variant: "outline",
+              size: "sm",
+              onClick: () => oe((ee) => Math.min(ne, ee + 1)),
+              disabled: q === ne,
+              className: "h-9 w-9 rounded-md p-0",
+              children: /* @__PURE__ */ f(Ha, { className: "h-4 w-4" })
+            }
+          ),
+          /* @__PURE__ */ f(
+            bt,
+            {
+              variant: "outline",
+              size: "sm",
+              onClick: () => oe(ne),
+              disabled: q === ne,
+              className: "hidden h-9 w-9 rounded-md p-0 sm:inline-flex",
+              children: /* @__PURE__ */ f(KP, { className: "h-4 w-4" })
+            }
+          )
+        ] })
       ] })
     ] })
-  ] });
+  );
 }
 function Dne({
   columns: e,
