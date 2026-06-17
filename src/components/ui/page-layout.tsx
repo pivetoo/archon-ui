@@ -36,6 +36,8 @@ export interface PageLayoutProps {
   viewLabel?: string
   editLabel?: string
   deleteLabel?: string
+  editDisabled?: boolean
+  editDisabledTooltip?: string
   selectedRowsCount?: number
   children?: React.ReactNode
   className?: string
@@ -59,6 +61,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   viewLabel,
   editLabel,
   deleteLabel,
+  editDisabled,
+  editDisabledTooltip,
   selectedRowsCount = 0,
   children,
   className
@@ -136,8 +140,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         icon: <Edit className="h-4 w-4" />,
         variant: "ghost",
         onClick: () => onEdit(),
-        disabled: needsSingleSelection,
-        tooltip: editTooltip,
+        disabled: needsSingleSelection || !!editDisabled,
+        tooltip: needsSingleSelection ? editTooltip : (editDisabled ? editDisabledTooltip : undefined),
         testId: "crud-edit-button"
       })
     }

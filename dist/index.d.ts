@@ -936,6 +936,8 @@ export declare interface PageLayoutProps {
     viewLabel?: string;
     editLabel?: string;
     deleteLabel?: string;
+    editDisabled?: boolean;
+    editDisabledTooltip?: string;
     selectedRowsCount?: number;
     children?: React_2.ReactNode;
     className?: string;
