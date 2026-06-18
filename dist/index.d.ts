@@ -123,6 +123,7 @@ export declare interface AppLayoutProps {
     headerMode?: SidebarHeaderMode;
     headerLogo?: string;
     headerLogoCollapsed?: string;
+    sidebarFooterExtra?: React_2.ReactNode;
     children?: React_2.ReactNode;
 }
 

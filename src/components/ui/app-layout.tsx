@@ -59,6 +59,7 @@ export interface AppLayoutProps {
   headerMode?: SidebarHeaderMode
   headerLogo?: string
   headerLogoCollapsed?: string
+  sidebarFooterExtra?: React.ReactNode
   children?: React.ReactNode
 }
 
@@ -94,6 +95,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   headerMode,
   headerLogo,
   headerLogoCollapsed,
+  sidebarFooterExtra,
   titleStyle,
   titleClassName,
   children,
@@ -191,16 +193,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 onModuleClick={mn.handleModuleClick}
                 brand={logo}
                 footer={
-                  <UserMenu
-                    placement="rail"
-                    user={user}
-                    onLogout={onLogout}
-                    profilePath={profilePath}
-                    onProfileNavigate={onProfileNavigate}
-                    onAvatarUpload={onAvatarUpload}
-                    onAvatarRemove={onAvatarRemove}
-                    onUpdateProfile={onUpdateProfile}
-                  />
+                  <>
+                    {sidebarFooterExtra}
+                    <UserMenu
+                      placement="rail"
+                      user={user}
+                      onLogout={onLogout}
+                      profilePath={profilePath}
+                      onProfileNavigate={onProfileNavigate}
+                      onAvatarUpload={onAvatarUpload}
+                      onAvatarRemove={onAvatarRemove}
+                      onUpdateProfile={onUpdateProfile}
+                    />
+                  </>
                 }
               />
               {mn.panelOpen && mn.openModule && (
