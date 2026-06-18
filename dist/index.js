@@ -28230,7 +28230,7 @@ const uk = ({ module: e, active: t, onClick: n }) => {
     i.length > 0 && /* @__PURE__ */ f("div", { className: "w-7 h-px bg-border my-2.5" }),
     /* @__PURE__ */ f("div", { className: "w-full flex flex-col items-center gap-1.5", children: i.map((s) => /* @__PURE__ */ f(uk, { module: s, active: s.key === t, onClick: () => n(s.key) }, s.key)) }),
     /* @__PURE__ */ f("div", { className: "flex-1" }),
-    o && /* @__PURE__ */ f("div", { className: "w-full flex justify-center pb-3", children: o })
+    o && /* @__PURE__ */ f("div", { className: "w-full flex flex-col items-center gap-1 pb-3", children: o })
   ] });
 };
 Y5.displayName = "ModuleRail";

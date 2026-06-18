@@ -55,7 +55,7 @@ export const ModuleRail: React.FC<ModuleRailProps> = ({ modules, activeModuleKey
         ))}
       </div>
       <div className="flex-1" />
-      {footer && <div className="w-full flex justify-center pb-3">{footer}</div>}
+      {footer && <div className="w-full flex flex-col items-center gap-1 pb-3">{footer}</div>}
     </aside>
   )
 }
