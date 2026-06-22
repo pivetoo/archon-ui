@@ -23,6 +23,7 @@ export interface ChartColors {
   isDark: boolean
   tick: string
   grid: string
+  crosshair: string
   surface: string
   tooltipBg: string
   tooltipText: string
@@ -39,6 +40,7 @@ export function useChartColors(): ChartColors {
             isDark,
             tick: "hsl(214, 10%, 68%)",
             grid: "hsl(220, 12%, 24%)",
+            crosshair: "hsl(214, 10%, 55%)",
             surface: "hsl(220, 13%, 15%)",
             tooltipBg: "hsl(220, 13%, 17%)",
             tooltipText: "hsl(210, 16%, 96%)",
@@ -47,6 +49,7 @@ export function useChartColors(): ChartColors {
             isDark,
             tick: "#6b7280",
             grid: "#e5e7eb",
+            crosshair: "#9ca3af",
             surface: "#ffffff",
             tooltipBg: "#ffffff",
             tooltipText: "#111827",
@@ -67,7 +70,7 @@ export function useNivoTheme() {
         domain: { line: { stroke: c.grid } },
       },
       grid: { line: { stroke: c.grid, strokeWidth: 1, strokeDasharray: "4 4" } },
-      crosshair: { line: { stroke: c.tick, strokeWidth: 1, strokeDasharray: "4 4" } },
+      crosshair: { line: { stroke: c.crosshair, strokeWidth: 1, strokeDasharray: "4 4" } },
       legends: { text: { fontFamily: "Inter, sans-serif", fontSize: 11, fill: c.tick } },
       tooltip: { container: { background: c.tooltipBg, color: c.tooltipText, fontSize: 12 } },
     }),

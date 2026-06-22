@@ -302,6 +302,7 @@ export declare interface ChartColors {
     isDark: boolean;
     tick: string;
     grid: string;
+    crosshair: string;
     surface: string;
     tooltipBg: string;
     tooltipText: string;

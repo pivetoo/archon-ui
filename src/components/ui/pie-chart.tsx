@@ -102,9 +102,9 @@ export const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
           tooltip={
             showTooltip
               ? ({ datum }) => (
-                  <div className="rounded-lg border border-border bg-popover px-3 py-2 shadow-lg">
-                    <p className="text-xs font-medium text-muted-foreground">{String(datum.label)}</p>
-                    <p className="text-sm font-bold text-foreground">
+                  <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-lg dark:border-border dark:bg-popover">
+                    <p className="text-xs font-medium text-gray-500 dark:text-muted-foreground">{String(datum.label)}</p>
+                    <p className="text-sm font-bold text-gray-900 dark:text-foreground">
                       {Number(datum.value).toLocaleString("pt-BR")}
                     </p>
                   </div>
