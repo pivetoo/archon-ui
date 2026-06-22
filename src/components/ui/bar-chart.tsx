@@ -1,6 +1,7 @@
 import * as React from "react"
 import { ResponsiveBar } from "@nivo/bar"
 import { cn } from "../../lib/utils"
+import { useNivoTheme } from "./chart-theme"
 
 export interface BarChartDataItem {
   name: string
@@ -48,6 +49,7 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
     ref
   ) => {
     const chartColors = colors || defaultColors
+    const nivoTheme = useNivoTheme()
 
     return (
       <div ref={ref} className={cn("h-full w-full", className)} style={{ height: typeof height === "number" ? height : 400 }}>
@@ -103,36 +105,16 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
           tooltip={
             showTooltip
               ? ({ id, value, indexValue }) => (
-                  <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-lg">
-                    <p className="text-xs font-medium text-gray-500">{String(indexValue)}</p>
-                    <p className="text-sm font-bold text-gray-900">
+                  <div className="rounded-lg border border-border bg-popover px-3 py-2 shadow-lg">
+                    <p className="text-xs font-medium text-muted-foreground">{String(indexValue)}</p>
+                    <p className="text-sm font-bold text-foreground">
                       {String(id)}: {Number(value).toLocaleString("pt-BR")}
                     </p>
                   </div>
                 )
               : undefined
           }
-          theme={{
-            text: {
-              fontFamily: "Inter, sans-serif",
-              fontSize: 11,
-              fill: "#6b7280",
-            },
-            grid: {
-              line: {
-                stroke: "#e5e7eb",
-                strokeWidth: 1,
-                strokeDasharray: "4 4",
-              },
-            },
-            legends: {
-              text: {
-                fontFamily: "Inter, sans-serif",
-                fontSize: 11,
-                fill: "#6b7280",
-              },
-            },
-          }}
+          theme={nivoTheme}
         />
       </div>
     )

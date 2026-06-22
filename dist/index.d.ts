@@ -298,6 +298,15 @@ export declare interface ChangePasswordPayload {
     newPassword: string;
 }
 
+export declare interface ChartColors {
+    isDark: boolean;
+    tick: string;
+    grid: string;
+    surface: string;
+    tooltipBg: string;
+    tooltipText: string;
+}
+
 export declare const ChartContainer: React_2.ForwardRefExoticComponent<ChartContainerProps & React_2.RefAttributes<HTMLDivElement>>;
 
 export declare interface ChartContainerProps {
@@ -1465,6 +1474,8 @@ declare interface UseBreadcrumbsOptions {
     menuGroups?: SidebarGroup[];
 }
 
+export declare function useChartColors(): ChartColors;
+
 export declare const useFormErrors: () => {
     fieldErrors: Record<string, string>;
     setErrors: (error: ApiError) => void;
@@ -1475,6 +1486,8 @@ export declare const useFormErrors: () => {
 export declare const useGlobalLoader: () => GlobalLoaderContextType;
 
 export declare const useI18n: () => I18nContextValue;
+
+export declare function useIsDark(): boolean;
 
 export declare function useModuleNav(modules: ModuleNavConfig): {
     activeModuleKey: string | null;
@@ -1487,6 +1500,66 @@ export declare function useModuleNav(modules: ModuleNavConfig): {
     toggleCollapsed: () => void;
     handleModuleClick: (moduleKey: string) => void;
     navigate: NavigateFunction;
+};
+
+export declare function useNivoTheme(): {
+    text: {
+        fontFamily: string;
+        fontSize: number;
+        fill: string;
+    };
+    axis: {
+        ticks: {
+            text: {
+                fontFamily: string;
+                fontSize: number;
+                fill: string;
+            };
+            line: {
+                stroke: string;
+            };
+        };
+        legend: {
+            text: {
+                fontFamily: string;
+                fontSize: number;
+                fill: string;
+            };
+        };
+        domain: {
+            line: {
+                stroke: string;
+            };
+        };
+    };
+    grid: {
+        line: {
+            stroke: string;
+            strokeWidth: number;
+            strokeDasharray: string;
+        };
+    };
+    crosshair: {
+        line: {
+            stroke: string;
+            strokeWidth: number;
+            strokeDasharray: string;
+        };
+    };
+    legends: {
+        text: {
+            fontFamily: string;
+            fontSize: number;
+            fill: string;
+        };
+    };
+    tooltip: {
+        container: {
+            background: string;
+            color: string;
+            fontSize: number;
+        };
+    };
 };
 
 export declare function useNotifications(options?: UseNotificationsOptions): UseNotificationsReturn;

@@ -1,6 +1,7 @@
 import * as React from "react"
 import { ResponsivePie } from "@nivo/pie"
 import { cn } from "../../lib/utils"
+import { useNivoTheme, useChartColors } from "./chart-theme"
 
 export interface PieChartDataItem {
   name: string
@@ -51,6 +52,8 @@ export const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
     ref
   ) => {
     const chartColors = colors || defaultColors
+    const nivoTheme = useNivoTheme()
+    const chartChrome = useChartColors()
 
     const nivoData = data.map((item, index) => ({
       id: item[nameKey],
@@ -69,7 +72,7 @@ export const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
           cornerRadius={4}
           colors={chartColors}
           borderWidth={1}
-          borderColor="#ffffff"
+          borderColor={chartChrome.surface}
           enableArcLabels={showLabels}
           arcLabel={showLabels ? (d) => `${d.value}` : undefined}
           arcLabelsSkipAngle={12}
@@ -87,7 +90,7 @@ export const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
                     itemsSpacing: 8,
                     itemWidth: 100,
                     itemHeight: 20,
-                    itemTextColor: "#6b7280",
+                    itemTextColor: chartChrome.tick,
                     itemDirection: "left-to-right",
                     itemOpacity: 1,
                     symbolSize: 10,
@@ -99,28 +102,16 @@ export const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
           tooltip={
             showTooltip
               ? ({ datum }) => (
-                  <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-lg">
-                    <p className="text-xs font-medium text-gray-500">{String(datum.label)}</p>
-                    <p className="text-sm font-bold text-gray-900">
+                  <div className="rounded-lg border border-border bg-popover px-3 py-2 shadow-lg">
+                    <p className="text-xs font-medium text-muted-foreground">{String(datum.label)}</p>
+                    <p className="text-sm font-bold text-foreground">
                       {Number(datum.value).toLocaleString("pt-BR")}
                     </p>
                   </div>
                 )
               : undefined
           }
-          theme={{
-            text: {
-              fontFamily: "Inter, sans-serif",
-              fontSize: 11,
-            },
-            legends: {
-              text: {
-                fontFamily: "Inter, sans-serif",
-                fontSize: 11,
-                fill: "#6b7280",
-              },
-            },
-          }}
+          theme={nivoTheme}
         />
       </div>
     )

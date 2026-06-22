@@ -1,6 +1,7 @@
 import * as React from "react"
 import { ResponsiveLine } from "@nivo/line"
 import { cn } from "../../lib/utils"
+import { useNivoTheme } from "./chart-theme"
 
 export interface LineChartDataItem {
   name: string
@@ -53,6 +54,7 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
     ref
   ) => {
     const chartColors = colors || defaultColors
+    const nivoTheme = useNivoTheme()
 
     const nivoData = dataKeys.map((key, index) => ({
       id: key,
@@ -125,43 +127,16 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
           tooltip={
             showTooltip
               ? ({ point }) => (
-                  <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-lg">
-                    <p className="text-xs font-medium text-gray-500">{point.data.x as string}</p>
-                    <p className="text-sm font-bold text-gray-900">
+                  <div className="rounded-lg border border-border bg-popover px-3 py-2 shadow-lg">
+                    <p className="text-xs font-medium text-muted-foreground">{point.data.x as string}</p>
+                    <p className="text-sm font-bold text-foreground">
                       {point.seriesId}: {Number(point.data.y).toLocaleString("pt-BR")}
                     </p>
                   </div>
                 )
               : undefined
           }
-          theme={{
-            text: {
-              fontFamily: "Inter, sans-serif",
-              fontSize: 11,
-              fill: "#6b7280",
-            },
-            grid: {
-              line: {
-                stroke: "#e5e7eb",
-                strokeWidth: 1,
-                strokeDasharray: "4 4",
-              },
-            },
-            crosshair: {
-              line: {
-                stroke: "#9ca3af",
-                strokeWidth: 1,
-                strokeDasharray: "4 4",
-              },
-            },
-            legends: {
-              text: {
-                fontFamily: "Inter, sans-serif",
-                fontSize: 11,
-                fill: "#6b7280",
-              },
-            },
-          }}
+          theme={nivoTheme}
         />
       </div>
     )
