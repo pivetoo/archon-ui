@@ -51,6 +51,14 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
     const chartColors = colors || defaultColors
     const nivoTheme = useNivoTheme()
 
+    // Margem esquerda do layout horizontal ajustada ao maior rotulo (com teto no valor antigo de 190):
+    // rotulos curtos ficam colados a esquerda do card em vez de flutuar no meio, e rotulos longos
+    // continuam com o espaco que ja tinham.
+    const longestLabel = layout === "horizontal"
+      ? data.reduce((max, item) => Math.max(max, String(item[xAxisKey] ?? "").length), 0)
+      : 0
+    const leftMargin = layout === "horizontal" ? Math.min(190, Math.max(60, longestLabel * 7 + 20)) : 50
+
     return (
       <div ref={ref} className={cn("h-full w-full", className)} style={{ height: typeof height === "number" ? height : 400 }}>
         <ResponsiveBar
@@ -58,7 +66,7 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
           keys={dataKeys}
           indexBy={xAxisKey}
           layout={layout === "horizontal" ? "horizontal" : "vertical"}
-          margin={{ top: 10, right: showLegend ? 80 : 10, bottom: 40, left: layout === "horizontal" ? 190 : 50 }}
+          margin={{ top: 10, right: showLegend ? 80 : 10, bottom: 40, left: leftMargin }}
           padding={0.3}
           innerPadding={2}
           borderRadius={4}
