@@ -43,6 +43,10 @@ export interface PageLayoutProps {
   className?: string
 }
 
+// Estados do header: "row" = titulo e acoes na mesma linha; "below" = acoes em
+// linha propria abaixo do titulo; "collapsed" = acoes nao primarias no menu "Acoes".
+type HeaderFit = "row" | "below" | "collapsed"
+
 export const PageLayout: React.FC<PageLayoutProps> = ({
   title,
   subtitle,
@@ -69,6 +73,47 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
 }) => {
   const { t } = useI18n()
   const [isRefreshing, setIsRefreshing] = React.useState(false)
+  const [headerFit, setHeaderFit] = React.useState<HeaderFit>("row")
+
+  const headerRowRef = React.useRef<HTMLDivElement>(null)
+  const titleRef = React.useRef<HTMLHeadingElement>(null)
+  const inlineActionsRef = React.useRef<HTMLDivElement>(null)
+
+  // Mede a largura real disponivel no conteudo (sensivel a sidebar aberta/fechada),
+  // em vez de breakpoints de viewport, para as acoes nunca quebrarem de linha.
+  const measureHeaderFit = React.useCallback(() => {
+    const row = headerRowRef.current
+    const inlineActions = inlineActionsRef.current
+    if (!row || !inlineActions) return
+
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches
+    const available = row.clientWidth
+    const actionsWidth = inlineActions.scrollWidth
+    const titleWidth = (titleRef.current?.scrollWidth ?? 0) + (onRefresh ? 40 : 0)
+
+    let next: HeaderFit
+    if (!isDesktop) next = "collapsed"
+    else if (titleWidth + 16 + actionsWidth <= available) next = "row"
+    else if (actionsWidth <= available) next = "below"
+    else next = "collapsed"
+
+    setHeaderFit((prev) => (prev === next ? prev : next))
+  }, [onRefresh])
+
+  React.useLayoutEffect(() => {
+    measureHeaderFit()
+  })
+
+  React.useEffect(() => {
+    const row = headerRowRef.current
+    if (!row || typeof ResizeObserver === "undefined") return
+    const observer = new ResizeObserver(() => measureHeaderFit())
+    observer.observe(row)
+    if (document.fonts) {
+      void document.fonts.ready.then(() => measureHeaderFit())
+    }
+    return () => observer.disconnect()
+  }, [measureHeaderFit])
 
   const handleRefresh = async () => {
     if (!onRefresh || isRefreshing) return
@@ -162,10 +207,10 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   const allActions = [...actions, ...defaultActions]
   const isCompact = density === "compact"
 
-  // No mobile, colapsa as acoes em um menu "Acoes" quando ha muitas; mantem as marcadas como primary visiveis.
+  // No estado colapsado, move as acoes para um menu "Acoes" quando ha muitas; mantem as marcadas como primary visiveis.
   const hasOverflow = allActions.length > 2
-  const mobilePrimaryActions = hasOverflow ? allActions.filter((a) => a.primary) : allActions
-  const mobileOverflowActions = hasOverflow ? allActions.filter((a) => !a.primary) : []
+  const collapsedPrimaryActions = hasOverflow ? allActions.filter((a) => a.primary) : allActions
+  const collapsedOverflowActions = hasOverflow ? allActions.filter((a) => !a.primary) : []
 
   const renderActionButton = (action: PageAction, extraClassName?: string) => {
     const button = (
@@ -206,10 +251,17 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
             isCompact ? "px-1" : "px-0.5"
           )}
         >
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+          <div
+            ref={headerRowRef}
+            className={cn(
+              "relative flex gap-4",
+              headerFit === "row" ? "flex-row items-start justify-between" : "flex-col"
+            )}
+          >
             <div className="min-w-0 space-y-2">
               <div className="flex items-center gap-2">
                 <h1
+                  ref={titleRef}
                   data-testid="page-title"
                   className={cn(
                     "truncate font-semibold tracking-tight text-primary drop-shadow-[0_1px_0_hsl(var(--primary)/0.15)]",
@@ -249,45 +301,54 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
 
             {(allActions.length > 0 || actionsSlot) && (
               <>
-                {/* Desktop/notebook (>=lg): acoes inline */}
-                <div className="hidden w-full flex-wrap items-center gap-2 lg:flex lg:w-auto lg:justify-end">
+                {/* Acoes inline em linha unica; no estado colapsado vira medidor invisivel de largura */}
+                <div
+                  ref={inlineActionsRef}
+                  className={cn(
+                    "flex flex-nowrap items-center gap-2",
+                    headerFit === "below" && "self-end",
+                    headerFit === "collapsed" && "invisible absolute left-0 top-0 h-0 overflow-hidden"
+                  )}
+                >
                   {actionsSlot}
                   {allActions.map((action) => renderActionButton(action))}
                 </div>
 
-                {/* Mobile/tablet (<lg): menu de overflow a esquerda, acoes primarias (Novo) a direita */}
-                <div className="flex w-full items-center gap-2 md:justify-end lg:hidden">
-                  {actionsSlot}
-                  {mobileOverflowActions.length > 0 && (
-                    <Dropdown>
-                      <DropdownTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className={cn("gap-2 rounded-lg px-3.5", mobilePrimaryActions.length === 0 && "flex-1 md:flex-none")}
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                          {resolveTooltip("pageLayout.action.more", "Ações")}
-                        </Button>
-                      </DropdownTrigger>
-                      <DropdownContent align="end" className="min-w-[12rem]">
-                        {mobileOverflowActions.map((action) => (
-                          <DropdownItem
-                            key={action.key}
-                            data-testid={action.testId}
-                            disabled={action.disabled}
-                            onSelect={() => action.onClick()}
-                            className={cn("gap-2", action.variant === "danger" && "text-destructive focus:text-destructive")}
+                {/* Sem largura para linha unica: menu de overflow a esquerda, acoes primarias (Novo) a direita */}
+                {headerFit === "collapsed" && (
+                  <div className="flex w-full items-center gap-2 md:justify-end">
+                    {actionsSlot}
+                    {collapsedOverflowActions.length > 0 && (
+                      <Dropdown>
+                        <DropdownTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className={cn("gap-2 rounded-lg px-3.5", collapsedPrimaryActions.length === 0 && "flex-1 md:flex-none")}
                           >
-                            {action.icon}
-                            {action.label}
-                          </DropdownItem>
-                        ))}
-                      </DropdownContent>
-                    </Dropdown>
-                  )}
-                  {mobilePrimaryActions.map((action) => renderActionButton(action, action.primary ? "flex-1 md:flex-none" : undefined))}
-                </div>
+                            <MoreHorizontal className="h-4 w-4" />
+                            {resolveTooltip("pageLayout.action.more", "Ações")}
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownContent align="end" className="min-w-[12rem]">
+                          {collapsedOverflowActions.map((action) => (
+                            <DropdownItem
+                              key={action.key}
+                              data-testid={action.testId}
+                              disabled={action.disabled}
+                              onSelect={() => action.onClick()}
+                              className={cn("gap-2", action.variant === "danger" && "text-destructive focus:text-destructive")}
+                            >
+                              {action.icon}
+                              {action.label}
+                            </DropdownItem>
+                          ))}
+                        </DropdownContent>
+                      </Dropdown>
+                    )}
+                    {collapsedPrimaryActions.map((action) => renderActionButton(action, action.primary ? "flex-1 md:flex-none" : undefined))}
+                  </div>
+                )}
               </>
             )}
           </div>
