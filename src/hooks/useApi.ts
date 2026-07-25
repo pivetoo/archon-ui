@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useI18n } from '../i18n';
 import { toast } from '../components/ui/use-toast';
 import type { ApiError, PaginationMetadata, RequestState, UseApiOptions } from '../services/http/types';
@@ -75,10 +75,15 @@ function buildErrorDescription(apiError: ApiError, t: (key: string) => string): 
 
   const visibleMessages = validationMessages.slice(0, 2)
   const hiddenCount = validationMessages.length - visibleMessages.length
+  // Comparar com a mensagem JA TRADUZIDA da propria chave, e nao com a string em ingles
+  // 'validation failed.' que estava fixa aqui. O catalogo tem pt-BR, en-US e es-AR, e a mensagem
+  // chega localizada do backend — em portugues a comparacao nunca batia, entao o toast mostrava a
+  // mensagem generica JUNTO da lista de erros, que e exatamente o que esta checagem evita.
+  const genericValidationMessage = t('validation.failed').trim().toLowerCase()
   const showMessage =
     apiError.message &&
     apiError.message.trim().length > 0 &&
-    apiError.message.trim().toLowerCase() !== 'validation failed.'
+    apiError.message.trim().toLowerCase() !== genericValidationMessage
 
   const lines: string[] = []
 
@@ -113,7 +118,9 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
     pagination: null,
   });
 
-  const execute = async (apiCall: () => Promise<any>) => {
+  // `useCallback` porque consumidor que ponha `execute` em array de dependencia de `useEffect`
+  // entrava em laco infinito de render — a funcao era nova a cada passagem.
+  const execute = useCallback(async (apiCall: () => Promise<any>) => {
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
@@ -179,9 +186,9 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
 
       return null;
     }
-  };
+  }, [options, t]);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setState({
       data: null,
       loading: false,
@@ -189,7 +196,7 @@ export function useApi<T = any>(options: UseApiOptions = {}) {
       message: '',
       pagination: null,
     });
-  };
+  }, []);
 
   return {
     ...state,

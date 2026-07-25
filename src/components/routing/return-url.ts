@@ -1,7 +1,7 @@
-export const OIDC_STATE_KEY = "@Archon:oidc:state"
-export const OIDC_NONCE_KEY = "@Archon:oidc:nonce"
-export const OIDC_CODE_VERIFIER_KEY = "@Archon:oidc:codeVerifier"
-export const OIDC_REDIRECT_URI_KEY = "@Archon:oidc:redirectUri"
+import { OIDC_CODE_VERIFIER_KEY, OIDC_NONCE_KEY, OIDC_REDIRECT_URI_KEY, OIDC_STATE_KEY } from "../../services/storage/keys"
+
+// Reexportadas para manter os imports existentes funcionando.
+export { OIDC_STATE_KEY, OIDC_NONCE_KEY, OIDC_CODE_VERIFIER_KEY, OIDC_REDIRECT_URI_KEY }
 
 const randomBase64Url = (byteLength: number) => {
   const bytes = new Uint8Array(byteLength)

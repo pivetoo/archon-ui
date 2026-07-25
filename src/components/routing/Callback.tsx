@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts';
 import { AuthService } from '../../services/auth/authService';
 import { getIdentityManagementURL } from '../../services/http/client';
+import { decodeJwtPayload } from '../../services/auth/jwt';
+import { OIDC_CLIENT_ID_KEY } from '../../services/storage/keys';
 import { OIDC_CODE_VERIFIER_KEY, OIDC_NONCE_KEY, OIDC_REDIRECT_URI_KEY, OIDC_STATE_KEY } from './return-url';
 
 export interface CallbackProps {
@@ -14,39 +16,26 @@ export interface CallbackProps {
   onError?: (error: Error) => void;
 }
 
-interface JwtPayload {
-  user_id?: string;
-  sub?: string;
-  nameid?: string;
-  username?: string;
-  unique_name?: string;
-  email?: string | string[];
-  name?: string;
-  given_name?: string;
-  contract_id?: string;
-  client_id?: string;
-  role_name?: string;
-  company_name?: string;
-  system_application_name?: string;
-  nonce?: string;
-  [key: string]: unknown;
-}
+/** Le uma claim como texto. O payload do JWT e `unknown` por claim, e o emissor pode mandar array. */
+const claimText = (payload: Record<string, unknown> | null, ...claims: string[]): string => {
+  for (const claim of claims) {
+    const value = payload?.[claim]
 
-const parseJwt = (token: string): JwtPayload | null => {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch {
-    return null;
+    if (Array.isArray(value) && typeof value[0] === 'string') {
+      return value[0]
+    }
+
+    if (typeof value === 'string' && value.length > 0) {
+      return value
+    }
+
+    if (typeof value === 'number') {
+      return String(value)
+    }
   }
-};
+
+  return ''
+}
 
 export const Callback: React.FC<CallbackProps> = ({
   redirectTo = '/',
@@ -60,14 +49,30 @@ export const Callback: React.FC<CallbackProps> = ({
   const [searchParams] = useSearchParams();
   const { login } = useAuth();
 
+  // Callbacks em ref, e nao no array de dependencia. Consumidor que passe arrow inline
+  // (`onSuccess={() => navigate('/')}`) muda a identidade a cada render; o efeito reexecutava, o
+  // `state` ja tinha sido consumido do sessionStorage, e a segunda passagem falhava com
+  // "OIDC state invalido" -> onError -> redirect para o IdP. Laco de login.
+  const onSuccessRef = useRef(onSuccess);
+  const onErrorRef = useRef(onError);
+  onSuccessRef.current = onSuccess;
+  onErrorRef.current = onError;
+
+  // O codigo de autorizacao e de uso unico: processar duas vezes queima o code.
+  const processedRef = useRef(false);
+
   useEffect(() => {
+    if (processedRef.current) {
+      return;
+    }
+
+    processedRef.current = true;
+
     const processCallback = async () => {
       try {
         await processOidcCallback();
       } catch (error) {
-        if (onError) {
-          onError(error as Error);
-        }
+        onErrorRef.current?.(error as Error);
 
         const idpUrl = identityManagementUrl || import.meta.env.VITE_IDENTITY_MANAGEMENT_URL;
         if (idpUrl) {
@@ -115,34 +120,38 @@ export const Callback: React.FC<CallbackProps> = ({
         throw new Error('Refresh token não retornado pelo OIDC token endpoint');
       }
 
-      const accessPayload = parseJwt(tokenData.access_token);
+      const accessPayload = decodeJwtPayload(tokenData.access_token);
       if (!accessPayload || AuthService.isTokenExpiringSoon(tokenData.access_token, 0)) {
         throw new Error('Access token OIDC inválido');
       }
 
-      if (tokenData.id_token && expectedNonce) {
-        const idPayload = parseJwt(tokenData.id_token);
+      // Se pedimos nonce, ele TEM que voltar e conferir. Antes a checagem so acontecia quando havia
+      // id_token na resposta, entao uma resposta sem id_token pulava a validacao em silencio.
+      if (expectedNonce) {
+        if (!tokenData.id_token) {
+          throw new Error('OIDC id_token ausente na resposta');
+        }
+
+        const idPayload = decodeJwtPayload(tokenData.id_token);
         if (idPayload?.nonce !== expectedNonce) {
           throw new Error('OIDC nonce inválido');
         }
       }
 
-      const email = accessPayload?.email;
-      const userEmail = Array.isArray(email) ? email[0] : (email || '');
       const loginData = {
         accessToken: tokenData.access_token,
         refreshToken: tokenData.refresh_token,
         user: {
-          id: Number(accessPayload?.user_id || accessPayload?.nameid || accessPayload?.sub || 0),
-          username: accessPayload?.username || accessPayload?.unique_name || '',
-          email: userEmail,
-          name: accessPayload?.name || accessPayload?.given_name || ''
+          id: Number(claimText(accessPayload, 'user_id', 'nameid', 'sub') || 0),
+          username: claimText(accessPayload, 'username', 'unique_name'),
+          email: claimText(accessPayload, 'email'),
+          name: claimText(accessPayload, 'name', 'given_name')
         },
         contract: {
-          contractId: Number(accessPayload?.contract_id || 0),
-          systemApplicationName: accessPayload?.system_application_name || '',
-          companyName: accessPayload?.company_name || '',
-          roleName: accessPayload?.role_name || ''
+          contractId: Number(claimText(accessPayload, 'contract_id') || 0),
+          systemApplicationName: claimText(accessPayload, 'system_application_name'),
+          companyName: claimText(accessPayload, 'company_name'),
+          roleName: claimText(accessPayload, 'role_name')
         },
         authenticationStep: 'completed' as const
       };
@@ -152,18 +161,16 @@ export const Callback: React.FC<CallbackProps> = ({
       sessionStorage.removeItem(OIDC_CODE_VERIFIER_KEY);
       sessionStorage.removeItem(OIDC_REDIRECT_URI_KEY);
 
-      localStorage.setItem("@Archon:oidcClientId", clientId);
+      localStorage.setItem(OIDC_CLIENT_ID_KEY, clientId);
       login(loginData);
 
-      if (onSuccess) {
-        onSuccess();
-      }
+      onSuccessRef.current?.();
 
       navigate(redirectTo, { replace: true });
     };
 
     processCallback();
-  }, [searchParams, login, navigate, redirectTo, identityManagementUrl, oidcClientId, oidcRedirectUri, onSuccess, onError]);
+  }, [searchParams, login, navigate, redirectTo, identityManagementUrl, oidcClientId, oidcRedirectUri]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background gap-6">

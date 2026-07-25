@@ -1,5 +1,6 @@
 import axios, { type AxiosRequestConfig } from "axios"
 import { translate } from "../../i18n/store"
+import { ACCESS_TOKEN_KEY, AUTH_STORAGE_KEYS, OIDC_CLIENT_ID_KEY, REFRESH_TOKEN_KEY } from "../storage/keys"
 import type { ApiResponse, ApiError } from "./types"
 
 declare module "axios" {
@@ -16,11 +17,6 @@ let apiBaseURL: string = ""
 let identityManagementURL: string = ""
 let requestLanguage: string = "pt-BR"
 let authFailureHandler: (() => void) | null = null
-const ACCESS_TOKEN_KEY = "@Archon:accessToken"
-const REFRESH_TOKEN_KEY = "@Archon:refreshToken"
-const OIDC_CLIENT_ID_KEY = "@Archon:oidcClientId"
-const USER_KEY = "@Archon:user"
-const CONTRACT_KEY = "@Archon:contract"
 
 const formatMessage = (key: string, ...values: Array<string | number>) => {
   return values.reduce(
@@ -56,9 +52,17 @@ export const setAuthFailureHandler = (handler: (() => void) | null) => {
   authFailureHandler = handler
 }
 
-let pendingRefresh: Promise<string> | null = null
+/** Resultado da renovacao. Devolve o pacote inteiro para nao existir uma segunda leitura da resposta. */
+export interface RefreshedTokens {
+  accessToken: string
+  refreshToken: string
+  tokenType: string
+  expiresIn: number
+}
 
-const performTokenRefresh = async (): Promise<string> => {
+let pendingRefresh: Promise<RefreshedTokens> | null = null
+
+const performTokenRefresh = async (): Promise<RefreshedTokens> => {
   const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
   const oidcClientId = localStorage.getItem(OIDC_CLIENT_ID_KEY) || import.meta.env.VITE_OIDC_CLIENT_ID
 
@@ -94,16 +98,73 @@ const performTokenRefresh = async (): Promise<string> => {
     localStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken)
   }
 
-  return accessToken
+  return {
+    accessToken,
+    refreshToken: newRefreshToken ?? refreshToken,
+    tokenType: response.data?.token_type ?? "Bearer",
+    expiresIn: Number(response.data?.expires_in ?? 0),
+  }
 }
 
-const refreshAccessToken = (): Promise<string> => {
+/**
+ * Ponto ÚNICO de renovação de token, com single-flight.
+ *
+ * Precisa ser único porque o IdentityManagement **rotaciona** refresh token: ao renovar, ele revoga o
+ * token apresentado e emite outro. Duas renovações concorrentes fazem a segunda apresentar um token
+ * já revogado, e o tratamento de erro derruba a sessão do usuário no meio do uso.
+ *
+ * Havia uma segunda implementação em `AuthService.refreshAccessToken`, sem essa proteção. Hoje ela
+ * delega para cá.
+ */
+export const refreshAccessToken = (): Promise<RefreshedTokens> => {
   if (!pendingRefresh) {
     pendingRefresh = performTokenRefresh().finally(() => {
       pendingRefresh = null
     })
   }
   return pendingRefresh
+}
+
+/** Limpa toda a sessão local. Usado no logout e quando a renovação falha em definitivo. */
+export const clearAuthStorage = () => {
+  AUTH_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key))
+}
+
+/**
+ * Sessão acabou: limpa o local e devolve o controle para a aplicação.
+ *
+ * O `authFailureHandler` é registrado pelo `AuthProvider`, então normalmente existe. O redirect duro
+ * fica só como último recurso — para a janela entre o boot e o efeito que registra o handler, e para
+ * quem monte o client fora de um `AuthProvider`. Antes daqui esse redirect era o comportamento
+ * padrão de um dos dois ramos, ignorando o router e perdendo a rota atual.
+ */
+const handleSessionEnded = () => {
+  clearAuthStorage()
+
+  if (authFailureHandler) {
+    authFailureHandler()
+    return
+  }
+
+  window.location.href = "/"
+}
+
+/**
+ * Desembrulha o envelope `ApiResponse` do Archon quando ele existe.
+ *
+ * A logica estava repetida nos cinco verbos. A checagem tambem exige agora que `message` seja
+ * string: um endpoint que devolva legitimamente um objeto com campo `message` de outro tipo era
+ * tratado como envelope, e o `data` real se perdia.
+ */
+function unwrapEnvelope<T>(payload: unknown): ApiResponse<T> {
+  if (payload && typeof payload === "object" && "message" in payload && typeof (payload as { message: unknown }).message === "string") {
+    return payload as ApiResponse<T>
+  }
+
+  return {
+    message: "",
+    data: payload as T,
+  }
 }
 
 class HttpClient {
@@ -162,15 +223,11 @@ class HttpClient {
 
           if (refreshToken && identityManagementURL && oidcClientId) {
             try {
-              const accessToken = await refreshAccessToken()
+              const { accessToken } = await refreshAccessToken()
               originalRequest.headers.Authorization = `Bearer ${accessToken}`
               return this.instance(originalRequest)
             } catch (refreshError) {
-              localStorage.removeItem(ACCESS_TOKEN_KEY)
-              localStorage.removeItem(REFRESH_TOKEN_KEY)
-              localStorage.removeItem(USER_KEY)
-              localStorage.removeItem(CONTRACT_KEY)
-              authFailureHandler?.()
+              handleSessionEnded()
 
               return Promise.reject(refreshError)
             }
@@ -178,7 +235,9 @@ class HttpClient {
             const isAuthEndpoint = originalRequest.url?.includes("/auth/")
 
             if (!isAuthEndpoint) {
-              window.location.href = "/"
+              // Mesmo desfecho do ramo acima: a sessao acabou. Os dois ramos tratavam isso de forma
+              // diferente — um chamava o handler, o outro redirecionava na marra.
+              handleSessionEnded()
             }
           }
         }
@@ -253,66 +312,31 @@ class HttpClient {
   async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.instance.get(url, config)
 
-    if (response.data && typeof response.data === "object" && "message" in response.data) {
-      return response.data
-    }
-
-    return {
-      message: "",
-      data: response.data,
-    }
+    return unwrapEnvelope<T>(response.data)
   }
 
   async post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.instance.post(url, data, config)
 
-    if (response.data && typeof response.data === "object" && "message" in response.data) {
-      return response.data
-    }
-
-    return {
-      message: "",
-      data: response.data,
-    }
+    return unwrapEnvelope<T>(response.data)
   }
 
   async put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.instance.put(url, data, config)
 
-    if (response.data && typeof response.data === "object" && "message" in response.data) {
-      return response.data
-    }
-
-    return {
-      message: "",
-      data: response.data,
-    }
+    return unwrapEnvelope<T>(response.data)
   }
 
   async delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.instance.delete(url, config)
 
-    if (response.data && typeof response.data === "object" && "message" in response.data) {
-      return response.data
-    }
-
-    return {
-      message: "",
-      data: response.data,
-    }
+    return unwrapEnvelope<T>(response.data)
   }
 
   async patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.instance.patch(url, data, config)
 
-    if (response.data && typeof response.data === "object" && "message" in response.data) {
-      return response.data
-    }
-
-    return {
-      message: "",
-      data: response.data,
-    }
+    return unwrapEnvelope<T>(response.data)
   }
 }
 

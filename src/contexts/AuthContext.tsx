@@ -1,7 +1,8 @@
 import * as React from "react"
-import type { AuthContextData, LoginResult, User, ContractType, ActiveSession } from "../types/auth"
+import type { AuthContextData, LoginResult, User, ContractType } from "../types/auth"
 import { AuthService } from "../services/auth/authService"
-import { setAuthFailureHandler } from "../services/http/client"
+import { setAuthFailureHandler, clearAuthStorage } from "../services/http/client"
+import { ACCESS_TOKEN_KEY, CONTRACT_KEY, REFRESH_TOKEN_KEY, USER_KEY, readJson } from "../services/storage/keys"
 
 const AuthContext = React.createContext<AuthContextData | null>(null)
 
@@ -23,23 +24,15 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }) => {
-  const [user, setUser] = React.useState<User | null>(() => {
-    const storedUser = localStorage.getItem("@Archon:user")
-    return storedUser ? JSON.parse(storedUser) : null
-  })
+  // `readJson` em vez de `JSON.parse` cru: valor corrompido no storage estourava aqui, no
+  // inicializador de estado, ou seja, no boot da aplicacao inteira e sem caminho de recuperacao.
+  const [user, setUser] = React.useState<User | null>(() => readJson<User>(localStorage, USER_KEY))
 
-  const [contract, setContract] = React.useState<ContractType | null>(() => {
-    const storedContract = localStorage.getItem("@Archon:contract")
-    return storedContract ? JSON.parse(storedContract) : null
-  })
+  const [contract, setContract] = React.useState<ContractType | null>(() => readJson<ContractType>(localStorage, CONTRACT_KEY))
 
-  const [accessToken, setAccessToken] = React.useState<string | null>(() => {
-    return localStorage.getItem("@Archon:accessToken")
-  })
+  const [accessToken, setAccessToken] = React.useState<string | null>(() => localStorage.getItem(ACCESS_TOKEN_KEY))
 
-  const [refreshToken, setRefreshToken] = React.useState<string | null>(() => {
-    return localStorage.getItem("@Archon:refreshToken")
-  })
+  const [refreshToken, setRefreshToken] = React.useState<string | null>(() => localStorage.getItem(REFRESH_TOKEN_KEY))
 
   const login = React.useCallback((data: LoginResult) => {
     setUser(data.user)
@@ -47,10 +40,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
     setAccessToken(data.accessToken)
     setRefreshToken(data.refreshToken)
 
-    localStorage.setItem("@Archon:user", JSON.stringify(data.user))
-    localStorage.setItem("@Archon:contract", JSON.stringify(data.contract))
-    localStorage.setItem("@Archon:accessToken", data.accessToken)
-    localStorage.setItem("@Archon:refreshToken", data.refreshToken)
+    localStorage.setItem(USER_KEY, JSON.stringify(data.user))
+    localStorage.setItem(CONTRACT_KEY, JSON.stringify(data.contract))
+    localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken)
+    localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken)
   }, [])
 
   const logout = React.useCallback(() => {
@@ -59,10 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
     setAccessToken(null)
     setRefreshToken(null)
 
-    localStorage.removeItem("@Archon:user")
-    localStorage.removeItem("@Archon:contract")
-    localStorage.removeItem("@Archon:accessToken")
-    localStorage.removeItem("@Archon:refreshToken")
+    clearAuthStorage()
 
     onLogout?.()
   }, [onLogout])
@@ -75,35 +65,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
     }
   }, [logout])
 
-  const logoutAllDevices = React.useCallback(async () => {
-    await AuthService.logoutAllDevices()
-    logout()
-  }, [logout])
-
   const refreshAccessToken = React.useCallback(async () => {
     try {
       const tokenData = await AuthService.refreshAccessToken()
       if (tokenData) {
         setAccessToken(tokenData.accessToken)
         setRefreshToken(tokenData.refreshToken)
-        localStorage.setItem("@Archon:accessToken", tokenData.accessToken)
-        localStorage.setItem("@Archon:refreshToken", tokenData.refreshToken)
       }
-    } catch (error) {
+    } catch {
       logout()
     }
   }, [logout])
-
-  const getActiveSessions = React.useCallback(async (): Promise<ActiveSession[]> => {
-    return []
-  }, [])
 
   const updateUser = React.useCallback(
     (userData: Partial<User>) => {
       if (user) {
         const updatedUser = { ...user, ...userData }
         setUser(updatedUser)
-        localStorage.setItem("@Archon:user", JSON.stringify(updatedUser))
+        localStorage.setItem(USER_KEY, JSON.stringify(updatedUser))
       }
     },
     [user]
@@ -120,9 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
       isAuthenticated,
       login,
       logout,
-      logoutAllDevices,
       refreshAccessToken,
-      getActiveSessions,
       updateUser,
     }),
     [
@@ -133,9 +110,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, onLogout }
       isAuthenticated,
       login,
       logout,
-      logoutAllDevices,
       refreshAccessToken,
-      getActiveSessions,
       updateUser,
     ]
   )

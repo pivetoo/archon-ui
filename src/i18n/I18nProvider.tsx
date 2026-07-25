@@ -3,7 +3,7 @@ import { httpClient, setRequestLanguage } from "../services/http/client"
 import { setTranslationMessages } from "./store"
 import type { ArchonCulture, I18nContextValue, LocalizationCatalog } from "./types"
 
-const LANGUAGE_STORAGE_KEY = "@Archon:language"
+import { LANGUAGE_KEY as LANGUAGE_STORAGE_KEY } from "../services/storage/keys"
 const DEFAULT_CULTURE: ArchonCulture = "pt-BR"
 
 const I18nContext = React.createContext<I18nContextValue | null>(null)

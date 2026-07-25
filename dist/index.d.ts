@@ -159,9 +159,7 @@ export declare interface AuthContextData {
     isAuthenticated: boolean;
     login: (data: LoginResult) => void;
     logout: () => void;
-    logoutAllDevices: () => Promise<void>;
     refreshAccessToken: () => Promise<void>;
-    getActiveSessions: () => Promise<ActiveSession[]>;
     updateUser: (userData: Partial<User>) => void;
 }
 
@@ -176,14 +174,20 @@ export declare class AuthService {
     static identify(credentials: LoginCredentials): Promise<IdentifyResult | null>;
     static logout(): void;
     static isAuthenticated(): boolean;
-    static getCurrentUser(): any | null;
+    static getCurrentUser(): User | null;
     static getAccessToken(): string | null;
     static getRefreshToken(): string | null;
     static logoutFromServer(): Promise<void>;
-    static logoutAllDevices(): Promise<void>;
+    /**
+     * Delega para o ponto ÚNICO de renovação do `httpClient`, que tem single-flight.
+     *
+     * Antes havia aqui uma segunda implementação, sem essa proteção. Como o IdentityManagement
+     * **rotaciona** refresh token (revoga o apresentado e emite outro), duas renovações concorrentes
+     * faziam a segunda apresentar um token já revogado — e o `catch` daqui deslogava o usuário no meio
+     * do uso, sem erro que explicasse.
+     */
     static refreshAccessToken(): Promise<RefreshTokenResponse | null>;
     static exchangeAuthorizationCode(request: OidcTokenRequest): Promise<OidcTokenResponse>;
-    static getActiveSessions(): Promise<ActiveSession[]>;
     static isTokenExpiringSoon(token: string, minutesBeforeExpiry?: number): boolean;
     static ensureValidToken(): Promise<boolean>;
 }
@@ -321,6 +325,9 @@ export declare interface ChartContainerProps {
 }
 
 export declare const Checkbox: React_2.ForwardRefExoticComponent<Omit<CheckboxPrimitive.CheckboxProps & React_2.RefAttributes<HTMLButtonElement>, "ref"> & React_2.RefAttributes<HTMLButtonElement>>;
+
+/** Limpa toda a sessão local. Usado no logout e quando a renovação falha em definitivo. */
+export declare const clearAuthStorage: () => void;
 
 export declare function cn(...inputs: ClassValue[]): string;
 
@@ -891,6 +898,7 @@ export declare const OIDC_NONCE_KEY = "@Archon:oidc:nonce";
 
 export declare const OIDC_REDIRECT_URI_KEY = "@Archon:oidc:redirectUri";
 
+/** Chaves do fluxo OIDC. Vivem em `sessionStorage` e são consumidas uma única vez no callback. */
 export declare const OIDC_STATE_KEY = "@Archon:oidc:state";
 
 export declare interface OidcTokenRequest {
@@ -1046,6 +1054,26 @@ export declare const RadioGroup: React_2.ForwardRefExoticComponent<Omit<RadioGro
 export declare const RadioGroupItem: React_2.ForwardRefExoticComponent<Omit<RadioGroupPrimitive.RadioGroupItemProps & React_2.RefAttributes<HTMLButtonElement>, "ref"> & React_2.RefAttributes<HTMLButtonElement>>;
 
 export declare const reducer: (state: State, action: Action) => State;
+
+/**
+ * Ponto ÚNICO de renovação de token, com single-flight.
+ *
+ * Precisa ser único porque o IdentityManagement **rotaciona** refresh token: ao renovar, ele revoga o
+ * token apresentado e emite outro. Duas renovações concorrentes fazem a segunda apresentar um token
+ * já revogado, e o tratamento de erro derruba a sessão do usuário no meio do uso.
+ *
+ * Havia uma segunda implementação em `AuthService.refreshAccessToken`, sem essa proteção. Hoje ela
+ * delega para cá.
+ */
+export declare const refreshAccessToken: () => Promise<RefreshedTokens>;
+
+/** Resultado da renovacao. Devolve o pacote inteiro para nao existir uma segunda leitura da resposta. */
+export declare interface RefreshedTokens {
+    accessToken: string;
+    refreshToken: string;
+    tokenType: string;
+    expiresIn: number;
+}
 
 export declare interface RefreshTokenRequest {
     refreshToken: string;

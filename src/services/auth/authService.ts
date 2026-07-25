@@ -1,8 +1,8 @@
 import axios from "axios"
-import { httpClient, getIdentityManagementURL, getRequestLanguage } from "../http/client"
-import type { IdentifyResult, LoginCredentials, RefreshTokenResponse, ActiveSession, OidcTokenRequest, OidcTokenResponse } from "../../types/auth"
-
-const OIDC_CLIENT_ID_KEY = "@Archon:oidcClientId"
+import { httpClient, getIdentityManagementURL, getRequestLanguage, refreshAccessToken as refreshSharedAccessToken, clearAuthStorage } from "../http/client"
+import { ACCESS_TOKEN_KEY, OIDC_CLIENT_ID_KEY, REFRESH_TOKEN_KEY, USER_KEY, readJson } from "../storage/keys"
+import { isTokenExpiringSoon as isJwtExpiringSoon } from "./jwt"
+import type { IdentifyResult, LoginCredentials, RefreshTokenResponse, OidcTokenRequest, OidcTokenResponse, User } from "../../types/auth"
 
 export class AuthService {
   static async identify(credentials: LoginCredentials): Promise<IdentifyResult | null> {
@@ -16,31 +16,26 @@ export class AuthService {
   }
 
   static logout(): void {
-    localStorage.removeItem("@Archon:accessToken")
-    localStorage.removeItem("@Archon:refreshToken")
-    localStorage.removeItem("@Archon:oidcClientId")
-    localStorage.removeItem("@Archon:user")
-    localStorage.removeItem("@Archon:contract")
+    clearAuthStorage()
   }
 
   static isAuthenticated(): boolean {
-    const accessToken = localStorage.getItem("@Archon:accessToken")
-    const refreshToken = localStorage.getItem("@Archon:refreshToken")
+    const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY)
+    const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
 
     return !!accessToken && !!refreshToken && !this.isTokenExpiringSoon(accessToken, 0)
   }
 
-  static getCurrentUser(): any | null {
-    const userStr = localStorage.getItem("@Archon:user")
-    return userStr ? JSON.parse(userStr) : null
+  static getCurrentUser(): User | null {
+    return readJson<User>(localStorage, USER_KEY)
   }
 
   static getAccessToken(): string | null {
-    return localStorage.getItem("@Archon:accessToken")
+    return localStorage.getItem(ACCESS_TOKEN_KEY)
   }
 
   static getRefreshToken(): string | null {
-    return localStorage.getItem("@Archon:refreshToken")
+    return localStorage.getItem(REFRESH_TOKEN_KEY)
   }
 
   static async logoutFromServer(): Promise<void> {
@@ -71,64 +66,16 @@ export class AuthService {
     }
   }
 
-  static async logoutAllDevices(): Promise<void> {
-    await this.logoutFromServer()
-  }
-
+  /**
+   * Delega para o ponto ÚNICO de renovação do `httpClient`, que tem single-flight.
+   *
+   * Antes havia aqui uma segunda implementação, sem essa proteção. Como o IdentityManagement
+   * **rotaciona** refresh token (revoga o apresentado e emite outro), duas renovações concorrentes
+   * faziam a segunda apresentar um token já revogado — e o `catch` daqui deslogava o usuário no meio
+   * do uso, sem erro que explicasse.
+   */
   static async refreshAccessToken(): Promise<RefreshTokenResponse | null> {
-    const refreshToken = this.getRefreshToken()
-    if (!refreshToken) {
-      throw new Error("Refresh token não encontrado")
-    }
-
-    try {
-      const identityManagementUrl = getIdentityManagementURL()
-      const oidcClientId = localStorage.getItem(OIDC_CLIENT_ID_KEY) || import.meta.env.VITE_OIDC_CLIENT_ID
-      if (!identityManagementUrl) {
-        throw new Error("Identity Management URL não configurada")
-      }
-
-      if (!oidcClientId) {
-        throw new Error("OIDC client_id não configurado")
-      }
-
-      const form = new URLSearchParams()
-      form.set("grant_type", "refresh_token")
-      form.set("client_id", oidcClientId)
-      form.set("refresh_token", refreshToken)
-
-      const response = await axios.post<unknown>(
-        `${identityManagementUrl.replace(/\/+$/, "")}/connect/token`,
-        form,
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Accept-Language": getRequestLanguage(),
-          },
-        }
-      )
-
-      const rawData = response.data
-      const oidcTokenData = rawData as OidcTokenResponse | null
-      if (!oidcTokenData?.access_token || !oidcTokenData.refresh_token) {
-        throw new Error("Refresh token response is empty.")
-      }
-
-      const tokenData: RefreshTokenResponse = {
-        accessToken: oidcTokenData.access_token,
-        refreshToken: oidcTokenData.refresh_token,
-        tokenType: oidcTokenData.token_type,
-        expiresIn: oidcTokenData.expires_in,
-      }
-
-      localStorage.setItem("@Archon:accessToken", tokenData.accessToken)
-      localStorage.setItem("@Archon:refreshToken", tokenData.refreshToken)
-
-      return tokenData
-    } catch (error) {
-      this.logout()
-      throw error
-    }
+    return await refreshSharedAccessToken()
   }
 
   static async exchangeAuthorizationCode(request: OidcTokenRequest): Promise<OidcTokenResponse> {
@@ -153,22 +100,8 @@ export class AuthService {
     return response.data
   }
 
-  static async getActiveSessions(): Promise<ActiveSession[]> {
-    return []
-  }
-
   static isTokenExpiringSoon(token: string, minutesBeforeExpiry: number = 5): boolean {
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]))
-      const exp = payload.exp * 1000
-      const now = Date.now()
-      const timeUntilExpiry = exp - now
-      const minutesUntilExpiry = timeUntilExpiry / (1000 * 60)
-
-      return minutesUntilExpiry <= minutesBeforeExpiry
-    } catch {
-      return true
-    }
+    return isJwtExpiringSoon(token, minutesBeforeExpiry)
   }
 
   static async ensureValidToken(): Promise<boolean> {

@@ -92,8 +92,12 @@ export interface AuthContextData {
   isAuthenticated: boolean
   login: (data: LoginResult) => void
   logout: () => void
-  logoutAllDevices: () => Promise<void>
   refreshAccessToken: () => Promise<void>
-  getActiveSessions: () => Promise<ActiveSession[]>
   updateUser: (userData: Partial<User>) => void
 }
+
+// `getActiveSessions` e `logoutAllDevices` foram removidos daqui. O primeiro devolvia `[]` fixo — uma
+// API que responde com sucesso e mente, fazendo a tela mostrar "nenhuma sessao" para quem tem varias.
+// O segundo so revogava o refresh token da sessao ATUAL, apesar do nome. Nenhum dos dois era
+// consumido pelas aplicacoes. Voltam quando o IdentityManagement expuser endpoint de sessao: a tabela
+// `loginsessions` ja existe la, o controller nao.

@@ -1,6 +1,7 @@
 import axios from "axios"
 import { getIdentityManagementURL, getRequestLanguage } from "../http/client"
 import type { User } from "../../types/auth"
+import { ACCESS_TOKEN_KEY } from "../storage/keys"
 
 export interface UpdateProfileRequest {
   id: number
@@ -15,7 +16,7 @@ export interface ChangePasswordPayload {
   newPassword: string
 }
 
-const getAccessToken = () => localStorage.getItem("@Archon:accessToken")
+const getAccessToken = () => localStorage.getItem(ACCESS_TOKEN_KEY)
 
 const getHeaders = () => {
   const accessToken = getAccessToken()
