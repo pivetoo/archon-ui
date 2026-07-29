@@ -1,9 +1,9 @@
 import * as React from "react"
-import { Eye, Plus, Edit, Trash2, RefreshCw, MoreHorizontal } from "lucide-react"
+import { Eye, Plus, Edit, Trash2, RefreshCw, MoreHorizontal, ChevronDown } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { useI18n } from "../../i18n"
 import { Button } from "./button"
-import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "./dropdown"
+import { Dropdown, DropdownContent, DropdownItem, DropdownLabel, DropdownTrigger } from "./dropdown"
 
 export interface PageAction {
   key: string
@@ -16,6 +16,11 @@ export interface PageAction {
   testId?: string
   // No mobile, mantem o botao visivel em vez de colapsar no menu "Acoes".
   primary?: boolean
+  // Agrupa acoes relacionadas atras de um unico rotulo. Com items preenchido a acao vira menu: o
+  // onClick do pai nao e chamado, e cada item aparece so quando a tela o inclui na lista. Serve para
+  // tela com muita acao do mesmo assunto, em que um botao por acao virava uma fileira ilegivel.
+  // No estado colapsado (mobile) os items entram achatados no menu "Acoes", sob o rotulo do pai.
+  items?: PageAction[]
 }
 
 export interface PageLayoutProps {
@@ -212,7 +217,44 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   const collapsedPrimaryActions = hasOverflow ? allActions.filter((a) => a.primary) : allActions
   const collapsedOverflowActions = hasOverflow ? allActions.filter((a) => !a.primary) : []
 
+  const renderActionMenuItems = (actions: PageAction[]) => actions.map((item) => (
+    <DropdownItem
+      key={item.key}
+      data-testid={item.testId}
+      disabled={item.disabled}
+      onSelect={() => item.onClick()}
+      className={cn("gap-2", item.variant === "danger" && "text-destructive focus:text-destructive")}
+    >
+      {item.icon}
+      {item.label}
+    </DropdownItem>
+  ))
+
   const renderActionButton = (action: PageAction, extraClassName?: string) => {
+    if (action.items && action.items.length > 0) {
+      return (
+        <Dropdown key={action.key}>
+          <DropdownTrigger asChild>
+            <Button
+              data-testid={action.testId}
+              variant={action.variant || "outline"}
+              size="sm"
+              disabled={action.disabled}
+              title={!action.disabled ? action.tooltip : undefined}
+              className={cn("gap-2 rounded-lg px-3.5", extraClassName)}
+            >
+              {action.icon}
+              {action.label}
+              <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+            </Button>
+          </DropdownTrigger>
+          <DropdownContent align="end" className="min-w-[12rem]">
+            {renderActionMenuItems(action.items)}
+          </DropdownContent>
+        </Dropdown>
+      )
+    }
+
     const button = (
       <Button
         key={action.key}
@@ -332,16 +374,25 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                         </DropdownTrigger>
                         <DropdownContent align="end" className="min-w-[12rem]">
                           {collapsedOverflowActions.map((action) => (
-                            <DropdownItem
-                              key={action.key}
-                              data-testid={action.testId}
-                              disabled={action.disabled}
-                              onSelect={() => action.onClick()}
-                              className={cn("gap-2", action.variant === "danger" && "text-destructive focus:text-destructive")}
-                            >
-                              {action.icon}
-                              {action.label}
-                            </DropdownItem>
+                            // Acao com items nao vira submenu aqui: o menu "Acoes" ja e a lista achatada
+                            // do mobile, entao os items entram diretamente sob o rotulo do pai.
+                            action.items && action.items.length > 0 ? (
+                              <React.Fragment key={action.key}>
+                                <DropdownLabel className="text-xs font-normal text-muted-foreground">{action.label}</DropdownLabel>
+                                {renderActionMenuItems(action.items)}
+                              </React.Fragment>
+                            ) : (
+                              <DropdownItem
+                                key={action.key}
+                                data-testid={action.testId}
+                                disabled={action.disabled}
+                                onSelect={() => action.onClick()}
+                                className={cn("gap-2", action.variant === "danger" && "text-destructive focus:text-destructive")}
+                              >
+                                {action.icon}
+                                {action.label}
+                              </DropdownItem>
+                            )
                           ))}
                         </DropdownContent>
                       </Dropdown>

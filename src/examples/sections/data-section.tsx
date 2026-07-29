@@ -80,6 +80,21 @@ export function DataSection() {
         onEdit={() => toast({ title: "Ação", description: "Editar acionado", variant: "info" })}
         onDelete={() => toast({ title: "Ação", description: "Excluir acionado", variant: "warning" })}
         selectedRowsCount={selectedRows.length}
+        // Ação com items vira menu: agrupa ações do mesmo assunto atrás de um rótulo, em vez de espalhar
+        // um botão por ação no cabeçalho. No mobile os items entram achatados no menu "Ações".
+        actions={[
+          {
+            key: "access",
+            label: "Acesso",
+            variant: "ghost",
+            onClick: () => undefined,
+            items: [
+              { key: "reset", label: "Redefinir senha", onClick: () => toast({ title: "Acesso", description: "Redefinição enviada", variant: "info" }) },
+              { key: "sessions", label: "Encerrar sessões", onClick: () => toast({ title: "Acesso", description: "Sessões encerradas", variant: "warning" }) },
+              { key: "revoke", label: "Revogar acesso", variant: "danger", onClick: () => toast({ title: "Acesso", description: "Acesso revogado", variant: "destructive" }) },
+            ],
+          },
+        ]}
       >
         <DataTable
           columns={personColumns}

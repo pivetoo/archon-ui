@@ -928,6 +928,7 @@ export declare interface PageAction {
     tooltip?: string;
     testId?: string;
     primary?: boolean;
+    items?: PageAction[];
 }
 
 export declare interface PagedRequest {
