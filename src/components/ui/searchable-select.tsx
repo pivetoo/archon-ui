@@ -20,6 +20,11 @@ interface SearchableSelectProps {
 
 const EMPTY_SENTINEL = '__searchable_select_empty__'
 
+// Teclas que continuam sendo do Select mesmo com o foco no campo de busca: navegar, escolher e fechar.
+// O resto (letras, espaco, backspace, Home/End) fica no input — sem isso o typeahead do Radix engole a
+// digitacao e o espaco chega a selecionar um item.
+const SELECT_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Enter', 'Escape', 'Tab'])
+
 export function SearchableSelect({
   value,
   onValueChange,
@@ -30,9 +35,11 @@ export function SearchableSelect({
   onSearch,
 }: SearchableSelectProps) {
   const [search, setSearch] = useState('')
+  const [open, setOpen] = useState(false)
   const [asyncOptions, setAsyncOptions] = useState<SearchableSelectOption[] | null>(null)
   const [searching, setSearching] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   // Mantem referencia mutavel pro callback para que closures inline no pai
   // (recriadas a cada render) nao reiniciem o effect e quebrem o debounce.
   const onSearchRef = useRef(onSearch)
@@ -77,8 +84,32 @@ export function SearchableSelect({
     }
   }, [search, hasAsyncSearch])
 
+  // O Radix Select toma o foco para o item selecionado (ou para o viewport, quando esse item sai da
+  // lista) toda vez que a colecao de itens muda. Como filtrar remonta a lista, a primeira letra tirava o
+  // foco do campo de busca e as seguintes viravam typeahead do Select: na pratica, uma letra por clique.
+  // Reancorar o foco no input depois do foco do Radix (por isso o rAF) mantem a digitacao continua, e
+  // fazer o mesmo na abertura evita ter que clicar no campo antes de comecar a buscar.
+  useEffect(() => {
+    if (!open) return
+    const frame = requestAnimationFrame(() => {
+      const input = inputRef.current
+      if (input && document.activeElement !== input) {
+        input.focus()
+      }
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [open, search, searching, filteredOptions.length])
+
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next)
+    if (!next) {
+      setSearch('')
+      setAsyncOptions(null)
+    }
+  }
+
   return (
-    <Select value={safeValue} onValueChange={(v) => { setSearch(''); setAsyncOptions(null); onValueChange(v === EMPTY_SENTINEL ? '' : v) }} disabled={disabled}>
+    <Select open={open} onOpenChange={handleOpenChange} value={safeValue} onValueChange={(v) => { setSearch(''); setAsyncOptions(null); onValueChange(v === EMPTY_SENTINEL ? '' : v) }} disabled={disabled}>
       <SelectTrigger>
         <SelectValue placeholder={placeholder}>
           {selectedIconUrl ? (
@@ -92,10 +123,11 @@ export function SearchableSelect({
       <SelectContent className="w-[var(--radix-select-trigger-width)]">
         <div className="px-2 pt-2 pb-1">
           <Input
+            ref={inputRef}
             placeholder={searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => e.stopPropagation()}
+            onKeyDown={(e) => { if (!SELECT_KEYS.has(e.key)) e.stopPropagation() }}
             className="h-8 text-sm"
           />
         </div>
