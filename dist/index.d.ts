@@ -1327,7 +1327,7 @@ export declare const TableHeader: React_2.ForwardRefExoticComponent<React_2.HTML
 
 export declare const TableRow: React_2.ForwardRefExoticComponent<React_2.HTMLAttributes<HTMLTableRowElement> & React_2.RefAttributes<HTMLTableRowElement>>;
 
-export declare function TableToolbar({ summary, searchValue, onSearchChange, searchPlaceholder, leftSlot, rightSlot, className, }: TableToolbarProps): JSX.Element;
+export declare function TableToolbar({ summary, searchValue, onSearchChange, searchPlaceholder, leftSlot, rightSlot, searchWidthClassName, className, }: TableToolbarProps): JSX.Element;
 
 export declare interface TableToolbarProps {
     summary?: React_2.ReactNode;
@@ -1336,6 +1336,12 @@ export declare interface TableToolbarProps {
     searchPlaceholder?: string;
     leftSlot?: React_2.ReactNode;
     rightSlot?: React_2.ReactNode;
+    /**
+     * Largura maxima da caixa de busca (que inclui o `rightSlot`) a partir de `md`.
+     * Default `md:max-w-sm`. Telas cujo `rightSlot` tem mais de um controle, ou cuja busca
+     * cobre varios campos, ganham espaco passando algo como `md:max-w-xl`.
+     */
+    searchWidthClassName?: string;
     className?: string;
 }
 

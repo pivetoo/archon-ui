@@ -10,6 +10,12 @@ export interface TableToolbarProps {
   searchPlaceholder?: string
   leftSlot?: React.ReactNode
   rightSlot?: React.ReactNode
+  /**
+   * Largura maxima da caixa de busca (que inclui o `rightSlot`) a partir de `md`.
+   * Default `md:max-w-sm`. Telas cujo `rightSlot` tem mais de um controle, ou cuja busca
+   * cobre varios campos, ganham espaco passando algo como `md:max-w-xl`.
+   */
+  searchWidthClassName?: string
   className?: string
 }
 
@@ -20,6 +26,7 @@ export function TableToolbar({
   searchPlaceholder,
   leftSlot,
   rightSlot,
+  searchWidthClassName = "md:max-w-sm",
   className,
 }: TableToolbarProps) {
   const { t } = useI18n()
@@ -33,7 +40,7 @@ export function TableToolbar({
     >
       <div className="flex min-w-0 flex-1 flex-col gap-3 md:flex-row md:items-center">
         {onSearchChange && (
-          <div className="flex w-full items-center gap-2 md:max-w-sm">
+          <div className={cn("flex w-full items-center gap-2", searchWidthClassName)}>
             <SearchBar
               value={searchValue}
               onChange={onSearchChange}

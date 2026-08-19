@@ -12566,25 +12566,26 @@ function Wne({
   searchPlaceholder: r,
   leftSlot: o,
   rightSlot: a,
-  className: i
+  searchWidthClassName: i = "md:max-w-sm",
+  className: s
 }) {
-  const { t: s } = lo();
+  const { t: l } = lo();
   return /* @__PURE__ */ I(
     "div",
     {
       className: Y(
         "flex flex-col gap-3 md:flex-row md:items-center md:justify-between",
-        i
+        s
       ),
       children: [
         /* @__PURE__ */ I("div", { className: "flex min-w-0 flex-1 flex-col gap-3 md:flex-row md:items-center", children: [
-          n && /* @__PURE__ */ I("div", { className: "flex w-full items-center gap-2 md:max-w-sm", children: [
+          n && /* @__PURE__ */ I("div", { className: Y("flex w-full items-center gap-2", i), children: [
             /* @__PURE__ */ f(
               wv,
               {
                 value: t,
                 onChange: n,
-                placeholder: r ?? s("common.action.search"),
+                placeholder: r ?? l("common.action.search"),
                 className: "flex-1"
               }
             ),
