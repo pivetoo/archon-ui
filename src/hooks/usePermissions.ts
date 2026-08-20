@@ -5,6 +5,12 @@ import { decodeJwtPayload, readClaim } from '../services/auth/jwt';
 interface UsePermissionsReturn {
   permissions: string[];
   isRoot: boolean;
+  /**
+   * Assinatura da empresa em pendencia: o usuario entra, mas a API responde 402 em tudo que nao
+   * for a tela de pagamento. Serve para o app esconder o resto em vez de deixar o cliente
+   * esbarrar em erro atras de erro.
+   */
+  isSubscriptionBlocked: boolean;
   hasPermission: (permission: string) => boolean;
   hasAnyPermission: (permissions: string[]) => boolean;
   hasAllPermissions: (permissions: string[]) => boolean;
@@ -13,9 +19,9 @@ interface UsePermissionsReturn {
 export function usePermissions(): UsePermissionsReturn {
   const { accessToken } = useAuth();
 
-  const { permissions, isRoot } = useMemo(() => {
+  const { permissions, isRoot, isSubscriptionBlocked } = useMemo(() => {
     if (!accessToken) {
-      return { permissions: [], isRoot: false };
+      return { permissions: [], isRoot: false, isSubscriptionBlocked: false };
     }
 
     const payload = decodeJwtPayload(accessToken);
@@ -23,6 +29,7 @@ export function usePermissions(): UsePermissionsReturn {
     return {
       permissions: readClaim(payload, 'permission'),
       isRoot: readClaim(payload, 'root').includes('true'),
+      isSubscriptionBlocked: readClaim(payload, 'subscription_blocked').includes('true'),
     };
   }, [accessToken]);
 
@@ -47,6 +54,7 @@ export function usePermissions(): UsePermissionsReturn {
   return {
     permissions,
     isRoot,
+    isSubscriptionBlocked,
     hasPermission,
     hasAnyPermission,
     hasAllPermissions

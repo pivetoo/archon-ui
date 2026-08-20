@@ -1625,6 +1625,12 @@ export declare function usePermissions(): UsePermissionsReturn;
 declare interface UsePermissionsReturn {
     permissions: string[];
     isRoot: boolean;
+    /**
+     * Assinatura da empresa em pendencia: o usuario entra, mas a API responde 402 em tudo que nao
+     * for a tela de pagamento. Serve para o app esconder o resto em vez de deixar o cliente
+     * esbarrar em erro atras de erro.
+     */
+    isSubscriptionBlocked: boolean;
     hasPermission: (permission: string) => boolean;
     hasAnyPermission: (permissions: string[]) => boolean;
     hasAllPermissions: (permissions: string[]) => boolean;
