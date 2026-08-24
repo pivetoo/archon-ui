@@ -116,9 +116,20 @@ export function DataTable<T = any>({
     return column.render ? column.render(value, record, index) : ((value as React.ReactNode) || "-")
   }
 
+  // Clique em botao/link/campo dentro da linha (ex.: coluna de acoes) nao deve
+  // disparar selecao/onRowClick da linha - senao o toggle de selecao da linha
+  // sobrescreve o estado que o proprio botao acabou de definir (ex.: abrir modal
+  // de edicao com o registro certo, mas a linha ja selecionada desseleciona e
+  // zera o registro no mesmo clique, abrindo o modal vazio).
+  const isInteractiveClickTarget = (e: React.MouseEvent): boolean => {
+    const target = e.target as HTMLElement
+    return !!target.closest('button, a, input, select, textarea, [role="button"], [role="checkbox"], [role="menuitem"]')
+  }
+
   // No card (mobile): tocar no corpo seleciona o registro (habilita a toolbar);
   // quando ha detalhe (onRowDoubleClick) e o corpo nao abre detalhe, a seta abre.
-  const handleCardBodyClick = (record: T) => {
+  const handleCardBodyClick = (record: T, e: React.MouseEvent) => {
+    if (isInteractiveClickTarget(e)) return
     if (isSelectable && onSelectionChange) {
       onSelectionChange(isRowSelected(record) ? [] : [record])
     } else if (onRowClick) {
@@ -405,6 +416,7 @@ export function DataTable<T = any>({
                     data-row="true"
                     data-state={selected ? "selected" : ""}
                     onClick={(e) => {
+                      if (isInteractiveClickTarget(e)) return
                       if (isSelectable) {
                         handleSelectRow(record, e)
                       } else {
@@ -468,7 +480,7 @@ export function DataTable<T = any>({
               return (
                 <div
                   key={key}
-                  onClick={() => handleCardBodyClick(record)}
+                  onClick={(e) => handleCardBodyClick(record, e)}
                   data-state={selected ? "selected" : ""}
                   className={cn(
                     "rounded-xl border border-border/70 bg-card p-3.5 transition-colors",
