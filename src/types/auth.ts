@@ -10,6 +10,7 @@ export interface IdentifyResult {
 export interface ContractType {
   contractId: number
   systemApplicationName: string
+  audience?: string
   companyName: string
   roleName?: string
   portalUrl?: string

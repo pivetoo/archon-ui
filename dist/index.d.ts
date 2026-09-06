@@ -377,6 +377,7 @@ export declare interface ContractRole {
 export declare interface ContractType {
     contractId: number;
     systemApplicationName: string;
+    audience?: string;
     companyName: string;
     roleName?: string;
     portalUrl?: string;
