@@ -15,6 +15,13 @@ export class AuthService {
     return response.data ?? null
   }
 
+  // SSO: identifica pelo token ja armazenado, sem senha; o backend exige Authorization.
+  static async identifyWithSession(authorizeUrl?: string): Promise<IdentifyResult | null> {
+    const response = await httpClient.post<IdentifyResult>("/auth/IdentifySession", { authorizeUrl })
+
+    return response.data ?? null
+  }
+
   static logout(): void {
     clearAuthStorage()
   }

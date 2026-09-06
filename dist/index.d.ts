@@ -172,6 +172,7 @@ declare interface AuthProviderProps {
 
 export declare class AuthService {
     static identify(credentials: LoginCredentials): Promise<IdentifyResult | null>;
+    static identifyWithSession(authorizeUrl?: string): Promise<IdentifyResult | null>;
     static logout(): void;
     static isAuthenticated(): boolean;
     static getCurrentUser(): User | null;
