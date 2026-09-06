@@ -236,7 +236,7 @@ export declare interface BreadcrumbProps extends React_2.HTMLAttributes<HTMLElem
     separator?: React_2.ReactNode;
 }
 
-export declare const buildIdentityManagementAuthorizeUrl: ({ identityManagementUrl, clientId, callbackPath, currentOrigin, redirectUri, scope, contractId, }: {
+export declare const buildIdentityManagementAuthorizeUrl: ({ identityManagementUrl, clientId, callbackPath, currentOrigin, redirectUri, scope, contractId, prompt, }: {
     identityManagementUrl?: string;
     clientId: string;
     callbackPath?: string;
@@ -244,9 +244,10 @@ export declare const buildIdentityManagementAuthorizeUrl: ({ identityManagementU
     redirectUri?: string;
     scope?: string;
     contractId?: string | number;
+    prompt?: string;
 }) => Promise<string | undefined>;
 
-export declare const buildIdentityManagementLoginUrl: ({ identityManagementUrl, clientId, callbackPath, currentOrigin, redirectUri, scope, contractId, }: {
+export declare const buildIdentityManagementLoginUrl: ({ identityManagementUrl, clientId, callbackPath, currentOrigin, redirectUri, scope, contractId, prompt, }: {
     identityManagementUrl?: string;
     clientId: string;
     callbackPath?: string;
@@ -254,6 +255,7 @@ export declare const buildIdentityManagementLoginUrl: ({ identityManagementUrl, 
     redirectUri?: string;
     scope?: string;
     contractId?: string | number;
+    prompt?: string;
 }) => Promise<string | undefined>;
 
 export declare function buildPaginationQuery(params?: PagedRequest): string;

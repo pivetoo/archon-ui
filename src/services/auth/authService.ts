@@ -2,6 +2,7 @@ import axios from "axios"
 import { httpClient, getIdentityManagementURL, getRequestLanguage, refreshAccessToken as refreshSharedAccessToken, clearAuthStorage } from "../http/client"
 import { ACCESS_TOKEN_KEY, OIDC_CLIENT_ID_KEY, REFRESH_TOKEN_KEY, USER_KEY, readJson } from "../storage/keys"
 import { isTokenExpiringSoon as isJwtExpiringSoon } from "./jwt"
+import { markPromptLogin } from "./promptLogin"
 import type { IdentifyResult, LoginCredentials, RefreshTokenResponse, OidcTokenRequest, OidcTokenResponse, User } from "../../types/auth"
 
 export class AuthService {
@@ -22,8 +23,11 @@ export class AuthService {
     return response.data ?? null
   }
 
+  // Logout explicito: alem de limpar o storage, marca que o proximo authorize deve exigir senha
+  // (prompt=login), senao a sessao do IdentityManagement reautentica quem acabou de sair.
   static logout(): void {
     clearAuthStorage()
+    markPromptLogin()
   }
 
   static isAuthenticated(): boolean {

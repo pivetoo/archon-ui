@@ -35,6 +35,7 @@ export const buildIdentityManagementAuthorizeUrl = async ({
   redirectUri,
   scope = "openid profile email offline_access",
   contractId,
+  prompt,
 }: {
   identityManagementUrl?: string
   clientId: string
@@ -43,6 +44,7 @@ export const buildIdentityManagementAuthorizeUrl = async ({
   redirectUri?: string
   scope?: string
   contractId?: string | number
+  prompt?: string
 }) => {
   if (!identityManagementUrl || !currentOrigin) {
     return identityManagementUrl
@@ -71,6 +73,9 @@ export const buildIdentityManagementAuthorizeUrl = async ({
   if (contractId !== undefined && contractId !== null && String(contractId).trim()) {
     authorizeUrl.searchParams.set("contract_id", String(contractId))
   }
+  if (prompt) {
+    authorizeUrl.searchParams.set("prompt", prompt)
+  }
 
   return authorizeUrl.toString()
 }
@@ -83,6 +88,7 @@ export const buildIdentityManagementLoginUrl = async ({
   redirectUri,
   scope,
   contractId,
+  prompt,
 }: {
   identityManagementUrl?: string
   clientId: string
@@ -91,6 +97,7 @@ export const buildIdentityManagementLoginUrl = async ({
   redirectUri?: string
   scope?: string
   contractId?: string | number
+  prompt?: string
 }) => {
   const authorizeUrl = await buildIdentityManagementAuthorizeUrl({
     identityManagementUrl,
@@ -100,6 +107,7 @@ export const buildIdentityManagementLoginUrl = async ({
     redirectUri,
     scope,
     contractId,
+    prompt,
   })
 
   if (!identityManagementUrl || !authorizeUrl) {

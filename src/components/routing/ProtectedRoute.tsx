@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { buildIdentityManagementAuthorizeUrl, buildIdentityManagementLoginUrl } from './return-url'
+import { consumePromptLogin } from '../../services/auth/promptLogin'
 
 export interface ProtectedRouteProps {
   children: React.ReactElement
@@ -129,6 +130,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         }
       }
 
+      // Depois de um logout explicito o IdentityManagement nao pode reaproveitar a propria sessao (SSO),
+      // senao "sair" volta logado na hora. prompt=login e o mecanismo padrao do OIDC para isso.
+      const prompt = consumePromptLogin() ? 'login' : undefined
+
       const targetUrl = oidcClientId
         ? await buildIdentityManagementLoginUrl({
           identityManagementUrl: redirectTo,
@@ -137,6 +142,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           currentOrigin,
           redirectUri: oidcRedirectUri,
           scope: oidcScope,
+          prompt,
         })
         : redirectTo
 

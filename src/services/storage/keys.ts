@@ -21,6 +21,8 @@ export const OIDC_STATE_KEY = `${PREFIX}oidc:state`
 export const OIDC_NONCE_KEY = `${PREFIX}oidc:nonce`
 export const OIDC_CODE_VERIFIER_KEY = `${PREFIX}oidc:codeVerifier`
 export const OIDC_REDIRECT_URI_KEY = `${PREFIX}oidc:redirectUri`
+/** Marca um logout explicito: o proximo authorize leva `prompt=login` para o IdentityManagement nao reaproveitar a sessao (SSO). */
+export const OIDC_PROMPT_LOGIN_KEY = `${PREFIX}oidc:promptLogin`
 
 /** Chaves da sessão de autenticação, limpas juntas no logout. */
 export const AUTH_STORAGE_KEYS = [ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, OIDC_CLIENT_ID_KEY, USER_KEY, CONTRACT_KEY] as const
