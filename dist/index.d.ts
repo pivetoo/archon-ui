@@ -18,6 +18,18 @@ import * as ToastPrimitives from '@radix-ui/react-toast';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { VariantProps } from 'class-variance-authority';
 
+export declare interface AccessCapability {
+    key: string;
+    module: string;
+    moduleLabel: string;
+    moduleOrder: number;
+    label: string;
+    description: string;
+    order: number;
+    isBaseline: boolean;
+    resourceCount: number;
+}
+
 export declare interface AccessResource {
     id: number;
     systemApplicationId: number;
@@ -28,6 +40,7 @@ export declare interface AccessResource {
     action: string;
     httpMethod: string;
     route: string;
+    capabilities?: string[];
 }
 
 declare type Action = {
@@ -375,6 +388,7 @@ export declare interface ContractRole {
     isRoot: boolean;
     isDefault: boolean;
     accessResourceIds?: number[];
+    capabilityKeys?: string[];
 }
 
 export declare interface ContractType {
@@ -406,6 +420,7 @@ export declare interface CreateRolePayload {
     isRoot: boolean;
     isDefault: boolean;
     accessResourceIds: number[];
+    capabilityKeys: string[];
 }
 
 export declare interface CreateUserInContractPayload {
@@ -1455,6 +1470,7 @@ export declare interface UpdateRolePayload {
     isRoot: boolean;
     isDefault: boolean;
     accessResourceIds: number[];
+    capabilityKeys: string[];
 }
 
 export declare interface UpdateUserPayload {
@@ -1628,6 +1644,8 @@ export declare function usePermissions(): UsePermissionsReturn;
 
 declare interface UsePermissionsReturn {
     permissions: string[];
+    /** Capacidades ("financeiro.aprovar") dos perfis do usuario no contrato, ja incluindo as basicas. */
+    capabilities: string[];
     isRoot: boolean;
     /**
      * Assinatura da empresa em pendencia: o usuario entra, mas a API responde 402 em tudo que nao
@@ -1638,6 +1656,7 @@ declare interface UsePermissionsReturn {
     hasPermission: (permission: string) => boolean;
     hasAnyPermission: (permissions: string[]) => boolean;
     hasAllPermissions: (permissions: string[]) => boolean;
+    hasCapability: (capability: string) => boolean;
 }
 
 export declare interface User {
@@ -1746,6 +1765,7 @@ export declare class UsersManagementService {
     static updateRole(roleId: number, payload: UpdateRolePayload): Promise<ContractRole>;
     static deleteRole(roleId: number): Promise<void>;
     static listAccessResources(): Promise<AccessResource[]>;
+    static listAccessCapabilities(): Promise<AccessCapability[]>;
 }
 
 export declare const useTheme: () => ThemeContextType;

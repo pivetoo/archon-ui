@@ -4,6 +4,8 @@ import { decodeJwtPayload, readClaim } from '../services/auth/jwt';
 
 interface UsePermissionsReturn {
   permissions: string[];
+  /** Capacidades ("financeiro.aprovar") dos perfis do usuario no contrato, ja incluindo as basicas. */
+  capabilities: string[];
   isRoot: boolean;
   /**
    * Assinatura da empresa em pendencia: o usuario entra, mas a API responde 402 em tudo que nao
@@ -14,20 +16,22 @@ interface UsePermissionsReturn {
   hasPermission: (permission: string) => boolean;
   hasAnyPermission: (permissions: string[]) => boolean;
   hasAllPermissions: (permissions: string[]) => boolean;
+  hasCapability: (capability: string) => boolean;
 }
 
 export function usePermissions(): UsePermissionsReturn {
   const { accessToken } = useAuth();
 
-  const { permissions, isRoot, isSubscriptionBlocked } = useMemo(() => {
+  const { permissions, capabilities, isRoot, isSubscriptionBlocked } = useMemo(() => {
     if (!accessToken) {
-      return { permissions: [], isRoot: false, isSubscriptionBlocked: false };
+      return { permissions: [], capabilities: [], isRoot: false, isSubscriptionBlocked: false };
     }
 
     const payload = decodeJwtPayload(accessToken);
 
     return {
       permissions: readClaim(payload, 'permission'),
+      capabilities: readClaim(payload, 'capability'),
       isRoot: readClaim(payload, 'root').includes('true'),
       isSubscriptionBlocked: readClaim(payload, 'subscription_blocked').includes('true'),
     };
@@ -51,12 +55,19 @@ export function usePermissions(): UsePermissionsReturn {
     [isRoot, permissions]
   );
 
+  const hasCapability = useCallback(
+    (capability: string): boolean => isRoot || capabilities.includes(capability),
+    [isRoot, capabilities]
+  );
+
   return {
     permissions,
+    capabilities,
     isRoot,
     isSubscriptionBlocked,
     hasPermission,
     hasAnyPermission,
-    hasAllPermissions
+    hasAllPermissions,
+    hasCapability
   };
 }

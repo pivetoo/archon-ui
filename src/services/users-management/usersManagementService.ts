@@ -22,6 +22,7 @@ export interface ContractRole {
   isRoot: boolean
   isDefault: boolean
   accessResourceIds?: number[]
+  capabilityKeys?: string[]
 }
 
 export interface AccessResource {
@@ -34,6 +35,21 @@ export interface AccessResource {
   action: string
   httpMethod: string
   route: string
+  capabilities?: string[]
+}
+
+// Permissao de produto ("financeiro.aprovar") que agrupa varios endpoints. Vem do catalogo que o
+// sistema sincroniza com o IdentityManagement; o perfil marca capacidades e o token e expandido.
+export interface AccessCapability {
+  key: string
+  module: string
+  moduleLabel: string
+  moduleOrder: number
+  label: string
+  description: string
+  order: number
+  isBaseline: boolean
+  resourceCount: number
 }
 
 export interface CreateRolePayload {
@@ -42,6 +58,7 @@ export interface CreateRolePayload {
   isRoot: boolean
   isDefault: boolean
   accessResourceIds: number[]
+  capabilityKeys: string[]
 }
 
 export interface UpdateRolePayload {
@@ -50,6 +67,7 @@ export interface UpdateRolePayload {
   isRoot: boolean
   isDefault: boolean
   accessResourceIds: number[]
+  capabilityKeys: string[]
 }
 
 export interface CreateUserInContractPayload {
@@ -138,6 +156,11 @@ export class UsersManagementService {
 
   static async listAccessResources(): Promise<AccessResource[]> {
     const response = await httpClient.get<AccessResource[]>(`${RESOURCE}/GetAccessResources`)
+    return response.data ?? []
+  }
+
+  static async listAccessCapabilities(): Promise<AccessCapability[]> {
+    const response = await httpClient.get<AccessCapability[]>(`${RESOURCE}/GetAccessCapabilities`)
     return response.data ?? []
   }
 }

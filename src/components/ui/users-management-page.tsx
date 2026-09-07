@@ -3,6 +3,7 @@ import { Copy, Shield, ShieldCheck, Users } from "lucide-react"
 import { usePermissions } from "../../hooks/usePermissions"
 import {
   UsersManagementService,
+  type AccessCapability,
   type AccessResource,
   type ContractRole,
   type ContractUser,
@@ -89,6 +90,7 @@ export function UsersManagementPage({
   const [users, setUsers] = React.useState<ContractUser[]>([])
   const [roles, setRoles] = React.useState<ContractRole[]>([])
   const [accessResources, setAccessResources] = React.useState<AccessResource[]>([])
+  const [accessCapabilities, setAccessCapabilities] = React.useState<AccessCapability[]>([])
   const [loading, setLoading] = React.useState(false)
   const [isFormOpen, setIsFormOpen] = React.useState(false)
   const [isSaving, setIsSaving] = React.useState(false)
@@ -107,14 +109,16 @@ export function UsersManagementPage({
   const loadData = React.useCallback(async () => {
     setLoading(true)
     try {
-      const [list, contractRoles, resources] = await Promise.all([
+      const [list, contractRoles, resources, capabilities] = await Promise.all([
         UsersManagementService.listInCurrentContract(),
         UsersManagementService.listRoles(),
         UsersManagementService.listAccessResources(),
+        UsersManagementService.listAccessCapabilities(),
       ])
       setUsers(list)
       setRoles(contractRoles)
       setAccessResources(resources)
+      setAccessCapabilities(capabilities)
     } catch (error) {
       toast({
         variant: "destructive",
@@ -304,6 +308,25 @@ export function UsersManagementPage({
         value ? <Badge variant="warning">Acesso total</Badge> : <Badge variant="outline">Restrito</Badge>,
     },
     {
+      key: "permissions",
+      title: "Permissões",
+      dataIndex: "id",
+      render: (_value: number, role: ContractRole) => {
+        if (role.isRoot) {
+          return "Tudo"
+        }
+        const modules = new Set((role.capabilityKeys ?? []).map((key) => key.split(".")[0]))
+        const parts: string[] = []
+        if (modules.size > 0) {
+          parts.push(`${modules.size} módulo(s)`)
+        }
+        if ((role.accessResourceIds ?? []).length > 0) {
+          parts.push(`${role.accessResourceIds!.length} ação(ões)`)
+        }
+        return parts.length > 0 ? parts.join(" · ") : <span className="text-muted-foreground">Nenhuma</span>
+      },
+    },
+    {
       key: "isDefault",
       title: "Default",
       dataIndex: "isDefault",
@@ -372,6 +395,7 @@ export function UsersManagementPage({
         isRoot: source.isRoot,
         isDefault: false,
         accessResourceIds: source.accessResourceIds ?? [],
+        capabilityKeys: source.capabilityKeys ?? [],
       })
       setEditingRoleId(null)
       setIsRoleModalOpen(true)
@@ -612,6 +636,7 @@ export function UsersManagementPage({
         roleId={editingRoleId}
         initialData={duplicateInitial}
         accessResources={accessResources}
+        capabilities={accessCapabilities}
         onSaved={() => {
           setSelectedRole(null)
           void loadData()
