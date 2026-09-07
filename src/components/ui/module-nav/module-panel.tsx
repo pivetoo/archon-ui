@@ -48,7 +48,7 @@ export const ModulePanel: React.FC<ModulePanelProps> = ({ module, activeRoutePat
       className="fixed left-[64px] top-0 h-screen w-[232px] bg-card border-r border-border flex flex-col z-40 shadow-sm transition-all duration-300"
       aria-label={module.label}
     >
-      <div className="flex items-center min-h-[60px] px-4 border-b border-border/60">
+      <div className="flex items-center h-[52px] px-4 border-b border-border/60">
         <div className="flex items-center gap-2.5 min-w-0">
           <span className="flex items-center justify-center w-7 h-7 rounded-md bg-primary/10 text-primary">{module.icon}</span>
           <span className="font-semibold text-base text-foreground tracking-tight truncate">{module.label}</span>

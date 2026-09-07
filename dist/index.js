@@ -28211,7 +28211,7 @@ const Mk = ({ module: e, active: t, onClick: n }) => {
 }, aP = ({ modules: e, activeModuleKey: t, onModuleClick: n, brand: r, footer: o }) => {
   const a = e.filter((s) => s.group === "op"), i = e.filter((s) => s.group === "sys");
   return /* @__PURE__ */ I("aside", { "data-module-nav": !0, className: "fixed left-0 top-0 h-screen w-[64px] bg-card border-r border-border flex flex-col items-center z-40 shadow-sm", children: [
-    /* @__PURE__ */ f("div", { className: "min-h-[60px] w-full flex items-center justify-center", children: r }),
+    /* @__PURE__ */ f("div", { className: "h-[52px] w-full flex items-center justify-center", children: r }),
     /* @__PURE__ */ f("div", { className: "pt-3 w-full flex flex-col items-center gap-1.5", children: a.map((s) => /* @__PURE__ */ f(Mk, { module: s, active: s.key === t, onClick: () => n(s.key) }, s.key)) }),
     i.length > 0 && /* @__PURE__ */ f("div", { className: "w-7 h-px bg-border my-2.5" }),
     /* @__PURE__ */ f("div", { className: "w-full flex flex-col items-center gap-1.5", children: i.map((s) => /* @__PURE__ */ f(Mk, { module: s, active: s.key === t, onClick: () => n(s.key) }, s.key)) }),
@@ -28249,7 +28249,7 @@ const Rk = ({ route: e, active: t, onClick: n }) => /* @__PURE__ */ I(
       className: "fixed left-[64px] top-0 h-screen w-[232px] bg-card border-r border-border flex flex-col z-40 shadow-sm transition-all duration-300",
       "aria-label": e.label,
       children: [
-        /* @__PURE__ */ f("div", { className: "flex items-center min-h-[60px] px-4 border-b border-border/60", children: /* @__PURE__ */ I("div", { className: "flex items-center gap-2.5 min-w-0", children: [
+        /* @__PURE__ */ f("div", { className: "flex items-center h-[52px] px-4 border-b border-border/60", children: /* @__PURE__ */ I("div", { className: "flex items-center gap-2.5 min-w-0", children: [
           /* @__PURE__ */ f("span", { className: "flex items-center justify-center w-7 h-7 rounded-md bg-primary/10 text-primary", children: e.icon }),
           /* @__PURE__ */ f("span", { className: "font-semibold text-base text-foreground tracking-tight truncate", children: e.label })
         ] }) }),

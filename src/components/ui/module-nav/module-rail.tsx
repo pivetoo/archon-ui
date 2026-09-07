@@ -40,7 +40,7 @@ export const ModuleRail: React.FC<ModuleRailProps> = ({ modules, activeModuleKey
   const sysModules = modules.filter((m) => m.group === 'sys')
   return (
     <aside data-module-nav className="fixed left-0 top-0 h-screen w-[64px] bg-card border-r border-border flex flex-col items-center z-40 shadow-sm">
-      <div className="min-h-[60px] w-full flex items-center justify-center">
+      <div className="h-[52px] w-full flex items-center justify-center">
         {brand}
       </div>
       <div className="pt-3 w-full flex flex-col items-center gap-1.5">
