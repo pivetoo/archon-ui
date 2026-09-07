@@ -1,5 +1,4 @@
 import * as React from "react"
-import { ChevronDown, ChevronRight } from "lucide-react"
 import {
   UsersManagementService,
   type AccessCapability,
@@ -102,7 +101,6 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
   const [loading, setLoading] = React.useState(false)
   const [saving, setSaving] = React.useState(false)
   const [isPickerOpen, setIsPickerOpen] = React.useState(false)
-  const [showAdvanced, setShowAdvanced] = React.useState(false)
 
   const modules = React.useMemo(() => groupByModule(capabilities), [capabilities])
   const baselineKeys = React.useMemo(() => capabilities.filter((item) => item.isBaseline).map((item) => item.key), [capabilities])
@@ -118,12 +116,10 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
         })
         setSelectedIds(initialData.accessResourceIds)
         setSelectedKeys(initialData.capabilityKeys ?? [])
-        setShowAdvanced(initialData.accessResourceIds.length > 0)
       } else {
         setForm(emptyForm)
         setSelectedIds([])
         setSelectedKeys([])
-        setShowAdvanced(false)
       }
       return
     }
@@ -139,7 +135,6 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
       })
       setSelectedIds(role.accessResourceIds ?? [])
       setSelectedKeys(role.capabilityKeys ?? [])
-      setShowAdvanced((role.accessResourceIds ?? []).length > 0)
     } catch (error) {
       toast({
         variant: "destructive",
@@ -269,7 +264,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
                   </label>
                 ) : null}
               </div>
-              <div className="grid gap-2 px-4 py-3 md:grid-cols-2">
+              <div className="grid gap-2 px-4 py-3 md:grid-cols-2 xl:grid-cols-3">
                 {module.items.map((capability) => {
                   const checked = capability.isBaseline || selectedKeys.includes(capability.key)
                   return (
@@ -303,34 +298,8 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
     </div>
   )
 
-  const renderAdvanced = () => (
-    <div className="rounded-lg border bg-muted/20">
-      <button
-        type="button"
-        className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left"
-        onClick={() => setShowAdvanced((current) => !current)}
-      >
-        <span className="flex items-center gap-2 text-sm font-medium">
-          {showAdvanced ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-          Permissões avançadas por ação
-        </span>
-        <span className="text-xs text-muted-foreground">
-          {selectedIds.length} de {accessResources.length} ações
-        </span>
-      </button>
-      {showAdvanced ? (
-        <div className="space-y-3 border-t px-4 py-3">
-          <p className="text-sm text-muted-foreground">
-            Libera ações específicas da API além das marcadas por módulo. Use apenas em casos fora do padrão.
-          </p>
-          <Button variant="secondary" size="sm" onClick={() => setIsPickerOpen(true)} disabled={accessResources.length === 0}>
-            Selecionar ações
-          </Button>
-        </div>
-      ) : null}
-    </div>
-  )
-
+  // Sem catalogo de capacidades (sistemas que ainda nao anotam os controllers), a unica opcao continua
+  // sendo a lista de endpoints.
   const renderLegacyPicker = () => (
     <>
       <div className="flex items-start justify-between gap-4">
@@ -356,7 +325,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
   return (
     <>
       <Modal open={open} onOpenChange={onOpenChange}>
-        <ModalContent size={hasCatalog ? "xl" : "lg"}>
+        <ModalContent size={hasCatalog ? "5xl" : "lg"}>
           <ModalHeader>
             <ModalTitle>{isEditMode ? "Editar perfil" : "Novo perfil"}</ModalTitle>
             <ModalDescription>
@@ -413,10 +382,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
                       Perfis com acesso total não precisam de permissões específicas — podem fazer tudo no sistema.
                     </div>
                   ) : hasCatalog ? (
-                    <div className="space-y-3">
-                      {renderCapabilityMatrix()}
-                      {renderAdvanced()}
-                    </div>
+                    renderCapabilityMatrix()
                   ) : (
                     <div className="rounded-lg border bg-muted/20 p-4">{renderLegacyPicker()}</div>
                   )}
@@ -435,13 +401,15 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
         </ModalContent>
       </Modal>
 
-      <RolePermissionsPickerModal
-        open={isPickerOpen}
-        onOpenChange={setIsPickerOpen}
-        resources={accessResources}
-        selectedResourceIds={selectedIds}
-        onConfirm={setSelectedIds}
-      />
+      {hasCatalog ? null : (
+        <RolePermissionsPickerModal
+          open={isPickerOpen}
+          onOpenChange={setIsPickerOpen}
+          resources={accessResources}
+          selectedResourceIds={selectedIds}
+          onConfirm={setSelectedIds}
+        />
+      )}
     </>
   )
 }
