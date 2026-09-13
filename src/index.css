@@ -30,7 +30,8 @@
     --info: 204 70% 53%;
     --info-foreground: 0 0% 100%;
     --border: 0 0% 81%;
-    --input: 0 0% 81%;
+    /* Borda de campo e de botao de contorno: 58% e o cinza mais claro que passa 3:1 sobre branco (WCAG 1.4.11). */
+    --input: 0 0% 58%;
     --ring: 214 52% 25%;
     --radius: 0.25rem;
   }
@@ -60,7 +61,7 @@
     --info: 204 68% 58%;
     --info-foreground: 204 45% 12%;
     --border: 220 12% 24%;
-    --input: 220 12% 24%;
+    --input: 220 10% 46%;
     --ring: 214 60% 58%;
   }
 }

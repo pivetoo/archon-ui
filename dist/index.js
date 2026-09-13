@@ -12533,7 +12533,7 @@ const Vr = v.forwardRef(({ className: e, ...t }, n) => /* @__PURE__ */ f(
   {
     ref: n,
     className: K(
-      "px-3 py-3 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "px-3 py-2.5 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
       e
     ),
     ...t
