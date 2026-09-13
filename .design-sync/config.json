@@ -1,0 +1,244 @@
+{
+  "pkg": "archon-ui",
+  "shape": "package",
+  "projectId": "8eba4454-4c41-49b4-b41b-20cdcce35095",
+  "buildCmd": "npm run build",
+  "globalName": "ArchonUi",
+  "cssEntry": "dist/style.css",
+  "extraEntries": [
+    "./.design-sync/preview-context.mjs"
+  ],
+  "provider": {
+    "component": "MemoryRouter",
+    "inner": {
+      "component": "AuthProvider",
+      "inner": {
+        "component": "ThemeProvider",
+        "inner": {
+          "component": "I18nProvider",
+          "props": {
+            "initialCulture": "pt-BR",
+            "catalogLoader": {
+              "$ref": "loadPtBRCatalog"
+            }
+          }
+        }
+      }
+    }
+  },
+  "docsMap": {
+    "Button": ".design-sync/groups/Primitives.md",
+    "Badge": ".design-sync/groups/Primitives.md",
+    "Card": ".design-sync/groups/Primitives.md",
+    "Tabs": ".design-sync/groups/Primitives.md",
+    "Dropdown": ".design-sync/groups/Primitives.md",
+    "Input": ".design-sync/groups/Forms.md",
+    "SearchableSelect": ".design-sync/groups/Forms.md",
+    "Checkbox": ".design-sync/groups/Forms.md",
+    "Select": ".design-sync/groups/Forms.md",
+    "Switch": ".design-sync/groups/Forms.md",
+    "Textarea": ".design-sync/groups/Forms.md",
+    "Modal": ".design-sync/groups/Feedback.md",
+    "ConfirmModal": ".design-sync/groups/Feedback.md",
+    "Sheet": ".design-sync/groups/Feedback.md",
+    "Toaster": ".design-sync/groups/Feedback.md",
+    "EmptyState": ".design-sync/groups/Feedback.md",
+    "GlobalLoader": ".design-sync/groups/Feedback.md",
+    "PageLayout": ".design-sync/groups/Data.md",
+    "DataTable": ".design-sync/groups/Data.md",
+    "FilterPanel": ".design-sync/groups/Data.md",
+    "TableToolbar": ".design-sync/groups/Data.md",
+    "SearchBar": ".design-sync/groups/Data.md",
+    "SheetPreviewSection": ".design-sync/groups/Data.md",
+    "BarChart": ".design-sync/groups/Charts.md",
+    "ChartContainer": ".design-sync/groups/Charts.md",
+    "LineChart": ".design-sync/groups/Charts.md",
+    "PieChart": ".design-sync/groups/Charts.md",
+    "AppLayout": ".design-sync/groups/Layout.md",
+    "UsersManagementPage": ".design-sync/groups/Pages.md"
+  },
+  "componentSrcMap": {
+    "AreaChart": null,
+    "AuthProvider": null,
+    "AuthService": null,
+    "Breadcrumb": null,
+    "Callback": null,
+    "CardContent": null,
+    "CardDescription": null,
+    "CardFooter": null,
+    "CardHeader": null,
+    "CardTitle": null,
+    "CommandPalette": null,
+    "DataTablePreview": null,
+    "DropdownCheckboxItem": null,
+    "DropdownContent": null,
+    "DropdownGroup": null,
+    "DropdownItem": null,
+    "DropdownLabel": null,
+    "DropdownPortal": null,
+    "DropdownRadioGroup": null,
+    "DropdownRadioItem": null,
+    "DropdownSeparator": null,
+    "DropdownShortcut": null,
+    "DropdownSub": null,
+    "DropdownSubContent": null,
+    "DropdownSubTrigger": null,
+    "DropdownTrigger": null,
+    "FilterDropdown": null,
+    "FormField": null,
+    "GlobalLoaderProvider": null,
+    "I18nProvider": null,
+    "LanguageFlag": null,
+    "ModalBody": null,
+    "ModalClose": null,
+    "ModalContent": null,
+    "ModalDescription": null,
+    "ModalFooter": null,
+    "ModalHeader": null,
+    "ModalOverlay": null,
+    "ModalPortal": null,
+    "ModalTitle": null,
+    "ModalTrigger": null,
+    "ModuleNavMobile": null,
+    "ModulePanel": null,
+    "ModuleRail": null,
+    "Navbar": null,
+    "Popover": null,
+    "PopoverAnchor": null,
+    "PopoverContent": null,
+    "PopoverTrigger": null,
+    "ProfileService": null,
+    "ProtectedRoute": null,
+    "RadioGroup": null,
+    "RadioGroupItem": null,
+    "SelectContent": null,
+    "SelectGroup": null,
+    "SelectItem": null,
+    "SelectLabel": null,
+    "SelectScrollDownButton": null,
+    "SelectScrollUpButton": null,
+    "SelectSeparator": null,
+    "SelectTrigger": null,
+    "SelectValue": null,
+    "SettingsMenu": null,
+    "SheetClose": null,
+    "SheetContent": null,
+    "SheetDescription": null,
+    "SheetFooter": null,
+    "SheetHeader": null,
+    "SheetOverlay": null,
+    "SheetPortal": null,
+    "SheetPreviewField": null,
+    "SheetPreviewGrid": null,
+    "SheetPreviewHeader": null,
+    "SheetTitle": null,
+    "SheetTrigger": null,
+    "Sidebar": null,
+    "SidebarContent": null,
+    "SidebarFooter": null,
+    "SidebarHeader": null,
+    "SidebarNav": null,
+    "SidebarNavItem": null,
+    "Skeleton": null,
+    "Table": null,
+    "TableBody": null,
+    "TableCaption": null,
+    "TableCell": null,
+    "TableFooter": null,
+    "TableHead": null,
+    "TableHeader": null,
+    "TableRow": null,
+    "TabsBadge": null,
+    "TabsContent": null,
+    "TabsList": null,
+    "TabsTrigger": null,
+    "ThemeProvider": null,
+    "Toast": null,
+    "ToastAction": null,
+    "ToastDescription": null,
+    "ToastProvider": null,
+    "ToastTitle": null,
+    "ToastViewport": null,
+    "Tooltip": null,
+    "TooltipContent": null,
+    "TooltipProvider": null,
+    "TooltipTrigger": null,
+    "UserMenu": null,
+    "UserProfileModal": null,
+    "UserProfilePage": null,
+    "UserProfilePanel": null,
+    "UsersManagementService": null
+  },
+  "overrides": {
+    "Modal": {
+      "cardMode": "single",
+      "viewport": "900x640"
+    },
+    "DataTable": {
+      "cardMode": "column"
+    },
+    "Dropdown": {
+      "cardMode": "single",
+      "viewport": "480x320"
+    },
+    "ConfirmModal": {
+      "cardMode": "single",
+      "viewport": "900x560"
+    },
+    "Sheet": {
+      "cardMode": "single",
+      "viewport": "1000x640"
+    },
+    "Toaster": {
+      "cardMode": "single",
+      "viewport": "900x420"
+    },
+    "GlobalLoader": {
+      "cardMode": "single",
+      "viewport": "640x360"
+    },
+    "PageLayout": {
+      "cardMode": "column"
+    },
+    "FilterPanel": {
+      "cardMode": "single",
+      "primaryStory": "PainelAberto",
+      "viewport": "520x420"
+    },
+    "AppLayout": {
+      "cardMode": "single",
+      "primaryStory": "Listagem",
+      "viewport": "1280x760"
+    },
+    "BarChart": {
+      "cardMode": "column"
+    },
+    "ChartContainer": {
+      "cardMode": "column"
+    },
+    "LineChart": {
+      "cardMode": "column"
+    },
+    "PieChart": {
+      "cardMode": "column"
+    },
+    "SearchBar": {
+      "cardMode": "column"
+    },
+    "TableToolbar": {
+      "cardMode": "column"
+    },
+    "EmptyState": {
+      "cardMode": "column"
+    },
+    "Card": {
+      "cardMode": "column"
+    },
+    "Select": {
+      "cardMode": "single",
+      "primaryStory": "Aberto",
+      "viewport": "480x320"
+    }
+  },
+  "readmeHeader": ".design-sync/conventions.md"
+}

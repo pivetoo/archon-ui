@@ -25,3 +25,10 @@ dist-ssr
 # Claude Code - configuracao local da sessao; os hooks apontam para a raiz do monorepo (nunca versionar)
 .claude/settings.json
 .claude/settings.local.json
+
+# Claude Design - artefatos regenerados pela skill /design-sync (nunca versionar)
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
