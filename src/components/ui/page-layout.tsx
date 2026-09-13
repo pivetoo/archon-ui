@@ -36,10 +36,8 @@ export interface PageLayoutProps {
   onView?: () => void
   onEdit?: () => void
   onDelete?: () => void
+  // Botao de atualizar: icone sempre no inicio do grupo de acoes, antes dos utilitarios da tela e das acoes.
   onRefresh?: () => void
-  // PROTOTIPO: posicao do botao de atualizar. "title" = ao lado do titulo (como era); "icon" = icone no grupo
-  // de acoes; "labeled" = botao com texto no grupo de acoes. Sai quando a posicao for escolhida.
-  refreshVariant?: "title" | "icon" | "labeled"
   addLabel?: string
   viewLabel?: string
   editLabel?: string
@@ -69,7 +67,6 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   onEdit,
   onDelete,
   onRefresh,
-  refreshVariant = "icon",
   addLabel,
   viewLabel,
   editLabel,
@@ -98,7 +95,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     const isDesktop = window.matchMedia("(min-width: 1024px)").matches
     const available = row.clientWidth
     const actionsWidth = inlineActions.scrollWidth
-    const titleWidth = (titleRef.current?.scrollWidth ?? 0) + (onRefresh && refreshVariant === "title" ? 40 : 0)
+    const titleWidth = titleRef.current?.scrollWidth ?? 0
 
     let next: HeaderFit
     if (!isDesktop) next = "collapsed"
@@ -107,7 +104,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     else next = "collapsed"
 
     setHeaderFit((prev) => (prev === next ? prev : next))
-  }, [onRefresh, refreshVariant])
+  }, [])
 
   React.useLayoutEffect(() => {
     measureHeaderFit()
@@ -216,37 +213,22 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   const allActions = [...actions, ...defaultActions]
 
   const refreshLabel = resolveTooltip("pageLayout.action.refresh", "Atualizar")
-  const refreshInActions = !!onRefresh && refreshVariant !== "title"
-  // Utilitario de leitura: fica no inicio do grupo de acoes, antes dos slots da tela e longe da acao principal.
-  const refreshButton = refreshInActions ? (
-    refreshVariant === "labeled" ? (
-      <Button
-        key="refresh"
-        data-testid="page-refresh-button"
-        variant="outline"
-        size="sm"
-        onClick={() => void handleRefresh()}
-        disabled={isRefreshing}
-        className="gap-2 rounded-lg px-3.5"
-      >
-        <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin")} />
-        {refreshLabel}
-      </Button>
-    ) : (
-      <Button
-        key="refresh"
-        data-testid="page-refresh-button"
-        variant="ghost"
-        size="sm"
-        onClick={() => void handleRefresh()}
-        disabled={isRefreshing}
-        aria-label={refreshLabel}
-        tooltip={refreshLabel}
-        className="h-8 w-8 shrink-0 rounded-lg px-0 text-muted-foreground hover:text-foreground"
-      >
-        <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin text-primary")} />
-      </Button>
-    )
+  // Utilitario de leitura, raro no dia a dia (a lista ja recarrega apos salvar, excluir e filtrar): so icone, sempre
+  // o primeiro do grupo de acoes, para nao disputar espaco nem peso com a acao principal e caber no celular.
+  const refreshButton = onRefresh ? (
+    <Button
+      key="refresh"
+      data-testid="page-refresh-button"
+      variant="ghost"
+      size="sm"
+      onClick={() => void handleRefresh()}
+      disabled={isRefreshing}
+      aria-label={refreshLabel}
+      tooltip={refreshLabel}
+      className="h-8 w-8 shrink-0 rounded-lg px-0 text-muted-foreground hover:text-foreground"
+    >
+      <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin text-primary")} />
+    </Button>
   ) : null
   const isCompact = density === "compact"
 
@@ -321,7 +303,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   }
 
   const hasHeader = !!(title || subtitle || allActions.length > 0 || actionsSlot || onRefresh || filtersSlot)
-  const hasActionGroup = allActions.length > 0 || !!actionsSlot || refreshInActions
+  const hasActionGroup = allActions.length > 0 || !!actionsSlot || !!onRefresh
 
   return (
     <div className={cn("flex flex-col h-full w-full", className)}>
@@ -352,20 +334,6 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                 >
                   {title}
                 </h1>
-
-                {onRefresh && refreshVariant === "title" && (
-                  <button
-                    onClick={handleRefresh}
-                    disabled={isRefreshing}
-                    className={cn(
-                      "rounded-lg border border-transparent p-2 text-muted-foreground transition-all hover:border-border/80 hover:bg-muted/35 hover:text-foreground",
-                      isRefreshing && "text-primary"
-                    )}
-                    title={t("pageLayout.action.refresh")}
-                  >
-                    <RefreshCw className={cn("h-4 w-4 transition-transform", isRefreshing && "animate-spin")} />
-                  </button>
-                )}
               </div>
 
               {subtitle && (
