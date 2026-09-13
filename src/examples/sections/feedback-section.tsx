@@ -16,6 +16,7 @@ import {
   Sheet,
   SheetContent,
   SheetDescription,
+  SheetBody,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -248,16 +249,22 @@ export function FeedbackSection() {
         />
 
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetContent side="right">
+          <SheetContent side="right" size="md">
             <SheetHeader>
               <SheetTitle>Detalhes do processo</SheetTitle>
               <SheetDescription>
                 Use o Sheet para mostrar configurações sem navegar de página.
               </SheetDescription>
             </SheetHeader>
-            <div className="my-4 text-sm text-muted-foreground">
-              Última execução: hoje às 14:32
-            </div>
+            <SheetBody className="space-y-4 text-sm">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                <div><div className="text-xs font-medium text-muted-foreground">Última execução</div><div className="mt-0.5">Hoje às 14:32</div></div>
+                <div><div className="text-xs font-medium text-muted-foreground">Duração</div><div className="mt-0.5">2 min 14 s</div></div>
+                <div><div className="text-xs font-medium text-muted-foreground">Situação</div><div className="mt-0.5">Concluído</div></div>
+                <div><div className="text-xs font-medium text-muted-foreground">Registros</div><div className="mt-0.5">1.248</div></div>
+              </div>
+              <p className="text-muted-foreground">O processo roda a cada hora e reconcilia os recebimentos com o extrato bancário.</p>
+            </SheetBody>
             <SheetFooter>
               <Button variant="outline" onClick={() => setIsSheetOpen(false)}>
                 Fechar

@@ -13,9 +13,15 @@ import {
   DataTablePreview,
   PageLayout,
   Sheet,
+  SheetBody,
   SheetContent,
+  SheetFooter,
   SheetDescription,
   SheetHeader,
+  SheetPreviewField,
+  SheetPreviewGrid,
+  SheetPreviewHeader,
+  SheetPreviewSection,
   SheetTitle,
   Switch,
   TableToolbar,
@@ -528,46 +534,42 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
           />
 
           <Sheet open={!!previewUser} onOpenChange={(open) => !open && setPreviewUser(null)}>
-            <SheetContent side="right" className="w-full sm:max-w-md">
+            <SheetContent side="right" size="md">
               {previewUser ? (
-                <div className="flex h-full flex-col">
+                <>
                   <SheetHeader>
-                    <SheetTitle>{previewUser.nome}</SheetTitle>
-                    <SheetDescription>
-                      Ficha aberta pelo clique na linha.
-                    </SheetDescription>
+                    <SheetTitle className="sr-only">{previewUser.nome}</SheetTitle>
+                    <SheetDescription className="sr-only">Ficha do usuário</SheetDescription>
+                    <SheetPreviewHeader
+                      className="border-b-0 pb-0"
+                      eyebrow="Usuário"
+                      title={previewUser.nome}
+                      meta={
+                        <Badge dot variant={previewUser.status === "Ativo" ? "soft-success" : "soft-warning"}>
+                          {previewUser.status}
+                        </Badge>
+                      }
+                      description="Ficha aberta pelo clique na linha."
+                    />
                   </SheetHeader>
 
-                  <div className="mt-6 flex-1 space-y-5 overflow-y-auto">
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
-                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">
-                          Perfil
-                        </div>
-                        <div className="mt-1 text-sm font-medium text-foreground">{previewUser.perfil}</div>
-                      </div>
+                  <SheetBody className="space-y-4">
+                    <SheetPreviewSection title="Dados de acesso" description="Perfil e contato principal.">
+                      <SheetPreviewGrid>
+                        <SheetPreviewField label="Perfil" value={previewUser.perfil} />
+                        <SheetPreviewField label="Situação" value={previewUser.status} />
+                        <SheetPreviewField className="sm:col-span-2" label="E-mail" value={previewUser.email} />
+                      </SheetPreviewGrid>
+                    </SheetPreviewSection>
+                    <SheetPreviewSection title="Atividade" defaultOpen={false}>
+                      <SheetPreviewGrid>
+                        <SheetPreviewField label="Último acesso" value="Hoje às 09:12" />
+                        <SheetPreviewField label="Sessões ativas" value="2" />
+                      </SheetPreviewGrid>
+                    </SheetPreviewSection>
+                  </SheetBody>
 
-                      <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
-                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">
-                          Situação
-                        </div>
-                        <div className="mt-2">
-                          <Badge variant={previewUser.status === "Ativo" ? "success" : "warning"}>
-                            {previewUser.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
-                      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">
-                        E-mail
-                      </div>
-                      <div className="mt-1 text-sm font-medium text-foreground">{previewUser.email}</div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex justify-end">
+                  <SheetFooter>
                     <Button
                       variant="outline-primary"
                       size="sm"
@@ -575,8 +577,8 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
                     >
                       Abrir detalhes
                     </Button>
-                  </div>
-                </div>
+                  </SheetFooter>
+                </>
               ) : null}
             </SheetContent>
           </Sheet>

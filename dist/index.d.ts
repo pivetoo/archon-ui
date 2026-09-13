@@ -1220,6 +1220,11 @@ export declare function setTranslationMessages(messages: Record<string, string>)
 
 export declare const Sheet: React_2.FC<DialogPrimitive.DialogProps>;
 
+export declare const SheetBody: {
+    ({ className, ...props }: React_2.HTMLAttributes<HTMLDivElement>): JSX.Element;
+    displayName: string;
+};
+
 export declare const SheetClose: React_2.ForwardRefExoticComponent<DialogPrimitive.DialogCloseProps & React_2.RefAttributes<HTMLButtonElement>>;
 
 export declare const SheetContent: React_2.ForwardRefExoticComponent<SheetContentProps & React_2.RefAttributes<HTMLDivElement>>;
@@ -1281,6 +1286,7 @@ export declare const SheetTrigger: React_2.ForwardRefExoticComponent<DialogPrimi
 
 declare const sheetVariants: (props?: ({
     side?: "top" | "right" | "bottom" | "left" | null | undefined;
+    size?: "sm" | "md" | "lg" | "xl" | "2xl" | "full" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 export declare const Sidebar: React_2.ForwardRefExoticComponent<SidebarProps & React_2.RefAttributes<HTMLDivElement>>;

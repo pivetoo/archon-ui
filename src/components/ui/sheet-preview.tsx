@@ -18,14 +18,10 @@ export function SheetPreviewHeader({
   className,
 }: SheetPreviewHeaderProps) {
   return (
-    <div className={cn("space-y-4 border-b border-border/70 pb-5", className)}>
-      {eyebrow ? (
-        <div className="inline-flex w-fit items-center rounded-full border border-primary/15 bg-primary/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
-          {eyebrow}
-        </div>
-      ) : null}
-      <div className="space-y-2">
-        <div className="text-lg font-semibold text-primary">{title}</div>
+    <div className={cn("space-y-2 border-b border-border/70 pb-4", className)}>
+      {eyebrow ? <div className="text-xs font-medium text-muted-foreground">{eyebrow}</div> : null}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+        <div className="text-lg font-semibold leading-tight text-primary">{title}</div>
         {meta ? <div className="flex flex-wrap items-center gap-2">{meta}</div> : null}
       </div>
       {description ? <div className="text-sm text-muted-foreground">{description}</div> : null}
@@ -50,14 +46,14 @@ export function SheetPreviewSection({
 }: SheetPreviewSectionProps) {
   return (
     <details open={defaultOpen} className={cn("group border-b border-border/70 pb-4 last:border-b-0 last:pb-0", className)}>
-      <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3">
+      <summary className="-mx-2 flex cursor-pointer list-none items-center justify-between gap-3 rounded-md px-2 py-2 transition-colors hover:bg-accent">
         <div>
-          <div className="text-base font-bold tracking-[-0.01em] text-primary">{title}</div>
+          <div className="text-sm font-semibold text-foreground">{title}</div>
           {description ? <div className="text-xs text-muted-foreground">{description}</div> : null}
         </div>
-        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-180" />
+        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
       </summary>
-      <div className="border-t border-border/60 px-4 pt-4">
+      <div className="pt-3">
         {children}
       </div>
     </details>
@@ -67,7 +63,7 @@ export function SheetPreviewSection({
 export interface SheetPreviewGridProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function SheetPreviewGrid({ className, ...props }: SheetPreviewGridProps) {
-  return <div className={cn("grid gap-4 sm:grid-cols-2", className)} {...props} />
+  return <div className={cn("grid gap-x-4 gap-y-3 sm:grid-cols-2", className)} {...props} />
 }
 
 export interface SheetPreviewFieldProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -77,9 +73,9 @@ export interface SheetPreviewFieldProps extends React.HTMLAttributes<HTMLDivElem
 
 export function SheetPreviewField({ label, value, className, ...props }: SheetPreviewFieldProps) {
   return (
-    <div className={className} {...props}>
-      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">{label}</div>
-      <div className="mt-1 text-sm font-medium text-foreground">{value}</div>
+    <div className={cn("min-w-0", className)} {...props}>
+      <div className="text-xs font-medium text-muted-foreground">{label}</div>
+      <div className="mt-0.5 break-words text-sm text-foreground">{value}</div>
     </div>
   )
 }
