@@ -306,8 +306,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                   ref={titleRef}
                   data-testid="page-title"
                   className={cn(
-                    "truncate font-semibold tracking-tight text-primary drop-shadow-[0_1px_0_hsl(var(--primary)/0.15)]",
-                    isCompact ? "text-2xl" : "text-3xl",
+                    "truncate font-semibold tracking-tight text-primary",
+                    isCompact ? "text-xl" : "text-2xl",
                     titleClassName
                   )}
                 >
@@ -333,7 +333,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                 <p
                   className={cn(
                     "max-w-3xl text-pretty text-muted-foreground",
-                    isCompact ? "text-sm" : "text-[15px]"
+                    "text-sm"
                   )}
                 >
                   {subtitle}

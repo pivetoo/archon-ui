@@ -142,7 +142,7 @@ function FilterPanelSection({ section }: FilterPanelSectionProps) {
 
   return (
     <div className="space-y-1.5">
-      <p className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <p className="px-1 text-xs font-medium text-muted-foreground">
         {section.label}
       </p>
       {useChips ? (

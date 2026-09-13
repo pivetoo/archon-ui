@@ -13,6 +13,11 @@ import {
   DropdownLabel,
   DropdownSeparator,
   DropdownTrigger,
+  Tabs,
+  TabsBadge,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -57,6 +62,38 @@ export function PrimitivesSection() {
             <Badge variant="info">Informativo</Badge>
             <Badge variant="destructive">Erro</Badge>
           </div>
+          <div className="flex flex-wrap gap-2">
+            <Badge dot variant="soft-success">Ativo</Badge>
+            <Badge dot variant="soft-warning">Pendente</Badge>
+            <Badge dot variant="soft-info">Em análise</Badge>
+            <Badge dot variant="soft-destructive">Vencido</Badge>
+            <Badge dot variant="soft-neutral">Inativo</Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Tabs</CardTitle>
+          <CardDescription>Variante padrão e sublinhada.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <Tabs defaultValue="dados">
+            <TabsList>
+              <TabsTrigger value="dados">Dados</TabsTrigger>
+              <TabsTrigger value="cobrancas">Cobranças <TabsBadge>3</TabsBadge></TabsTrigger>
+              <TabsTrigger value="historico">Histórico</TabsTrigger>
+            </TabsList>
+            <TabsContent value="dados" className="pt-3 text-sm text-muted-foreground">Informações cadastrais do cliente.</TabsContent>
+          </Tabs>
+          <Tabs defaultValue="cobrancas">
+            <TabsList variant="underline">
+              <TabsTrigger value="dados">Dados</TabsTrigger>
+              <TabsTrigger value="cobrancas">Cobranças <TabsBadge>3</TabsBadge></TabsTrigger>
+              <TabsTrigger value="historico">Histórico</TabsTrigger>
+            </TabsList>
+            <TabsContent value="cobrancas" className="pt-3 text-sm text-muted-foreground">Três cobranças em aberto.</TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 

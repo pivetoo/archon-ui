@@ -35,11 +35,13 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-border bg-white text-foreground",
-        success: "border-border border-l-[12px] border-l-emerald-400 bg-white text-emerald-700 dark:border-border dark:border-l-emerald-500 dark:bg-white dark:text-emerald-400",
-        destructive: "border-border border-l-[12px] border-l-red-500 bg-white text-red-700 dark:border-border dark:border-l-red-500 dark:bg-white dark:text-red-400",
-        warning: "border-border border-l-[12px] border-l-amber-400 bg-white text-amber-700 dark:border-border dark:border-l-amber-500 dark:bg-white dark:text-amber-400",
-        info: "border-border border-l-[12px] border-l-sky-400 bg-white text-sky-700 dark:border-border dark:border-l-sky-500 dark:bg-white dark:text-sky-400",
+        // So tokens: fundo do card (funciona no escuro), filete fino na cor do status e icone na mesma cor.
+        // A cor do texto no root vale para o icone; titulo e descricao definem a propria cor.
+        default: "border-border bg-card text-foreground",
+        success: "border-border border-l-[3px] border-l-success bg-card text-[hsl(142_60%_30%)] dark:text-success",
+        destructive: "border-border border-l-[3px] border-l-destructive bg-card text-destructive",
+        warning: "border-border border-l-[3px] border-l-warning bg-card text-[hsl(36_90%_31%)] dark:text-warning",
+        info: "border-border border-l-[3px] border-l-info bg-card text-[hsl(204_70%_36%)] dark:text-info",
       },
     },
     defaultVariants: {
@@ -86,7 +88,7 @@ const ToastAction = React.forwardRef<
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-current/20 bg-transparent px-3 text-sm font-medium transition-colors hover:bg-white/10 focus:outline-none focus:ring-1 focus:ring-ring disabled:pointer-events-none disabled:opacity-50",
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-input bg-card px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25 disabled:pointer-events-none disabled:opacity-50",
       className
     )}
     {...props}
@@ -100,7 +102,7 @@ const ToastTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Title
     ref={ref}
-    className={cn("text-sm font-bold leading-tight tracking-[-0.01em] text-gray-700", className)}
+    className={cn("text-sm font-semibold leading-tight text-foreground", className)}
     {...props}
   />
 ))
@@ -112,7 +114,7 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
-    className={cn("mt-1 whitespace-pre-line text-[13px] font-medium leading-5 text-gray-500", className)}
+    className={cn("mt-1 whitespace-pre-line text-sm leading-5 text-muted-foreground", className)}
     {...props}
   />
 ))
