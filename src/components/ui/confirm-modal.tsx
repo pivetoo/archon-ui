@@ -46,7 +46,8 @@ const ConfirmModal = React.forwardRef<HTMLDivElement, ConfirmModalProps>(
     return (
       <Modal open={open} onOpenChange={onOpenChange}>
         <ModalContent ref={ref} data-testid="dialog-confirm">
-          <ModalHeader>
+          {/* Sem corpo entre cabecalho e rodape, a linha do cabecalho viraria uma faixa vazia. */}
+          <ModalHeader className="group-data-[padded]/modal:border-b-0 group-data-[padded]/modal:pb-1 sm:group-data-[padded]/modal:pb-2">
             <ModalTitle>{title ?? t("confirmModal.title")}</ModalTitle>
             {(description ?? t("confirmModal.description")) && (
               <ModalDescription>{description ?? t("confirmModal.description")}</ModalDescription>

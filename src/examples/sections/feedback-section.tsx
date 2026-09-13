@@ -7,7 +7,9 @@ import {
   CardHeader,
   CardTitle,
   ConfirmModal,
+  Input,
   Modal,
+  ModalBody,
   ModalContent,
   ModalDescription,
   ModalFooter,
@@ -144,9 +146,23 @@ export function FeedbackSection() {
             <ModalHeader>
               <ModalTitle>Novo vínculo</ModalTitle>
               <ModalDescription>
-                Este exemplo demonstra a composição padrão do modal no archon-ui.
+                Vincule um usuário a um contrato. Os campos com asterisco são obrigatórios.
               </ModalDescription>
             </ModalHeader>
+            <ModalBody className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium" htmlFor="vinculo-usuario">Usuário *</label>
+                <Input id="vinculo-usuario" defaultValue="ana.souza@empresa.com" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium" htmlFor="vinculo-contrato">Contrato *</label>
+                <Input id="vinculo-contrato" placeholder="Buscar contrato pelo cliente" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium" htmlFor="vinculo-obs">Observações</label>
+                <Input id="vinculo-obs" placeholder="Opcional" />
+              </div>
+            </ModalBody>
             <ModalFooter>
               <Button variant="outline" onClick={() => setIsModalOpen(false)}>
                 Cancelar

@@ -7070,7 +7070,7 @@ const yi = CM, vne = SM, rL = kM, yne = Lu, TM = v.forwardRef(({ className: e, .
   {
     ref: n,
     className: G(
-      "fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-[200] bg-black/40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       e
     ),
     ...t
@@ -7079,7 +7079,8 @@ const yi = CM, vne = SM, rL = kM, yne = Lu, TM = v.forwardRef(({ className: e, .
 TM.displayName = Eu.displayName;
 const oL = Js(
   [
-    "fixed z-[201] flex flex-col bg-background shadow-lg duration-200 overflow-y-auto",
+    // bg-card no lugar de bg-background: o cinza da pagina deixava o modal sem contraste com o conteudo dele.
+    "group/modal fixed z-[201] flex flex-col bg-card shadow-lg duration-200 overflow-y-auto",
     // mobile: bottom-sheet sobe de baixo — !w-full sobrescreve inline style width:95vw dos modais
     "inset-x-0 bottom-0 !w-full max-h-[90dvh] rounded-t-2xl p-4 gap-3",
     // sm+: dialog centralizado flutuante
@@ -7115,26 +7116,27 @@ const oL = Js(
     }
   }
 ), ra = v.forwardRef(({ className: e, children: t, size: n, onOpenAutoFocus: r, ...o }, a) => {
-  const i = (s) => {
+  const i = (c) => {
     if (r) {
-      r(s);
+      r(c);
       return;
     }
-    typeof window < "u" && window.matchMedia("(max-width: 640px)").matches && (s.preventDefault(), s.currentTarget?.focus({ preventScroll: !0 }));
-  };
+    typeof window < "u" && window.matchMedia("(max-width: 640px)").matches && (c.preventDefault(), c.currentTarget?.focus({ preventScroll: !0 }));
+  }, s = G(oL({ size: n }), e), l = /(^|\s)p-4(\s|$)/.test(s) && /(^|\s)sm:p-6(\s|$)/.test(s);
   return /* @__PURE__ */ E(rL, { children: [
     /* @__PURE__ */ f(TM, {}),
     /* @__PURE__ */ E(
       Pu,
       {
         ref: a,
-        className: G(oL({ size: n }), e),
+        className: s,
+        "data-padded": l ? "" : void 0,
         onOpenAutoFocus: i,
         ...o,
         children: [
           /* @__PURE__ */ f("div", { "aria-hidden": !0, className: "mx-auto -mt-1 mb-1 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/25 sm:hidden" }),
           t,
-          /* @__PURE__ */ E(Lu, { className: "absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none", children: [
+          /* @__PURE__ */ E(Lu, { className: "absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25 disabled:pointer-events-none", children: [
             /* @__PURE__ */ f(fu, { className: "h-4 w-4" }),
             /* @__PURE__ */ f("span", { className: "sr-only", children: "Fechar" })
           ] })
@@ -7152,7 +7154,10 @@ const oa = ({
   "div",
   {
     className: G(
-      "flex shrink-0 flex-col space-y-1.5 text-center sm:text-left",
+      "flex shrink-0 flex-col gap-1 pr-10 text-left",
+      // Com o padding padrao do modal, o cabecalho sangra ate a borda e ganha a linha divisoria.
+      "group-data-[padded]/modal:-mx-4 group-data-[padded]/modal:-mt-2 group-data-[padded]/modal:border-b group-data-[padded]/modal:border-border/70 group-data-[padded]/modal:px-4 group-data-[padded]/modal:pb-3 group-data-[padded]/modal:pt-1",
+      "sm:group-data-[padded]/modal:-mx-6 sm:group-data-[padded]/modal:-mt-6 sm:group-data-[padded]/modal:px-6 sm:group-data-[padded]/modal:pb-4 sm:group-data-[padded]/modal:pt-5",
       t && "border-b border-border pb-3",
       e
     ),
@@ -7182,7 +7187,9 @@ const aa = ({
   "div",
   {
     className: G(
-      "flex shrink-0 flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      "flex shrink-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+      "group-data-[padded]/modal:-mx-4 group-data-[padded]/modal:-mb-4 group-data-[padded]/modal:border-t group-data-[padded]/modal:border-border/70 group-data-[padded]/modal:bg-muted/30 group-data-[padded]/modal:px-4 group-data-[padded]/modal:py-3",
+      "sm:group-data-[padded]/modal:-mx-6 sm:group-data-[padded]/modal:-mb-6 sm:group-data-[padded]/modal:px-6",
       t && "border-t border-border pt-3",
       e
     ),
@@ -9220,7 +9227,7 @@ const jt = new F$(), lx = "pt-BR", nv = v.createContext(null), cx = (e) => e ===
       s?.(), t?.(!1);
     };
     return /* @__PURE__ */ f(yi, { open: e, onOpenChange: t, children: /* @__PURE__ */ E(ra, { ref: u, "data-testid": "dialog-confirm", children: [
-      /* @__PURE__ */ E(oa, { children: [
+      /* @__PURE__ */ E(oa, { className: "group-data-[padded]/modal:border-b-0 group-data-[padded]/modal:pb-1 sm:group-data-[padded]/modal:pb-2", children: [
         /* @__PURE__ */ f(ia, { children: n ?? d("confirmModal.title") }),
         (r ?? d("confirmModal.description")) && /* @__PURE__ */ f(al, { children: r ?? d("confirmModal.description") })
       ] }),

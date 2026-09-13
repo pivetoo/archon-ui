@@ -20,7 +20,7 @@ const ModalOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-[200] bg-black/40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -30,7 +30,8 @@ ModalOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const modalContentVariants = cva(
   [
-    "fixed z-[201] flex flex-col bg-background shadow-lg duration-200 overflow-y-auto",
+    // bg-card no lugar de bg-background: o cinza da pagina deixava o modal sem contraste com o conteudo dele.
+    "group/modal fixed z-[201] flex flex-col bg-card shadow-lg duration-200 overflow-y-auto",
     // mobile: bottom-sheet sobe de baixo — !w-full sobrescreve inline style width:95vw dos modais
     "inset-x-0 bottom-0 !w-full max-h-[90dvh] rounded-t-2xl p-4 gap-3",
     // sm+: dialog centralizado flutuante
@@ -90,18 +91,24 @@ const ModalContent = React.forwardRef<
     }
   }
 
+  // Telas que tiram o padding montam a propria estrutura; nesse caso header e footer nao sangram
+  // ate a borda (o data-padded so existe enquanto p-4 e sm:p-6 sobrevivem ao merge das classes).
+  const mergedClassName = cn(modalContentVariants({ size }), className)
+  const padded = /(^|\s)p-4(\s|$)/.test(mergedClassName) && /(^|\s)sm:p-6(\s|$)/.test(mergedClassName)
+
   return (
   <ModalPortal>
     <ModalOverlay />
     <DialogPrimitive.Content
       ref={ref}
-      className={cn(modalContentVariants({ size }), className)}
+      className={mergedClassName}
+      data-padded={padded ? "" : undefined}
       onOpenAutoFocus={handleOpenAutoFocus}
       {...props}
     >
       <div aria-hidden className="mx-auto -mt-1 mb-1 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/25 sm:hidden" />
       {children}
-      <DialogPrimitive.Close className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
+      <DialogPrimitive.Close className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25 disabled:pointer-events-none">
         <X className="h-4 w-4" />
         <span className="sr-only">Fechar</span>
       </DialogPrimitive.Close>
@@ -118,7 +125,10 @@ const ModalHeader = ({
 }: React.HTMLAttributes<HTMLDivElement> & { bordered?: boolean }) => (
   <div
     className={cn(
-      "flex shrink-0 flex-col space-y-1.5 text-center sm:text-left",
+      "flex shrink-0 flex-col gap-1 pr-10 text-left",
+      // Com o padding padrao do modal, o cabecalho sangra ate a borda e ganha a linha divisoria.
+      "group-data-[padded]/modal:-mx-4 group-data-[padded]/modal:-mt-2 group-data-[padded]/modal:border-b group-data-[padded]/modal:border-border/70 group-data-[padded]/modal:px-4 group-data-[padded]/modal:pb-3 group-data-[padded]/modal:pt-1",
+      "sm:group-data-[padded]/modal:-mx-6 sm:group-data-[padded]/modal:-mt-6 sm:group-data-[padded]/modal:px-6 sm:group-data-[padded]/modal:pb-4 sm:group-data-[padded]/modal:pt-5",
       bordered && "border-b border-border pb-3",
       className
     )}
@@ -148,7 +158,9 @@ const ModalFooter = ({
 }: React.HTMLAttributes<HTMLDivElement> & { bordered?: boolean }) => (
   <div
     className={cn(
-      "flex shrink-0 flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      "flex shrink-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+      "group-data-[padded]/modal:-mx-4 group-data-[padded]/modal:-mb-4 group-data-[padded]/modal:border-t group-data-[padded]/modal:border-border/70 group-data-[padded]/modal:bg-muted/30 group-data-[padded]/modal:px-4 group-data-[padded]/modal:py-3",
+      "sm:group-data-[padded]/modal:-mx-6 sm:group-data-[padded]/modal:-mb-6 sm:group-data-[padded]/modal:px-6",
       bordered && "border-t border-border pt-3",
       className
     )}
