@@ -5673,17 +5673,18 @@ const HO = Js(
       variant: {
         primary: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
         secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/90",
-        success: "bg-success/15 text-[hsl(142_60%_32%)] hover:bg-success/25 dark:text-[hsl(142_60%_62%)]",
+        // Textos escuros das variantes suaves e de contorno: luminosidade escolhida para passar 4.5:1 sobre branco e sobre o fundo suave.
+        success: "bg-success/15 text-[hsl(142_60%_30%)] hover:bg-success/25 dark:text-[hsl(142_60%_62%)]",
         error: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         danger: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-        warning: "bg-warning/15 text-[hsl(36_90%_36%)] hover:bg-warning/25 dark:text-[hsl(36_90%_62%)]",
+        warning: "bg-warning/15 text-[hsl(36_90%_31%)] hover:bg-warning/25 dark:text-[hsl(36_90%_62%)]",
         info: "bg-info/15 text-[hsl(204_70%_36%)] hover:bg-info/25 dark:text-[hsl(204_70%_65%)]",
         // bg-card nos contornos: bg-background era o cinza da pagina e o botao parecia apagado sobre card e modal.
         outline: "border border-input bg-card text-foreground hover:border-muted-foreground/50 hover:bg-accent hover:text-accent-foreground",
-        "outline-secondary": "border border-secondary bg-card text-[hsl(186_100%_30%)] hover:bg-secondary/10 dark:text-secondary",
+        "outline-secondary": "border border-secondary bg-card text-[hsl(186_100%_26%)] hover:bg-secondary/10 dark:text-secondary",
         "outline-primary": "border border-primary bg-card text-primary hover:bg-primary/10",
-        "outline-success": "border border-success bg-card text-[hsl(142_60%_32%)] hover:bg-success/10 dark:text-success",
-        "outline-warning": "border border-warning bg-card text-[hsl(36_90%_36%)] hover:bg-warning/10 dark:text-warning",
+        "outline-success": "border border-success bg-card text-[hsl(142_60%_30%)] hover:bg-success/10 dark:text-success",
+        "outline-warning": "border border-warning bg-card text-[hsl(36_90%_31%)] hover:bg-warning/10 dark:text-warning",
         "outline-danger": "border border-destructive bg-card text-destructive hover:bg-destructive/10",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         text: "hover:underline",
@@ -5800,7 +5801,7 @@ const Ft = v.forwardRef(
           "aria-describedby": d,
           className: K(
             // bg-card em vez de bg-background: o cinza da pagina fazia o campo parecer desabilitado dentro de card e modal.
-            "flex h-9 w-full min-w-0 rounded-md border border-input bg-card px-3 py-1 text-base text-foreground transition-[color,border-color,box-shadow] file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground/80 hover:border-muted-foreground/50 focus-visible:outline-none focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/15 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60 disabled:hover:border-input md:text-sm [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:ml-auto [&::-ms-reveal]:hidden [&::-ms-clear]:hidden [&::-webkit-credentials-auto-fill-button]:hidden",
+            "flex h-9 w-full min-w-0 rounded-md border border-input bg-card px-3 py-1 text-base text-foreground transition-[color,border-color,box-shadow] file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground hover:border-muted-foreground/75 focus-visible:outline-none focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/15 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60 disabled:hover:border-input md:text-sm [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:ml-auto [&::-ms-reveal]:hidden [&::-ms-clear]:hidden [&::-webkit-credentials-auto-fill-button]:hidden",
             n && "border-destructive hover:border-destructive focus-visible:border-destructive focus-visible:ring-destructive/15",
             e
           ),
@@ -5827,7 +5828,7 @@ const GO = v.forwardRef(
           "aria-invalid": t || void 0,
           "aria-describedby": u,
           className: K(
-            "flex min-h-[80px] w-full rounded-md border border-input bg-card px-3 py-2 text-base text-foreground transition-[color,border-color,box-shadow] placeholder:text-muted-foreground/80 hover:border-muted-foreground/50 focus-visible:outline-none focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/15 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60 disabled:hover:border-input md:text-sm",
+            "flex min-h-[80px] w-full rounded-md border border-input bg-card px-3 py-2 text-base text-foreground transition-[color,border-color,box-shadow] placeholder:text-muted-foreground hover:border-muted-foreground/75 focus-visible:outline-none focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/15 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60 disabled:hover:border-input md:text-sm",
             t && "border-destructive hover:border-destructive focus-visible:border-destructive focus-visible:ring-destructive/15",
             e
           ),
@@ -5910,7 +5911,7 @@ const ZO = Js(
         "soft-default": "border-transparent bg-primary/10 font-medium text-primary dark:text-[hsl(214_60%_72%)]",
         "soft-secondary": "border-transparent bg-secondary/15 font-medium text-[hsl(186_100%_26%)] dark:text-[hsl(186_75%_65%)]",
         "soft-success": "border-transparent bg-success/15 font-medium text-[hsl(142_60%_30%)] dark:text-[hsl(142_60%_62%)]",
-        "soft-warning": "border-transparent bg-warning/15 font-medium text-[hsl(36_90%_34%)] dark:text-[hsl(36_90%_62%)]",
+        "soft-warning": "border-transparent bg-warning/15 font-medium text-[hsl(36_90%_31%)] dark:text-[hsl(36_90%_62%)]",
         "soft-info": "border-transparent bg-info/15 font-medium text-[hsl(204_70%_36%)] dark:text-[hsl(204_70%_65%)]",
         "soft-destructive": "border-transparent bg-destructive/12 font-medium text-[hsl(0_65%_45%)] dark:text-[hsl(0_72%_68%)]",
         "soft-neutral": "border-transparent bg-muted-foreground/12 font-medium text-muted-foreground"
@@ -6167,11 +6168,11 @@ const Zr = v.forwardRef(({ className: e, checked: t, ...n }, r) => /* @__PURE__ 
     checked: t,
     className: K(
       // Raio explicito: rounded-sm do tema resolve para 0px (--radius 4px menos 4px) e deixava o quadrado reto.
-      // Borda em muted-foreground/60: border-input quase sumia sobre o fundo claro das linhas da tabela.
-      "peer inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-[4px] border border-muted-foreground/60 bg-background transition-colors",
+      // Borda em muted-foreground/75: border-input quase sumia sobre o fundo claro; 75% e o minimo que passa 3:1 sobre branco.
+      "peer inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-[4px] border border-muted-foreground/75 bg-background transition-colors",
       "hover:border-primary",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
-      "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-muted-foreground/60",
+      "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-muted-foreground/75",
       "data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
       "data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground",
       e
@@ -11124,7 +11125,7 @@ const B3 = A9, Hne = L9, W3 = E9, pv = v.forwardRef(({ className: e, children: t
   {
     ref: r,
     className: K(
-      "flex h-9 w-full items-center justify-between rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground transition-[color,border-color,box-shadow] hover:border-muted-foreground/50 focus:outline-none focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/15 data-[state=open]:border-primary data-[state=open]:ring-[3px] data-[state=open]:ring-primary/15 data-[placeholder]:text-muted-foreground/80 data-[invalid]:border-destructive disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60 disabled:hover:border-input [&>span]:line-clamp-1 [&[data-state=open]>svg]:rotate-180",
+      "flex h-9 w-full items-center justify-between rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground transition-[color,border-color,box-shadow] hover:border-muted-foreground/75 focus:outline-none focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/15 data-[state=open]:border-primary data-[state=open]:ring-[3px] data-[state=open]:ring-primary/15 data-[placeholder]:text-muted-foreground data-[invalid]:border-destructive disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60 disabled:hover:border-input [&>span]:line-clamp-1 [&[data-state=open]>svg]:rotate-180",
       e
     ),
     ...n,
@@ -12556,7 +12557,7 @@ const Sv = v.forwardRef(
       onClick: a,
       "aria-label": s["aria-label"] ?? n ?? "Buscar",
       className: K(
-        "relative flex h-9 items-center rounded-[10px] border border-input bg-card pl-9 pr-3 text-left text-sm text-muted-foreground transition-[color,border-color,box-shadow] hover:border-muted-foreground/50 hover:text-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary/15",
+        "relative flex h-9 items-center rounded-[10px] border border-input bg-card pl-9 pr-3 text-left text-sm text-muted-foreground transition-[color,border-color,box-shadow] hover:border-muted-foreground/75 hover:text-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary/15",
         r
       ),
       children: [

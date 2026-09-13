@@ -13,11 +13,11 @@ const Checkbox = React.forwardRef<
     checked={checked}
     className={cn(
       // Raio explicito: rounded-sm do tema resolve para 0px (--radius 4px menos 4px) e deixava o quadrado reto.
-      // Borda em muted-foreground/60: border-input quase sumia sobre o fundo claro das linhas da tabela.
-      "peer inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-[4px] border border-muted-foreground/60 bg-background transition-colors",
+      // Borda em muted-foreground/75: border-input quase sumia sobre o fundo claro; 75% e o minimo que passa 3:1 sobre branco.
+      "peer inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-[4px] border border-muted-foreground/75 bg-background transition-colors",
       "hover:border-primary",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
-      "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-muted-foreground/60",
+      "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-muted-foreground/75",
       "data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
       "data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground",
       className

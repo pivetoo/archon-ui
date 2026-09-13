@@ -22,7 +22,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           aria-invalid={error || undefined}
           aria-describedby={describedBy}
           className={cn(
-            "flex min-h-[80px] w-full rounded-md border border-input bg-card px-3 py-2 text-base text-foreground transition-[color,border-color,box-shadow] placeholder:text-muted-foreground/80 hover:border-muted-foreground/50 focus-visible:outline-none focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/15 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60 disabled:hover:border-input md:text-sm",
+            "flex min-h-[80px] w-full rounded-md border border-input bg-card px-3 py-2 text-base text-foreground transition-[color,border-color,box-shadow] placeholder:text-muted-foreground hover:border-muted-foreground/75 focus-visible:outline-none focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/15 disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60 disabled:hover:border-input md:text-sm",
             error && "border-destructive hover:border-destructive focus-visible:border-destructive focus-visible:ring-destructive/15",
             className
           )}

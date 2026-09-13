@@ -13,17 +13,18 @@ const buttonVariants = cva(
       variant: {
         primary: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
         secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/90",
-        success: "bg-success/15 text-[hsl(142_60%_32%)] hover:bg-success/25 dark:text-[hsl(142_60%_62%)]",
+        // Textos escuros das variantes suaves e de contorno: luminosidade escolhida para passar 4.5:1 sobre branco e sobre o fundo suave.
+        success: "bg-success/15 text-[hsl(142_60%_30%)] hover:bg-success/25 dark:text-[hsl(142_60%_62%)]",
         error: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         danger: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-        warning: "bg-warning/15 text-[hsl(36_90%_36%)] hover:bg-warning/25 dark:text-[hsl(36_90%_62%)]",
+        warning: "bg-warning/15 text-[hsl(36_90%_31%)] hover:bg-warning/25 dark:text-[hsl(36_90%_62%)]",
         info: "bg-info/15 text-[hsl(204_70%_36%)] hover:bg-info/25 dark:text-[hsl(204_70%_65%)]",
         // bg-card nos contornos: bg-background era o cinza da pagina e o botao parecia apagado sobre card e modal.
         outline: "border border-input bg-card text-foreground hover:border-muted-foreground/50 hover:bg-accent hover:text-accent-foreground",
-        "outline-secondary": "border border-secondary bg-card text-[hsl(186_100%_30%)] hover:bg-secondary/10 dark:text-secondary",
+        "outline-secondary": "border border-secondary bg-card text-[hsl(186_100%_26%)] hover:bg-secondary/10 dark:text-secondary",
         "outline-primary": "border border-primary bg-card text-primary hover:bg-primary/10",
-        "outline-success": "border border-success bg-card text-[hsl(142_60%_32%)] hover:bg-success/10 dark:text-success",
-        "outline-warning": "border border-warning bg-card text-[hsl(36_90%_36%)] hover:bg-warning/10 dark:text-warning",
+        "outline-success": "border border-success bg-card text-[hsl(142_60%_30%)] hover:bg-success/10 dark:text-success",
+        "outline-warning": "border border-warning bg-card text-[hsl(36_90%_31%)] hover:bg-warning/10 dark:text-warning",
         "outline-danger": "border border-destructive bg-card text-destructive hover:bg-destructive/10",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         text: "hover:underline",

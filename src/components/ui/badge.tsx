@@ -20,7 +20,7 @@ const badgeVariants = cva(
         "soft-default": "border-transparent bg-primary/10 font-medium text-primary dark:text-[hsl(214_60%_72%)]",
         "soft-secondary": "border-transparent bg-secondary/15 font-medium text-[hsl(186_100%_26%)] dark:text-[hsl(186_75%_65%)]",
         "soft-success": "border-transparent bg-success/15 font-medium text-[hsl(142_60%_30%)] dark:text-[hsl(142_60%_62%)]",
-        "soft-warning": "border-transparent bg-warning/15 font-medium text-[hsl(36_90%_34%)] dark:text-[hsl(36_90%_62%)]",
+        "soft-warning": "border-transparent bg-warning/15 font-medium text-[hsl(36_90%_31%)] dark:text-[hsl(36_90%_62%)]",
         "soft-info": "border-transparent bg-info/15 font-medium text-[hsl(204_70%_36%)] dark:text-[hsl(204_70%_65%)]",
         "soft-destructive": "border-transparent bg-destructive/12 font-medium text-[hsl(0_65%_45%)] dark:text-[hsl(0_72%_68%)]",
         "soft-neutral": "border-transparent bg-muted-foreground/12 font-medium text-muted-foreground",
