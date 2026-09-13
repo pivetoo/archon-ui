@@ -386,7 +386,7 @@ export function DataTable<T = any>({
     return actions.filter((action) => !action.hidden?.(record))
   }
 
-  const renderRowActionsMenu = (record: T, alwaysVisible: boolean) => {
+  const renderRowActionsMenu = (record: T) => {
     const actions = resolveRowActions(record)
     if (actions.length === 0) return null
     const regular = actions.filter((action) => action.variant !== "danger")
@@ -413,10 +413,7 @@ export function DataTable<T = any>({
             variant="ghost"
             size="icon"
             aria-label={resolveLabel("common.table.rowActions", "Ações")}
-            className={cn(
-              "h-8 w-8 text-muted-foreground hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground",
-              !alwaysVisible && "opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100 data-[state=open]:opacity-100 [@media(hover:none)]:opacity-100"
-            )}
+            className="h-8 w-8 text-muted-foreground hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground"
           >
             <MoreHorizontal className="h-4 w-4" />
           </Button>
@@ -621,7 +618,7 @@ export function DataTable<T = any>({
                     })}
                     {hasRowActions && (
                       <TableCell className="w-12 py-1 text-right">
-                        {renderRowActionsMenu(record, false)}
+                        {renderRowActionsMenu(record)}
                       </TableCell>
                     )}
                   </TableRow>
@@ -703,7 +700,7 @@ export function DataTable<T = any>({
                       )}
                     </div>
                     {hasRowActions && (
-                      <div className="shrink-0 self-start">{renderRowActionsMenu(record, true)}</div>
+                      <div className="shrink-0 self-start">{renderRowActionsMenu(record)}</div>
                     )}
                     {showCardDetailArrow && (
                       <button

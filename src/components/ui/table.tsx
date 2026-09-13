@@ -22,7 +22,8 @@ const TableHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <thead
     ref={ref}
-    className={cn("[&_tr]:border-b [&_tr]:border-border/70 [&_tr]:hover:bg-transparent", className)}
+    // 0.13 sobre a superficie branca reproduz o tom que 0.07 dava quando a tabela ficava sobre o fundo cinza da pagina.
+    className={cn("bg-[hsl(var(--muted-foreground)/0.13)] [&_tr]:border-b [&_tr]:border-border/70 [&_tr]:hover:bg-transparent", className)}
     {...props}
   />
 ))
