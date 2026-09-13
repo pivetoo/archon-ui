@@ -36,6 +36,22 @@ export function PrimitivesSection() {
             <Button variant="primary" loading>Processando</Button>
           </div>
           <div className="flex flex-wrap gap-2">
+            <Button variant="outline-primary">Convidar</Button>
+            <Button variant="outline-secondary">Exportar</Button>
+            <Button variant="outline-success">Aprovar</Button>
+            <Button variant="outline-warning">Solicitar ajuste</Button>
+            <Button variant="outline-danger">Cancelar contrato</Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="ghost">Ver mais</Button>
+            <Button variant="link">Abrir contrato</Button>
+            <Button variant="success">Pago</Button>
+            <Button variant="warning">Pendente</Button>
+            <Button variant="info">Em análise</Button>
+            <Button variant="dark">Publicar</Button>
+            <Button disabled>Desabilitado</Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
             <Badge variant="success">Ativo</Badge>
             <Badge variant="warning">Atenção</Badge>
             <Badge variant="info">Informativo</Badge>

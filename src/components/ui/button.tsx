@@ -7,27 +7,28 @@ import { cn } from "../../lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[6px] text-sm font-medium transition active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[6px] text-sm font-medium transition active:scale-[0.98] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        primary: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-        secondary: "bg-secondary text-secondary-foreground shadow hover:bg-secondary/90",
+        primary: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+        secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/90",
         success: "bg-success/15 text-[hsl(142_60%_32%)] hover:bg-success/25 dark:text-[hsl(142_60%_62%)]",
-        error: "bg-destructive text-destructive-foreground shadow hover:bg-destructive/90",
-        danger: "bg-destructive text-destructive-foreground shadow hover:bg-destructive/90",
+        error: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        danger: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         warning: "bg-warning/15 text-[hsl(36_90%_36%)] hover:bg-warning/25 dark:text-[hsl(36_90%_62%)]",
         info: "bg-info/15 text-[hsl(204_70%_36%)] hover:bg-info/25 dark:text-[hsl(204_70%_65%)]",
-        outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-        "outline-secondary": "border border-secondary bg-background text-secondary hover:bg-secondary/10",
-        "outline-primary": "border border-primary bg-background text-primary hover:bg-primary/10",
-        "outline-success": "border border-success bg-background text-success hover:bg-success/10",
-        "outline-warning": "border border-warning bg-background text-warning hover:bg-warning/10",
-        "outline-danger": "border border-destructive bg-background text-destructive hover:bg-destructive/10",
+        // bg-card nos contornos: bg-background era o cinza da pagina e o botao parecia apagado sobre card e modal.
+        outline: "border border-input bg-card text-foreground hover:border-muted-foreground/50 hover:bg-accent hover:text-accent-foreground",
+        "outline-secondary": "border border-secondary bg-card text-[hsl(186_100%_30%)] hover:bg-secondary/10 dark:text-secondary",
+        "outline-primary": "border border-primary bg-card text-primary hover:bg-primary/10",
+        "outline-success": "border border-success bg-card text-[hsl(142_60%_32%)] hover:bg-success/10 dark:text-success",
+        "outline-warning": "border border-warning bg-card text-[hsl(36_90%_36%)] hover:bg-warning/10 dark:text-warning",
+        "outline-danger": "border border-destructive bg-card text-destructive hover:bg-destructive/10",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         text: "hover:underline",
         link: "text-primary underline-offset-4 hover:underline",
-        dark: "bg-foreground text-background shadow hover:bg-foreground/90",
+        dark: "bg-foreground text-background shadow-sm hover:bg-foreground/90",
       },
       size: {
         sm: "h-8 px-3 text-xs",
