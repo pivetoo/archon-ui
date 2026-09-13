@@ -367,6 +367,7 @@ export function DataTable<T = any>({
   }
 
   const pageAllChecked = paginatedData.length > 0 && paginatedData.every((record) => isRowSelected(record))
+  const pageSomeChecked = !pageAllChecked && paginatedData.some((record) => isRowSelected(record))
 
   const togglePageChecked = () => {
     if (!onSelectionChange) return
@@ -511,7 +512,7 @@ export function DataTable<T = any>({
               {checkboxSelection && (
                 <TableHead className="w-10">
                   <Checkbox
-                    checked={pageAllChecked}
+                    checked={pageAllChecked ? true : pageSomeChecked ? "indeterminate" : false}
                     onCheckedChange={togglePageChecked}
                     disabled={paginatedData.length === 0}
                     aria-label={resolveLabel("common.table.selectAll", "Selecionar todos")}
