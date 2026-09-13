@@ -25,7 +25,7 @@ const SearchBar = React.forwardRef<HTMLInputElement, SearchBarProps>(
           onClick={onButtonClick}
           aria-label={props["aria-label"] ?? placeholder ?? "Buscar"}
           className={cn(
-            "relative flex h-9 items-center rounded-[10px] border border-input bg-background pl-9 pr-3 text-left text-sm text-muted-foreground shadow-sm transition-colors hover:bg-accent dark:hover:bg-accent/80 focus-visible:border-secondary focus-visible:outline-none",
+            "relative flex h-9 items-center rounded-[10px] border border-input bg-card pl-9 pr-3 text-left text-sm text-muted-foreground transition-[color,border-color,box-shadow] hover:border-muted-foreground/50 hover:text-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary/15",
             className
           )}
         >
@@ -46,7 +46,7 @@ const SearchBar = React.forwardRef<HTMLInputElement, SearchBarProps>(
           value={value ?? ""}
           onChange={(event) => onChange?.(event.target.value)}
           placeholder={placeholder}
-          className="rounded-[10px] pl-9 focus-visible:border-secondary focus-visible:ring-0"
+          className="rounded-[10px] pl-9"
           {...props}
         />
       </div>
