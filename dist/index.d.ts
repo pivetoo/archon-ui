@@ -206,13 +206,14 @@ export declare class AuthService {
     static ensureValidToken(): Promise<boolean>;
 }
 
-export declare function Badge({ className, variant, ...props }: BadgeProps): JSX.Element;
+export declare function Badge({ className, variant, dot, children, ...props }: BadgeProps): JSX.Element;
 
 export declare interface BadgeProps extends React_2.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {
+    dot?: boolean;
 }
 
 export declare const badgeVariants: (props?: ({
-    variant?: "secondary" | "success" | "error" | "warning" | "info" | "outline" | "default" | "destructive" | null | undefined;
+    variant?: "secondary" | "success" | "error" | "warning" | "info" | "outline" | "default" | "destructive" | "soft-default" | "soft-secondary" | "soft-success" | "soft-warning" | "soft-info" | "soft-destructive" | "soft-neutral" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 export declare const BarChart: React_2.ForwardRefExoticComponent<BarChartProps & React_2.RefAttributes<HTMLDivElement>>;

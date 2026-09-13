@@ -456,7 +456,7 @@ export function DataTable<T = any>({
     // No mobile (modo card) a moldura da tabela (borda + overflow-hidden + arredondamento) e dispensada:
     // os cards viram uma lista solta na pagina. Isso evita o clip que cortava a borda lateral do card
     // selecionado. A partir de md, a moldura volta para a tabela.
-    <div className={cn("flex flex-col md:overflow-hidden md:rounded-lg md:border md:border-border/70 md:bg-background md:shadow-sm", className)}>
+    <div className={cn("flex flex-col md:overflow-hidden md:rounded-lg md:border md:border-border/70 md:bg-card md:shadow-[0_1px_2px_rgba(15,23,42,0.04)]", className)}>
       {checkboxSelection && hasSelection && (
         // Barra de lote flutuante no rodape da tela: o contêiner externo so centraliza (sem transform,
         // que brigaria com a animacao de entrada) e deixa passar o clique fora da barra.
@@ -593,7 +593,8 @@ export function DataTable<T = any>({
                       "group",
                       rowSelectsOnClick || onRowClick || onRowDoubleClick ? "cursor-pointer" : "",
                       rowSelectsOnClick && "select-none",
-                      selected && "!bg-[hsl(var(--secondary)/0.22)] hover:!bg-[hsl(var(--secondary)/0.28)]"
+                      // Tom suave + filete na borda esquerda (na primeira celula: box-shadow em <tr> nao renderiza em todo navegador).
+                      selected && "!bg-[hsl(var(--primary)/0.06)] hover:!bg-[hsl(var(--primary)/0.08)] [&>td:first-child]:shadow-[inset_2px_0_0_hsl(var(--primary))]"
                     )}
                   >
                     {checkboxSelection && (
@@ -665,7 +666,7 @@ export function DataTable<T = any>({
                   className={cn(
                     "rounded-xl border border-border/70 bg-card p-3.5 transition-colors",
                     cardBodyTappable && "cursor-pointer active:scale-[0.99] active:bg-accent",
-                    selected && "border-secondary/50 bg-[hsl(var(--secondary)/0.12)]"
+                    selected && "border-primary/40 bg-[hsl(var(--primary)/0.05)]"
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -726,71 +727,75 @@ export function DataTable<T = any>({
       )}
 
       {data.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border/70 bg-muted/20 px-4 py-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <label htmlFor={pageSizeSelectId} className="hidden sm:inline">{t("common.table.rowsPerPage")}</label>
-            <select
-              id={pageSizeSelectId}
-              name="pageSize"
-              aria-label={t("common.table.rowsPerPage")}
-              value={pageSize}
-              onChange={(e) => changePageSize(Number(e.target.value))}
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-sm"
-            >
-              {pageSizeOptions.map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-1 py-3 md:border-t md:border-border/60 md:px-4 md:py-2.5">
+          <span className="text-sm text-muted-foreground">
+            {startIndex + 1}–{endIndex} de {effectiveTotalCount}
+          </span>
 
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <span>
-              {startIndex + 1}-{endIndex} de {effectiveTotalCount}
-            </span>
-          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <label htmlFor={pageSizeSelectId} className="hidden sm:inline">{t("common.table.rowsPerPage")}</label>
+              <select
+                id={pageSizeSelectId}
+                name="pageSize"
+                aria-label={t("common.table.rowsPerPage")}
+                value={pageSize}
+                onChange={(e) => changePageSize(Number(e.target.value))}
+                className="h-8 rounded-md border border-input bg-background px-2 text-sm text-foreground"
+              >
+                {pageSizeOptions.map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <div className="flex items-center gap-1">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(1)}
-              disabled={currentPage === 1}
-              className="hidden h-9 w-9 rounded-md p-0 sm:inline-flex"
-            >
-              <ChevronsLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="h-9 w-9 rounded-md p-0"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="px-3 text-sm font-medium text-foreground">
-              {currentPage} / {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="h-9 w-9 rounded-md p-0"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(totalPages)}
-              disabled={currentPage === totalPages}
-              className="hidden h-9 w-9 rounded-md p-0 sm:inline-flex"
-            >
-              <ChevronsRight className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-0.5">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+                aria-label={resolveLabel("common.table.firstPage", "Primeira página")}
+                className="hidden h-8 w-8 text-muted-foreground sm:inline-flex"
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                aria-label={resolveLabel("common.table.previousPage", "Página anterior")}
+                className="h-8 w-8 text-muted-foreground"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="min-w-[3.5rem] px-1 text-center text-sm tabular-nums text-foreground">
+                {currentPage} / {totalPages}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                aria-label={resolveLabel("common.table.nextPage", "Próxima página")}
+                className="h-8 w-8 text-muted-foreground"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages}
+                aria-label={resolveLabel("common.table.lastPage", "Última página")}
+                className="hidden h-8 w-8 text-muted-foreground sm:inline-flex"
+              >
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       )}

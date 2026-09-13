@@ -339,7 +339,7 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
       key: "status",
       title: "Status",
       dataIndex: "status",
-      render: (value) => <Badge variant={value === "Ativo" ? "success" : "warning"}>{String(value)}</Badge>,
+      render: (value) => <Badge dot variant={value === "Ativo" ? "soft-success" : "soft-warning"}>{String(value)}</Badge>,
     },
   ]
 
