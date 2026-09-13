@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoreHorizontal } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoreHorizontal, X } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { useI18n } from "../../i18n"
 import {
@@ -112,6 +112,12 @@ export function DataTable<T = any>({
   const rowSelectsOnClick = isSelectable && !checkboxSelection
   const hasRowActions = !!rowActions
   const extraColumnCount = (checkboxSelection ? 1 : 0) + (hasRowActions ? 1 : 0)
+  const hasSelection = selectedRows.length > 0
+  // Checkbox so aparece no hover da linha (ou com foco/toque). Com algum registro marcado, todos
+  // ficam visiveis para facilitar marcar os demais.
+  const hoverRevealClass = hasSelection
+    ? undefined
+    : "opacity-0 transition-opacity focus-visible:opacity-100 [@media(hover:none)]:opacity-100"
   const containerRef = React.useRef<HTMLDivElement>(null)
   const rowRefs = React.useRef<Map<string | number, HTMLTableRowElement>>(new Map())
   const pageSizeSelectId = React.useId()
@@ -455,33 +461,43 @@ export function DataTable<T = any>({
     // os cards viram uma lista solta na pagina. Isso evita o clip que cortava a borda lateral do card
     // selecionado. A partir de md, a moldura volta para a tabela.
     <div className={cn("flex flex-col md:overflow-hidden md:rounded-lg md:border md:border-border/70 md:bg-background md:shadow-sm", className)}>
-      {checkboxSelection && selectedRows.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-secondary/40 bg-[hsl(var(--secondary)/0.12)] px-4 py-2 md:rounded-none md:border-0 md:border-b md:border-border/70">
-          <div className="flex items-center gap-3 text-sm">
-            <span className="font-medium text-foreground">
+      {checkboxSelection && hasSelection && (
+        // Barra de lote flutuante no rodape da tela: o contêiner externo so centraliza (sem transform,
+        // que brigaria com a animacao de entrada) e deixa passar o clique fora da barra.
+        <div className="pointer-events-none fixed inset-x-0 bottom-6 z-[90] flex justify-center px-4">
+          <div
+            role="toolbar"
+            aria-label={resolveLabel("common.table.bulkActions", "Ações em lote")}
+            className="pointer-events-auto flex max-w-full items-center gap-1 overflow-x-auto rounded-xl border border-border bg-card p-1.5 pl-3 text-card-foreground shadow-[0_16px_40px_-16px_rgba(15,23,42,0.45)] animate-in fade-in-0 slide-in-from-bottom-2"
+          >
+            <span className="whitespace-nowrap pr-2 text-sm font-medium">
               {selectedRows.length} {resolveLabel("common.table.selected", "selecionado(s)")}
             </span>
-            <button
-              type="button"
-              onClick={() => onSelectionChange?.([])}
-              className="text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
-            >
-              {resolveLabel("common.table.clearSelection", "Limpar seleção")}
-            </button>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
+            <span className="h-5 w-px shrink-0 bg-border" aria-hidden />
             {bulkActions!.map((action) => (
               <Button
                 key={action.key}
                 size="sm"
-                variant={action.variant === "danger" ? "outline-danger" : "outline"}
+                variant="ghost"
                 icon={action.icon}
                 disabled={action.disabled}
                 onClick={() => action.onClick(selectedRows)}
+                className={cn(action.variant === "danger" && "text-destructive hover:bg-destructive/10 hover:text-destructive")}
               >
                 {action.label}
               </Button>
             ))}
+            <span className="h-5 w-px shrink-0 bg-border" aria-hidden />
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={resolveLabel("common.table.clearSelection", "Limpar seleção")}
+              tooltip={resolveLabel("common.table.clearSelection", "Limpar seleção")}
+              onClick={() => onSelectionChange?.([])}
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       )}
@@ -496,7 +512,7 @@ export function DataTable<T = any>({
         )}
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="group/header">
               {checkboxSelection && (
                 <TableHead className="w-10">
                   <Checkbox
@@ -504,6 +520,7 @@ export function DataTable<T = any>({
                     onCheckedChange={togglePageChecked}
                     disabled={paginatedData.length === 0}
                     aria-label={resolveLabel("common.table.selectAll", "Selecionar todos")}
+                    className={cn(hoverRevealClass, !hasSelection && "group-hover/header:opacity-100")}
                   />
                 </TableHead>
               )}
@@ -590,6 +607,7 @@ export function DataTable<T = any>({
                           checked={selected}
                           onCheckedChange={() => toggleRowChecked(record)}
                           aria-label={resolveLabel("common.table.selectRow", "Selecionar registro")}
+                          className={cn(hoverRevealClass, !hasSelection && "group-hover:opacity-100")}
                         />
                       </TableCell>
                     )}
