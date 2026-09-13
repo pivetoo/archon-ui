@@ -36,7 +36,7 @@ export interface PageLayoutProps {
   onView?: () => void
   onEdit?: () => void
   onDelete?: () => void
-  // Botao de atualizar: icone sempre no inicio do grupo de acoes, antes dos utilitarios da tela e das acoes.
+  // Botao de atualizar: icone sempre colado aos botoes principais, depois dos utilitarios da tela e antes do separador.
   onRefresh?: () => void
   addLabel?: string
   viewLabel?: string
@@ -213,8 +213,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   const allActions = [...actions, ...defaultActions]
 
   const refreshLabel = resolveTooltip("pageLayout.action.refresh", "Atualizar")
-  // Utilitario de leitura, raro no dia a dia (a lista ja recarrega apos salvar, excluir e filtrar): so icone, sempre
-  // o primeiro do grupo de acoes, para nao disputar espaco nem peso com a acao principal e caber no celular.
+  // Utilitario de leitura, raro no dia a dia (a lista ja recarrega apos salvar, excluir e filtrar): so icone, para
+  // nao disputar espaco nem peso com a acao principal e caber no celular.
   const refreshButton = onRefresh ? (
     <Button
       key="refresh"
@@ -304,6 +304,10 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
 
   const hasHeader = !!(title || subtitle || allActions.length > 0 || actionsSlot || onRefresh || filtersSlot)
   const hasActionGroup = allActions.length > 0 || !!actionsSlot || !!onRefresh
+  // Ordem do grupo: utilitarios da tela (actionsSlot), Atualizar e, havendo botoes principais, o separador antes deles.
+  // O separador e do PageLayout: a tela nao desenha o seu. Sem botoes principais (ex.: so o Atualizar) nao ha o que separar.
+  const hasUtilities = !!actionsSlot || !!onRefresh
+  const actionsSeparator = <span key="actions-separator" aria-hidden className="mx-1 h-5 w-px shrink-0 bg-border" />
 
   return (
     <div className={cn("flex flex-col h-full w-full", className)}>
@@ -359,16 +363,18 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                     headerFit === "collapsed" && "invisible absolute left-0 top-0 h-0 overflow-hidden"
                   )}
                 >
-                  {refreshButton}
                   {actionsSlot}
+                  {refreshButton}
+                  {hasUtilities && allActions.length > 0 && actionsSeparator}
                   {allActions.map((action) => renderActionButton(action))}
                 </div>
 
                 {/* Sem largura para linha unica: menu de overflow a esquerda, acoes primarias (Novo) a direita */}
                 {headerFit === "collapsed" && (
                   <div className="flex w-full items-center gap-2 md:justify-end">
-                    {refreshButton}
                     {actionsSlot}
+                    {refreshButton}
+                    {hasUtilities && allActions.length > 0 && actionsSeparator}
                     {collapsedOverflowActions.length > 0 && (
                       <Dropdown>
                         <DropdownTrigger asChild>

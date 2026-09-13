@@ -456,7 +456,6 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
                 <Button variant="ghost" size="sm" aria-label="Importar e exportar Excel" tooltip="Importar e exportar Excel" className="h-8 w-8 px-0 text-muted-foreground hover:text-success">
                   <FileSpreadsheet className="h-4 w-4" />
                 </Button>
-                <span className="mx-1 h-5 w-px bg-border" aria-hidden />
               </div>
             }
             onAdd={() => toast({ title: "Usuários", description: "Incluir acionado", variant: "success" })}
