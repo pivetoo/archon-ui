@@ -113,11 +113,6 @@ export function DataTable<T = any>({
   const hasRowActions = !!rowActions
   const extraColumnCount = (checkboxSelection ? 1 : 0) + (hasRowActions ? 1 : 0)
   const hasSelection = selectedRows.length > 0
-  // Checkbox so aparece no hover da linha (ou com foco/toque). Com algum registro marcado, todos
-  // ficam visiveis para facilitar marcar os demais.
-  const hoverRevealClass = hasSelection
-    ? undefined
-    : "opacity-0 transition-opacity focus-visible:opacity-100 [@media(hover:none)]:opacity-100"
   const containerRef = React.useRef<HTMLDivElement>(null)
   const rowRefs = React.useRef<Map<string | number, HTMLTableRowElement>>(new Map())
   const pageSizeSelectId = React.useId()
@@ -512,7 +507,7 @@ export function DataTable<T = any>({
         )}
         <Table>
           <TableHeader>
-            <TableRow className="group/header">
+            <TableRow>
               {checkboxSelection && (
                 <TableHead className="w-10">
                   <Checkbox
@@ -520,7 +515,6 @@ export function DataTable<T = any>({
                     onCheckedChange={togglePageChecked}
                     disabled={paginatedData.length === 0}
                     aria-label={resolveLabel("common.table.selectAll", "Selecionar todos")}
-                    className={cn(hoverRevealClass, !hasSelection && "group-hover/header:opacity-100")}
                   />
                 </TableHead>
               )}
@@ -607,7 +601,6 @@ export function DataTable<T = any>({
                           checked={selected}
                           onCheckedChange={() => toggleRowChecked(record)}
                           aria-label={resolveLabel("common.table.selectRow", "Selecionar registro")}
-                          className={cn(hoverRevealClass, !hasSelection && "group-hover:opacity-100")}
                         />
                       </TableCell>
                     )}
