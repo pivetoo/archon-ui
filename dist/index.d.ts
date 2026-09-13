@@ -431,7 +431,16 @@ export declare interface CreateUserInContractPayload {
     roleId: number;
 }
 
-export declare function DataTable<T = any>({ columns, data, loading, rowKey, selectable, selectedRows, onSelectionChange, onRowClick, onRowDoubleClick, className, emptyText, dragSelect, pageSize: initialPageSize, pageSizeOptions, totalCount, page: controlledPage, onPageChange, onPageSizeChange, mobileCards, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T = any>({ columns, data, loading, rowKey, selectable, selectedRows, onSelectionChange, onRowClick, onRowDoubleClick, className, emptyText, dragSelect, pageSize: initialPageSize, pageSizeOptions, totalCount, page: controlledPage, onPageChange, onPageSizeChange, mobileCards, rowActions, bulkActions, }: DataTableProps<T>): JSX.Element;
+
+export declare interface DataTableBulkAction<T = any> {
+    key: string;
+    label: string;
+    icon?: React_2.ReactNode;
+    onClick: (selected: T[]) => void;
+    variant?: "default" | "danger";
+    disabled?: boolean;
+}
 
 export declare interface DataTableColumn<T = any> {
     key: string;
@@ -489,6 +498,18 @@ export declare interface DataTableProps<T = any> {
     onPageChange?: (page: number) => void;
     onPageSizeChange?: (pageSize: number) => void;
     mobileCards?: boolean;
+    rowActions?: DataTableRowAction<T>[] | ((record: T) => DataTableRowAction<T>[]);
+    bulkActions?: DataTableBulkAction<T>[];
+}
+
+export declare interface DataTableRowAction<T = any> {
+    key: string;
+    label: string;
+    icon?: React_2.ReactNode;
+    onClick: (record: T) => void;
+    variant?: "default" | "danger";
+    disabled?: boolean | ((record: T) => boolean);
+    hidden?: (record: T) => boolean;
 }
 
 export declare function deriveActiveModuleKey(modules: ModuleNavConfig, pathname: string): string | null;

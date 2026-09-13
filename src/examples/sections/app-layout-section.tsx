@@ -1,5 +1,5 @@
 import * as React from "react"
-import { BarChart3, Building2, Filter, Home, Settings, Users } from "lucide-react"
+import { BarChart3, Building2, Download, Filter, Home, Mail, Pencil, Settings, Trash2, Users } from "lucide-react"
 import {
   AppLayout,
   Badge,
@@ -8,6 +8,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  ConfirmModal,
   DataTable,
   DataTablePreview,
   PageLayout,
@@ -28,6 +29,8 @@ import {
   type SidebarItemData,
   type UserProfileUser,
 } from "../../components/ui"
+import { MemoryRouter } from "react-router-dom"
+import { AuthProvider } from "../../contexts/AuthContext"
 import { I18nProvider, type ArchonCulture, type LocalizationCatalog } from "../../i18n"
 
 const modules: Module[] = [
@@ -45,6 +48,16 @@ const layoutCatalogs: Record<ArchonCulture, LocalizationCatalog> = {
       "nav.logout": "Sair",
       "nav.theme.dark": "Modo Escuro",
       "nav.theme.light": "Modo Claro",
+      "pageLayout.action.add": "Incluir",
+      "pageLayout.action.edit": "Editar",
+      "pageLayout.action.delete": "Excluir",
+      "pageLayout.action.refresh": "Atualizar",
+      "pageLayout.action.view": "Visualizar",
+      "common.action.search": "Buscar...",
+      "common.table.rowsPerPage": "Linhas por página",
+      "common.state.noResults": "Sem resultados",
+      "common.state.noRecordsFound": "Nenhum registro encontrado",
+      "common.state.adjustFilters": "Ajuste filtros, paginação ou critérios de busca para continuar.",
       "profile.title": "Meu Perfil",
       "profile.description": "Gerencie suas informações pessoais, preferências e segurança.",
       "profile.section.identity": "Identidade",
@@ -357,7 +370,8 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
     )
   })
 
-  const previewUser = selectedUsers.length === 1 ? selectedUsers[0] : null
+  const [previewUser, setPreviewUser] = React.useState<UserRow | null>(null)
+  const [userToDelete, setUserToDelete] = React.useState<UserRow | null>(null)
 
   const filteredDepartments = departmentsData.filter((department) => {
     const search = departmentSearch.trim().toLowerCase()
@@ -431,9 +445,6 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
             title="Usuários"
             subtitle="Gestão de acessos e perfis"
             onAdd={() => toast({ title: "Usuários", description: "Incluir acionado", variant: "success" })}
-            onEdit={() => toast({ title: "Usuários", description: "Editar acionado", variant: "info" })}
-            onDelete={() => toast({ title: "Usuários", description: "Excluir acionado", variant: "warning" })}
-            selectedRowsCount={selectedUsers.length}
             actions={[
               {
                 key: "invite",
@@ -459,19 +470,71 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
                 rowKey="id"
                 selectedRows={selectedUsers}
                 onSelectionChange={setSelectedUsers}
+                onRowClick={setPreviewUser}
+                rowActions={[
+                  {
+                    key: "edit",
+                    label: "Editar",
+                    icon: <Pencil />,
+                    onClick: (user) => toast({ title: "Usuários", description: `Editar ${user.nome}`, variant: "info" }),
+                  },
+                  {
+                    key: "resend",
+                    label: "Reenviar convite",
+                    icon: <Mail />,
+                    hidden: (user) => user.status !== "Pendente",
+                    onClick: (user) => toast({ title: "Usuários", description: `Convite reenviado para ${user.email}`, variant: "success" }),
+                  },
+                  {
+                    key: "delete",
+                    label: "Excluir",
+                    icon: <Trash2 />,
+                    variant: "danger",
+                    onClick: setUserToDelete,
+                  },
+                ]}
+                bulkActions={[
+                  {
+                    key: "export",
+                    label: "Exportar",
+                    icon: <Download className="h-4 w-4" />,
+                    onClick: (users) => toast({ title: "Usuários", description: `${users.length} usuário(s) exportado(s)`, variant: "success" }),
+                  },
+                  {
+                    key: "delete",
+                    label: "Excluir",
+                    icon: <Trash2 className="h-4 w-4" />,
+                    variant: "danger",
+                    onClick: (users) => toast({ title: "Usuários", description: `${users.length} usuário(s) excluído(s)`, variant: "warning" }),
+                  },
+                ]}
                 pageSize={5}
               />
             </div>
           </PageLayout>
 
-          <Sheet open={!!previewUser} onOpenChange={(open) => !open && setSelectedUsers([])}>
+          <ConfirmModal
+            open={!!userToDelete}
+            onOpenChange={(open) => !open && setUserToDelete(null)}
+            variant="danger"
+            title="Excluir usuário"
+            description={userToDelete ? `${userToDelete.nome} perderá o acesso ao contrato. Esta ação não pode ser desfeita.` : undefined}
+            confirmText="Excluir"
+            cancelText="Cancelar"
+            onConfirm={() => {
+              toast({ title: "Usuários", description: `${userToDelete?.nome} excluído`, variant: "warning" })
+              setUserToDelete(null)
+            }}
+          />
+
+          <Sheet open={!!previewUser} onOpenChange={(open) => !open && setPreviewUser(null)}>
             <SheetContent side="right" className="w-full sm:max-w-md">
               {previewUser ? (
                 <div className="flex h-full flex-col">
                   <SheetHeader>
                     <SheetTitle>{previewUser.nome}</SheetTitle>
                     <SheetDescription>
-                      Preview lateral acionado pela seleção do usuário.
+                      Ficha aberta pelo clique na linha.
                     </SheetDescription>
                   </SheetHeader>
 
@@ -620,36 +683,40 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
   }
 
   return (
-    <I18nProvider initialCulture="pt-BR" catalogLoader={loadLayoutCatalog}>
-      <AppLayout
-        title="archon-ui"
-        logo={sidebarLogo}
-        subtitle={companyName}
-        user={profileUser}
-        menuItems={menuItems}
-        menuGroups={menuGroups}
-        breadcrumbs={[{ label: "Início" }, { label: "Gestão" }, { label: pageLabels[currentPage] }]}
-        notifications={notifications}
-        modules={modules}
-        currentModule={currentModule}
-        onModuleChange={setCurrentModule}
-        profilePath="/profile"
-        onProfileNavigate={() => {
-          setCurrentPage("profile")
-        }}
-        onLogout={() => toast({ title: "Logout", description: "Ação de sair acionada", variant: "info" })}
-      >
-        <div className="space-y-4">
-          {onBackToCatalog && currentPage === "dashboard" && (
-            <div className="flex">
-              <Button size="sm" variant="secondary" onClick={onBackToCatalog}>
-                Voltar ao catálogo
-              </Button>
+    <MemoryRouter>
+      <AuthProvider>
+        <I18nProvider initialCulture="pt-BR" catalogLoader={loadLayoutCatalog}>
+          <AppLayout
+            title="archon-ui"
+            logo={sidebarLogo}
+            subtitle={companyName}
+            user={profileUser}
+            menuItems={menuItems}
+            menuGroups={menuGroups}
+            breadcrumbs={[{ label: "Início" }, { label: "Gestão" }, { label: pageLabels[currentPage] }]}
+            notifications={notifications}
+            modules={modules}
+            currentModule={currentModule}
+            onModuleChange={setCurrentModule}
+            profilePath="/profile"
+            onProfileNavigate={() => {
+              setCurrentPage("profile")
+            }}
+            onLogout={() => toast({ title: "Logout", description: "Ação de sair acionada", variant: "info" })}
+          >
+            <div className="space-y-4">
+              {onBackToCatalog && currentPage === "dashboard" && (
+                <div className="flex">
+                  <Button size="sm" variant="secondary" onClick={onBackToCatalog}>
+                    Voltar ao catálogo
+                  </Button>
+                </div>
+              )}
+              {renderPageContent()}
             </div>
-          )}
-          {renderPageContent()}
-        </div>
-      </AppLayout>
-    </I18nProvider>
+          </AppLayout>
+        </I18nProvider>
+      </AuthProvider>
+    </MemoryRouter>
   )
 }

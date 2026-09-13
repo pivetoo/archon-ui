@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoreHorizontal } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { useI18n } from "../../i18n"
 import {
@@ -11,6 +11,8 @@ import {
   TableCell,
 } from "./table"
 import { Button } from "./button"
+import { Checkbox } from "./checkbox"
+import { Dropdown, DropdownContent, DropdownItem, DropdownSeparator, DropdownTrigger } from "./dropdown"
 
 export interface DataTableColumn<T = any> {
   key: string
@@ -47,6 +49,31 @@ export interface DataTableProps<T = any> {
   onPageSizeChange?: (pageSize: number) => void
   // Abaixo de md, renderiza cada registro como card empilhado (default). false mantem a tabela com scroll horizontal.
   mobileCards?: boolean
+  // Menu "..." no fim de cada linha (visivel no hover; sempre visivel em tela de toque). Substitui o
+  // fluxo de selecionar a linha e usar editar/excluir do PageLayout.
+  rowActions?: DataTableRowAction<T>[] | ((record: T) => DataTableRowAction<T>[])
+  // Liga a coluna de checkbox e a barra de acoes em lote. Nesse modo o clique na linha nao seleciona:
+  // ele chama onRowClick (abrir o registro), e a selecao passa a ser so pelos checkboxes.
+  bulkActions?: DataTableBulkAction<T>[]
+}
+
+export interface DataTableRowAction<T = any> {
+  key: string
+  label: string
+  icon?: React.ReactNode
+  onClick: (record: T) => void
+  variant?: "default" | "danger"
+  disabled?: boolean | ((record: T) => boolean)
+  hidden?: (record: T) => boolean
+}
+
+export interface DataTableBulkAction<T = any> {
+  key: string
+  label: string
+  icon?: React.ReactNode
+  onClick: (selected: T[]) => void
+  variant?: "default" | "danger"
+  disabled?: boolean
 }
 
 interface SelectionBox {
@@ -76,9 +103,15 @@ export function DataTable<T = any>({
   onPageChange,
   onPageSizeChange,
   mobileCards = true,
+  rowActions,
+  bulkActions,
 }: DataTableProps<T>) {
   const { t } = useI18n()
   const isSelectable = selectable !== undefined ? selectable : !!onSelectionChange
+  const checkboxSelection = !!bulkActions && !!onSelectionChange
+  const rowSelectsOnClick = isSelectable && !checkboxSelection
+  const hasRowActions = !!rowActions
+  const extraColumnCount = (checkboxSelection ? 1 : 0) + (hasRowActions ? 1 : 0)
   const containerRef = React.useRef<HTMLDivElement>(null)
   const rowRefs = React.useRef<Map<string | number, HTMLTableRowElement>>(new Map())
   const pageSizeSelectId = React.useId()
@@ -130,7 +163,7 @@ export function DataTable<T = any>({
   // quando ha detalhe (onRowDoubleClick) e o corpo nao abre detalhe, a seta abre.
   const handleCardBodyClick = (record: T, e: React.MouseEvent) => {
     if (isInteractiveClickTarget(e)) return
-    if (isSelectable && onSelectionChange) {
+    if (rowSelectsOnClick && onSelectionChange) {
       onSelectionChange(isRowSelected(record) ? [] : [record])
     } else if (onRowClick) {
       onRowClick(record)
@@ -138,8 +171,8 @@ export function DataTable<T = any>({
       onRowDoubleClick(record)
     }
   }
-  const cardBodyTappable = isSelectable || !!onRowClick || !!onRowDoubleClick
-  const showCardDetailArrow = !!onRowDoubleClick && (isSelectable || !!onRowClick)
+  const cardBodyTappable = rowSelectsOnClick || !!onRowClick || !!onRowDoubleClick
+  const showCardDetailArrow = !!onRowDoubleClick && (rowSelectsOnClick || !!onRowClick)
 
   const resolveLabel = (key: string, fallback: string): string => {
     const value = t(key)
@@ -216,7 +249,7 @@ export function DataTable<T = any>({
   }, [paginatedData, getRowKey])
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!isSelectable || !onSelectionChange || !dragSelect) return
+    if (!rowSelectsOnClick || !onSelectionChange || !dragSelect) return
     if (e.button !== 0) return
 
     const container = containerRef.current
@@ -317,9 +350,82 @@ export function DataTable<T = any>({
   }
 
   const handleTableClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && isSelectable && onSelectionChange) {
+    if (e.target === e.currentTarget && rowSelectsOnClick && onSelectionChange) {
       onSelectionChange([])
     }
+  }
+
+  const toggleRowChecked = (record: T) => {
+    if (!onSelectionChange) return
+    const key = getRowKey(record)
+    onSelectionChange(
+      isRowSelected(record)
+        ? selectedRows.filter((row) => getRowKey(row) !== key)
+        : [...selectedRows, record]
+    )
+  }
+
+  const pageAllChecked = paginatedData.length > 0 && paginatedData.every((record) => isRowSelected(record))
+
+  const togglePageChecked = () => {
+    if (!onSelectionChange) return
+    const pageKeys = new Set(paginatedData.map((record) => getRowKey(record)))
+    if (pageAllChecked) {
+      onSelectionChange(selectedRows.filter((row) => !pageKeys.has(getRowKey(row))))
+      return
+    }
+    const missing = paginatedData.filter((record) => !isRowSelected(record))
+    onSelectionChange([...selectedRows, ...missing])
+  }
+
+  const resolveRowActions = (record: T): DataTableRowAction<T>[] => {
+    if (!rowActions) return []
+    const actions = typeof rowActions === "function" ? rowActions(record) : rowActions
+    return actions.filter((action) => !action.hidden?.(record))
+  }
+
+  const renderRowActionsMenu = (record: T, alwaysVisible: boolean) => {
+    const actions = resolveRowActions(record)
+    if (actions.length === 0) return null
+    const regular = actions.filter((action) => action.variant !== "danger")
+    const danger = actions.filter((action) => action.variant === "danger")
+    const renderItem = (action: DataTableRowAction<T>) => {
+      const disabled = typeof action.disabled === "function" ? action.disabled(record) : !!action.disabled
+      return (
+        <DropdownItem
+          key={action.key}
+          disabled={disabled}
+          onSelect={() => action.onClick(record)}
+          className={cn("gap-2 [&_svg]:h-4 [&_svg]:w-4", action.variant === "danger" && "text-destructive focus:text-destructive")}
+        >
+          {action.icon}
+          {action.label}
+        </DropdownItem>
+      )
+    }
+
+    return (
+      <Dropdown modal={false}>
+        <DropdownTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={resolveLabel("common.table.rowActions", "Ações")}
+            className={cn(
+              "h-8 w-8 text-muted-foreground hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground",
+              !alwaysVisible && "opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100 data-[state=open]:opacity-100 [@media(hover:none)]:opacity-100"
+            )}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownTrigger>
+        <DropdownContent align="end" className="min-w-[10rem]">
+          {regular.map(renderItem)}
+          {regular.length > 0 && danger.length > 0 && <DropdownSeparator />}
+          {danger.map(renderItem)}
+        </DropdownContent>
+      </Dropdown>
+    )
   }
 
   const getSelectionBoxStyle = (): React.CSSProperties | undefined => {
@@ -349,6 +455,36 @@ export function DataTable<T = any>({
     // os cards viram uma lista solta na pagina. Isso evita o clip que cortava a borda lateral do card
     // selecionado. A partir de md, a moldura volta para a tabela.
     <div className={cn("flex flex-col md:overflow-hidden md:rounded-lg md:border md:border-border/70 md:bg-background md:shadow-sm", className)}>
+      {checkboxSelection && selectedRows.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-secondary/40 bg-[hsl(var(--secondary)/0.12)] px-4 py-2 md:rounded-none md:border-0 md:border-b md:border-border/70">
+          <div className="flex items-center gap-3 text-sm">
+            <span className="font-medium text-foreground">
+              {selectedRows.length} {resolveLabel("common.table.selected", "selecionado(s)")}
+            </span>
+            <button
+              type="button"
+              onClick={() => onSelectionChange?.([])}
+              className="text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+            >
+              {resolveLabel("common.table.clearSelection", "Limpar seleção")}
+            </button>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {bulkActions!.map((action) => (
+              <Button
+                key={action.key}
+                size="sm"
+                variant={action.variant === "danger" ? "outline-danger" : "outline"}
+                icon={action.icon}
+                disabled={action.disabled}
+                onClick={() => action.onClick(selectedRows)}
+              >
+                {action.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
       <div
         ref={containerRef}
         className={cn("relative", mobileCards && "hidden md:block")}
@@ -361,6 +497,16 @@ export function DataTable<T = any>({
         <Table>
           <TableHeader>
             <TableRow>
+              {checkboxSelection && (
+                <TableHead className="w-10">
+                  <Checkbox
+                    checked={pageAllChecked}
+                    onCheckedChange={togglePageChecked}
+                    disabled={paginatedData.length === 0}
+                    aria-label={resolveLabel("common.table.selectAll", "Selecionar todos")}
+                  />
+                </TableHead>
+              )}
               {columns.map((column) => (
                 <TableHead
                   key={column.key}
@@ -370,23 +516,30 @@ export function DataTable<T = any>({
                   {column.title}
                 </TableHead>
               ))}
+              {hasRowActions && (
+                <TableHead className="w-12">
+                  <span className="sr-only">{resolveLabel("common.table.rowActions", "Ações")}</span>
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={`skeleton-${i}`}>
+                  {checkboxSelection && <TableCell className="w-10" />}
                   {columns.map((column) => (
                     <TableCell key={column.key} className={getHiddenClass(column)}>
                       <div className="h-4 animate-pulse rounded-full bg-muted" />
                     </TableCell>
                   ))}
+                  {hasRowActions && <TableCell className="w-12" />}
                 </TableRow>
               ))
             ) : data.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length + (isSelectable ? 1 : 0)}
+                  colSpan={columns.length + extraColumnCount}
                   className="py-14 text-center"
                 >
                   <div className="mx-auto flex max-w-sm flex-col items-center gap-2 text-center">
@@ -417,7 +570,7 @@ export function DataTable<T = any>({
                     data-state={selected ? "selected" : ""}
                     onClick={(e) => {
                       if (isInteractiveClickTarget(e)) return
-                      if (isSelectable) {
+                      if (rowSelectsOnClick) {
                         handleSelectRow(record, e)
                       } else {
                         onRowClick?.(record)
@@ -425,11 +578,21 @@ export function DataTable<T = any>({
                     }}
                     onDoubleClick={() => onRowDoubleClick?.(record)}
                     className={cn(
-                      isSelectable || onRowClick || onRowDoubleClick ? "cursor-pointer" : "",
-                      isSelectable && "select-none",
+                      "group",
+                      rowSelectsOnClick || onRowClick || onRowDoubleClick ? "cursor-pointer" : "",
+                      rowSelectsOnClick && "select-none",
                       selected && "!bg-[hsl(var(--secondary)/0.22)] hover:!bg-[hsl(var(--secondary)/0.28)]"
                     )}
                   >
+                    {checkboxSelection && (
+                      <TableCell className="w-10">
+                        <Checkbox
+                          checked={selected}
+                          onCheckedChange={() => toggleRowChecked(record)}
+                          aria-label={resolveLabel("common.table.selectRow", "Selecionar registro")}
+                        />
+                      </TableCell>
+                    )}
                     {columns.map((column) => {
                       const value = column.dataIndex
                         ? record[column.dataIndex]
@@ -443,6 +606,11 @@ export function DataTable<T = any>({
                         </TableCell>
                       )
                     })}
+                    {hasRowActions && (
+                      <TableCell className="w-12 py-1 text-right">
+                        {renderRowActionsMenu(record, false)}
+                      </TableCell>
+                    )}
                   </TableRow>
                 )
               })
@@ -489,6 +657,14 @@ export function DataTable<T = any>({
                   )}
                 >
                   <div className="flex items-center gap-3">
+                    {checkboxSelection && (
+                      <Checkbox
+                        checked={selected}
+                        onCheckedChange={() => toggleRowChecked(record)}
+                        aria-label={resolveLabel("common.table.selectRow", "Selecionar registro")}
+                        className="self-start mt-0.5"
+                      />
+                    )}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0 break-words text-[15px] font-semibold leading-tight">
@@ -513,6 +689,9 @@ export function DataTable<T = any>({
                         </div>
                       )}
                     </div>
+                    {hasRowActions && (
+                      <div className="shrink-0 self-start">{renderRowActionsMenu(record, true)}</div>
+                    )}
                     {showCardDetailArrow && (
                       <button
                         type="button"
