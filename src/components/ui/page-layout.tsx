@@ -37,6 +37,9 @@ export interface PageLayoutProps {
   onEdit?: () => void
   onDelete?: () => void
   onRefresh?: () => void
+  // PROTOTIPO: posicao do botao de atualizar. "title" = ao lado do titulo (como era); "icon" = icone no grupo
+  // de acoes; "labeled" = botao com texto no grupo de acoes. Sai quando a posicao for escolhida.
+  refreshVariant?: "title" | "icon" | "labeled"
   addLabel?: string
   viewLabel?: string
   editLabel?: string
@@ -66,6 +69,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   onEdit,
   onDelete,
   onRefresh,
+  refreshVariant = "icon",
   addLabel,
   viewLabel,
   editLabel,
@@ -94,7 +98,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     const isDesktop = window.matchMedia("(min-width: 1024px)").matches
     const available = row.clientWidth
     const actionsWidth = inlineActions.scrollWidth
-    const titleWidth = (titleRef.current?.scrollWidth ?? 0) + (onRefresh ? 40 : 0)
+    const titleWidth = (titleRef.current?.scrollWidth ?? 0) + (onRefresh && refreshVariant === "title" ? 40 : 0)
 
     let next: HeaderFit
     if (!isDesktop) next = "collapsed"
@@ -103,7 +107,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     else next = "collapsed"
 
     setHeaderFit((prev) => (prev === next ? prev : next))
-  }, [onRefresh])
+  }, [onRefresh, refreshVariant])
 
   React.useLayoutEffect(() => {
     measureHeaderFit()
@@ -210,6 +214,40 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   }
 
   const allActions = [...actions, ...defaultActions]
+
+  const refreshLabel = resolveTooltip("pageLayout.action.refresh", "Atualizar")
+  const refreshInActions = !!onRefresh && refreshVariant !== "title"
+  // Utilitario de leitura: fica no inicio do grupo de acoes, antes dos slots da tela e longe da acao principal.
+  const refreshButton = refreshInActions ? (
+    refreshVariant === "labeled" ? (
+      <Button
+        key="refresh"
+        data-testid="page-refresh-button"
+        variant="outline"
+        size="sm"
+        onClick={() => void handleRefresh()}
+        disabled={isRefreshing}
+        className="gap-2 rounded-lg px-3.5"
+      >
+        <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin")} />
+        {refreshLabel}
+      </Button>
+    ) : (
+      <Button
+        key="refresh"
+        data-testid="page-refresh-button"
+        variant="ghost"
+        size="sm"
+        onClick={() => void handleRefresh()}
+        disabled={isRefreshing}
+        aria-label={refreshLabel}
+        tooltip={refreshLabel}
+        className="h-8 w-8 shrink-0 rounded-lg px-0 text-muted-foreground hover:text-foreground"
+      >
+        <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin text-primary")} />
+      </Button>
+    )
+  ) : null
   const isCompact = density === "compact"
 
   // No estado colapsado, move as acoes para um menu "Acoes" quando ha muitas; mantem as marcadas como primary visiveis.
@@ -283,6 +321,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   }
 
   const hasHeader = !!(title || subtitle || allActions.length > 0 || actionsSlot || onRefresh || filtersSlot)
+  const hasActionGroup = allActions.length > 0 || !!actionsSlot || refreshInActions
 
   return (
     <div className={cn("flex flex-col h-full w-full", className)}>
@@ -314,7 +353,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                   {title}
                 </h1>
 
-                {onRefresh && (
+                {onRefresh && refreshVariant === "title" && (
                   <button
                     onClick={handleRefresh}
                     disabled={isRefreshing}
@@ -341,7 +380,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
               )}
             </div>
 
-            {(allActions.length > 0 || actionsSlot) && (
+            {hasActionGroup && (
               <>
                 {/* Acoes inline em linha unica; no estado colapsado vira medidor invisivel de largura */}
                 <div
@@ -352,6 +391,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                     headerFit === "collapsed" && "invisible absolute left-0 top-0 h-0 overflow-hidden"
                   )}
                 >
+                  {refreshButton}
                   {actionsSlot}
                   {allActions.map((action) => renderActionButton(action))}
                 </div>
@@ -359,6 +399,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                 {/* Sem largura para linha unica: menu de overflow a esquerda, acoes primarias (Novo) a direita */}
                 {headerFit === "collapsed" && (
                   <div className="flex w-full items-center gap-2 md:justify-end">
+                    {refreshButton}
                     {actionsSlot}
                     {collapsedOverflowActions.length > 0 && (
                       <Dropdown>

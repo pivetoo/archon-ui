@@ -1,5 +1,5 @@
 import * as React from "react"
-import { BarChart3, Building2, Download, Filter, Home, Mail, Pencil, Settings, Trash2, Users } from "lucide-react"
+import { BarChart3, Building2, Download, FileSpreadsheet, Filter, Home, Mail, Pencil, Settings, Trash2, Users } from "lucide-react"
 import {
   AppLayout,
   Badge,
@@ -256,6 +256,8 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
   const [selectedUsers, setSelectedUsers] = React.useState<UserRow[]>([])
   const [selectedDepartment, setSelectedDepartment] = React.useState<DepartmentRow | null>(null)
   const [userSearch, setUserSearch] = React.useState("")
+  // PROTOTIPO: compara as posicoes do botao de atualizar no cabecalho da pagina.
+  const [refreshVariant, setRefreshVariant] = React.useState<"title" | "icon" | "labeled">("icon")
   const [departmentSearch, setDepartmentSearch] = React.useState("")
 
   const pageLabels: Record<PageKey, string> = {
@@ -450,6 +452,16 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
           <PageLayout
             title="Usuários"
             subtitle="Gestão de acessos e perfis"
+            onRefresh={() => new Promise<void>((resolve) => window.setTimeout(resolve, 700))}
+            refreshVariant={refreshVariant}
+            actionsSlot={
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="sm" aria-label="Importar e exportar Excel" tooltip="Importar e exportar Excel" className="h-8 w-8 px-0 text-muted-foreground hover:text-success">
+                  <FileSpreadsheet className="h-4 w-4" />
+                </Button>
+                <span className="mx-1 h-5 w-px bg-border" aria-hidden />
+              </div>
+            }
             onAdd={() => toast({ title: "Usuários", description: "Incluir acionado", variant: "success" })}
             actions={[
               {
@@ -715,6 +727,16 @@ export function AppLayoutSection({ onBackToCatalog }: AppLayoutSectionProps) {
                 </div>
               )}
               {renderPageContent()}
+              {currentPage === "usuarios" && (
+                <div className="fixed bottom-6 left-6 z-[95] flex items-center gap-1 rounded-xl border border-dashed border-primary/50 bg-card p-1.5 pl-3 text-sm shadow-lg">
+                  <span className="pr-2 text-xs font-medium text-muted-foreground">Protótipo: Atualizar</span>
+                  {([["title", "Atual (no título)"], ["icon", "Ícone nas ações"], ["labeled", "Botão com texto"]] as const).map(([value, label]) => (
+                    <Button key={value} size="sm" variant={refreshVariant === value ? "primary" : "ghost"} onClick={() => setRefreshVariant(value)}>
+                      {label}
+                    </Button>
+                  ))}
+                </div>
+              )}
             </div>
           </AppLayout>
         </I18nProvider>
