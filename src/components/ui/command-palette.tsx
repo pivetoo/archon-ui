@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Search } from "lucide-react"
 import { cn } from "../../lib/utils"
+import { useOptionalI18n } from "../../i18n/I18nProvider"
 
 export interface CommandPaletteItem {
   key: string
@@ -18,7 +19,9 @@ export interface CommandPaletteProps {
   placeholder?: string
 }
 
-const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, items, onSelect, placeholder = "Buscar telas…" }) => {
+const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, items, onSelect, placeholder }) => {
+  const i18n = useOptionalI18n()
+  const resolvedPlaceholder = placeholder ?? i18n?.t("commandPalette.placeholder") ?? "Buscar telas…"
   const [query, setQuery] = React.useState("")
   const [highlight, setHighlight] = React.useState(0)
   const inputRef = React.useRef<HTMLInputElement>(null)
@@ -66,14 +69,14 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, items, o
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={placeholder}
+            placeholder={resolvedPlaceholder}
             className="flex-1 bg-transparent py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none"
           />
           <kbd className="text-[10px] font-mono text-muted-foreground border border-border rounded px-1.5 py-0.5">ESC</kbd>
         </div>
         <div className="max-h-[320px] overflow-y-auto py-2 scrollbar-hide">
           {filtered.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm text-muted-foreground">Nada encontrado</div>
+            <div className="px-4 py-8 text-center text-sm text-muted-foreground">{i18n?.t("commandPalette.empty") ?? "Nada encontrado"}</div>
           ) : (
             filtered.map((item, i) => (
               <button
@@ -94,8 +97,8 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, items, o
           )}
         </div>
         <div className="flex items-center gap-4 border-t border-border bg-muted/40 px-4 py-2.5 text-[11px] text-muted-foreground">
-          <span className="flex items-center gap-1.5"><kbd className={kbd}>↑</kbd><kbd className={kbd}>↓</kbd>navegar</span>
-          <span className="flex items-center gap-1.5"><kbd className={kbd}>↵</kbd>abrir</span>
+          <span className="flex items-center gap-1.5"><kbd className={kbd}>↑</kbd><kbd className={kbd}>↓</kbd>{i18n?.t("commandPalette.hint.navigate") ?? "navegar"}</span>
+          <span className="flex items-center gap-1.5"><kbd className={kbd}>↵</kbd>{i18n?.t("commandPalette.hint.open") ?? "abrir"}</span>
         </div>
       </div>
     </div>

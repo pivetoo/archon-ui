@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 import type { SidebarItemData, SidebarGroup } from "../components/ui/sidebar"
 import type { BreadcrumbItem } from "../components/ui/breadcrumb"
+import { useOptionalI18n } from "../i18n/I18nProvider"
 
 interface UseBreadcrumbsOptions {
   pathname: string
@@ -11,7 +12,8 @@ interface UseBreadcrumbsOptions {
 }
 
 export function useBreadcrumbs(options: UseBreadcrumbsOptions): BreadcrumbItem[] {
-  const { pathname, navigate, home = { label: "Dashboard", path: "/" }, menuItems = [], menuGroups = [] } = options
+  const i18n = useOptionalI18n()
+  const { pathname, navigate, home = { label: i18n?.t("nav.dashboard") ?? "Dashboard", path: "/" }, menuItems = [], menuGroups = [] } = options
 
   return useMemo(() => {
     const crumbs: BreadcrumbItem[] = []

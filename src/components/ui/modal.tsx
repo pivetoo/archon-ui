@@ -4,6 +4,7 @@ import { X } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "../../lib/utils"
+import { useOptionalI18n } from "../../i18n/I18nProvider"
 
 const Modal = DialogPrimitive.Root
 
@@ -76,6 +77,8 @@ const ModalContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   ModalContentProps
 >(({ className, children, size, onOpenAutoFocus, ...props }, ref) => {
+  const i18n = useOptionalI18n()
+  const closeLabel = i18n?.t("common.action.close") ?? "Fechar"
   const handleOpenAutoFocus = (event: Event) => {
     if (onOpenAutoFocus) {
       onOpenAutoFocus(event)
@@ -110,7 +113,7 @@ const ModalContent = React.forwardRef<
       {children}
       <DialogPrimitive.Close className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25 disabled:pointer-events-none">
         <X className="h-4 w-4" />
-        <span className="sr-only">Fechar</span>
+        <span className="sr-only">{closeLabel}</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </ModalPortal>

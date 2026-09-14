@@ -6,6 +6,7 @@ import { getIdentityManagementURL } from '../../services/http/client';
 import { decodeJwtPayload } from '../../services/auth/jwt';
 import { OIDC_CLIENT_ID_KEY } from '../../services/storage/keys';
 import { OIDC_CODE_VERIFIER_KEY, OIDC_NONCE_KEY, OIDC_REDIRECT_URI_KEY, OIDC_STATE_KEY } from './return-url';
+import { useOptionalI18n } from '../../i18n/I18nProvider';
 
 export interface CallbackProps {
   redirectTo?: string;
@@ -48,6 +49,8 @@ export const Callback: React.FC<CallbackProps> = ({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { login } = useAuth();
+  const i18n = useOptionalI18n();
+  const t = (key: string, fallback: string) => (i18n ? i18n.t(key) : fallback);
 
   // Callbacks em ref, e nao no array de dependencia. Consumidor que passe arrow inline
   // (`onSuccess={() => navigate('/')}`) muda a identidade a cada render; o efeito reexecutava, o
@@ -93,15 +96,15 @@ export const Callback: React.FC<CallbackProps> = ({
       const redirectUri = oidcRedirectUri || storedRedirectUri || window.location.href.split('?')[0];
 
       if (!code || !state || !expectedState || state !== expectedState) {
-        throw new Error('OIDC state inválido');
+        throw new Error(t('auth.oidc.invalidState', 'OIDC state inválido'));
       }
 
       if (!codeVerifier) {
-        throw new Error('OIDC code verifier não encontrado');
+        throw new Error(t('auth.oidc.missingCodeVerifier', 'OIDC code verifier não encontrado'));
       }
 
       if (!idpUrl || !clientId) {
-        throw new Error('Configuração OIDC incompleta');
+        throw new Error(t('auth.oidc.incompleteConfig', 'Configuração OIDC incompleta'));
       }
 
       const tokenData = await AuthService.exchangeAuthorizationCode({
@@ -113,28 +116,28 @@ export const Callback: React.FC<CallbackProps> = ({
       });
 
       if (!tokenData.access_token) {
-        throw new Error('Access token não retornado pelo OIDC token endpoint');
+        throw new Error(t('auth.oidc.missingAccessToken', 'Access token não retornado pelo OIDC token endpoint'));
       }
 
       if (!tokenData.refresh_token) {
-        throw new Error('Refresh token não retornado pelo OIDC token endpoint');
+        throw new Error(t('auth.oidc.missingRefreshToken', 'Refresh token não retornado pelo OIDC token endpoint'));
       }
 
       const accessPayload = decodeJwtPayload(tokenData.access_token);
       if (!accessPayload || AuthService.isTokenExpiringSoon(tokenData.access_token, 0)) {
-        throw new Error('Access token OIDC inválido');
+        throw new Error(t('auth.oidc.invalidAccessToken', 'Access token OIDC inválido'));
       }
 
       // Se pedimos nonce, ele TEM que voltar e conferir. Antes a checagem so acontecia quando havia
       // id_token na resposta, entao uma resposta sem id_token pulava a validacao em silencio.
       if (expectedNonce) {
         if (!tokenData.id_token) {
-          throw new Error('OIDC id_token ausente na resposta');
+          throw new Error(t('auth.oidc.missingIdToken', 'OIDC id_token ausente na resposta'));
         }
 
         const idPayload = decodeJwtPayload(tokenData.id_token);
         if (idPayload?.nonce !== expectedNonce) {
-          throw new Error('OIDC nonce inválido');
+          throw new Error(t('auth.oidc.invalidNonce', 'OIDC nonce inválido'));
         }
       }
 

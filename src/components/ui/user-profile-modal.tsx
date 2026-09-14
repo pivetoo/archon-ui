@@ -9,6 +9,7 @@ import { Modal, ModalContent, ModalHeader, ModalTitle, ModalBody, ModalFooter } 
 import { Button } from "./button"
 import { Input } from "./input"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs"
+import { useOptionalI18n } from "../../i18n/I18nProvider"
 
 export interface ProfileUpdatePayload {
   name: string
@@ -30,6 +31,8 @@ interface UserProfileModalProps {
 }
 
 export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarRemove, onUpdateProfile }: UserProfileModalProps) {
+  const i18n = useOptionalI18n()
+  const t = (key: string, fallback: string) => i18n?.t(key) ?? fallback
   const { user, updateUser } = useAuth()
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [activeTab, setActiveTab] = React.useState("profile")
@@ -113,11 +116,11 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarR
         avatarUrl: finalAvatarUrl,
       })
 
-      toast({ variant: "success", title: "Perfil atualizado", description: "Suas informações foram salvas com sucesso." })
+      toast({ variant: "success", title: t("profile.toast.saveSuccessTitle", "Perfil atualizado"), description: t("profile.toast.saveSuccessDescription", "Suas informações foram salvas com sucesso.") })
       onOpenChange(false)
     } catch (err: any) {
-      const message = err?.response?.data?.message ?? err?.message ?? "Erro ao salvar perfil."
-      toast({ variant: "destructive", title: "Erro", description: message })
+      const message = err?.response?.data?.message ?? err?.message ?? t("profile.toast.saveErrorDescription", "Erro ao salvar perfil.")
+      toast({ variant: "destructive", title: t("profile.toast.errorTitle", "Erro"), description: message })
     } finally {
       setIsSaving(false)
     }
@@ -126,23 +129,23 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarR
   const handleChangePassword = async () => {
     if (!user) return
     if (newPassword !== confirmPassword) {
-      toast({ variant: "destructive", title: "Senhas não conferem", description: "A nova senha e a confirmação devem ser iguais." })
+      toast({ variant: "destructive", title: t("profile.toast.errorTitle", "Erro"), description: t("profile.password.validation.confirmMismatch", "A nova senha e a confirmação devem ser iguais.") })
       return
     }
     if (newPassword.length < 6) {
-      toast({ variant: "destructive", title: "Senha muito curta", description: "A senha deve ter no mínimo 6 caracteres." })
+      toast({ variant: "destructive", title: t("profile.toast.errorTitle", "Erro"), description: t("profile.password.validation.minLength", "A senha deve ter no mínimo 6 caracteres.") })
       return
     }
     setIsChangingPassword(true)
     try {
       await ProfileService.changePassword({ userId: user.id, currentPassword, newPassword })
-      toast({ variant: "success", title: "Senha alterada", description: "Sua senha foi alterada com sucesso." })
+      toast({ variant: "success", title: t("profile.toast.passwordSuccessTitle", "Senha alterada"), description: t("profile.toast.passwordSuccessDescription", "Sua senha foi alterada com sucesso.") })
       setCurrentPassword("")
       setNewPassword("")
       setConfirmPassword("")
     } catch (err: any) {
-      const message = err?.response?.data?.message ?? err?.message ?? "Erro ao alterar senha."
-      toast({ variant: "destructive", title: "Erro", description: message })
+      const message = err?.response?.data?.message ?? err?.message ?? t("profile.toast.passwordErrorDescription", "Erro ao alterar senha.")
+      toast({ variant: "destructive", title: t("profile.toast.errorTitle", "Erro"), description: message })
     } finally {
       setIsChangingPassword(false)
     }
@@ -156,7 +159,7 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarR
     <Modal open={open} onOpenChange={onOpenChange}>
       <ModalContent size="md">
         <ModalHeader>
-          <ModalTitle>Meu perfil</ModalTitle>
+          <ModalTitle>{t("profile.title", "Meu perfil")}</ModalTitle>
         </ModalHeader>
 
         <ModalBody>
@@ -167,14 +170,14 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarR
                 className="gap-2 rounded-none border-b-2 border-transparent bg-transparent px-1 pb-3 pt-0 text-sm font-medium text-muted-foreground shadow-none hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none"
               >
                 <User className="h-4 w-4" />
-                Dados pessoais
+                {t("profile.section.identity", "Dados pessoais")}
               </TabsTrigger>
               <TabsTrigger
                 value="security"
                 className="gap-2 rounded-none border-b-2 border-transparent bg-transparent px-1 pb-3 pt-0 text-sm font-medium text-muted-foreground shadow-none hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none"
               >
                 <Lock className="h-4 w-4" />
-                Segurança
+                {t("profile.section.security", "Segurança")}
               </TabsTrigger>
             </TabsList>
 
@@ -212,22 +215,22 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarR
                     className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-destructive"
                   >
                     <Trash2 className="h-3 w-3" />
-                    Remover foto
+                    {t("profile.action.removePhoto", "Remover foto")}
                   </button>
                 )}
               </div>
 
               <div className="grid gap-3">
                 <div className="grid gap-1.5">
-                  <label className="text-sm font-medium">Nome</label>
-                  <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" />
+                  <label className="text-sm font-medium">{t("profile.field.name", "Nome")}</label>
+                  <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("profile.placeholder.name", "Seu nome completo")} />
                 </div>
                 <div className="grid gap-1.5">
-                  <label className="text-sm font-medium">E-mail</label>
+                  <label className="text-sm font-medium">{t("profile.field.email", "E-mail")}</label>
                   <Input type="email" value={email} disabled readOnly />
                 </div>
                 <div className="grid gap-1.5">
-                  <label className="text-sm font-medium">Usuário</label>
+                  <label className="text-sm font-medium">{t("profile.field.username", "Usuário")}</label>
                   <Input value={username} disabled readOnly />
                 </div>
               </div>
@@ -236,13 +239,13 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarR
             <TabsContent value="security" className="mt-5 space-y-0">
               <div className="grid gap-3">
                 <div className="grid gap-1.5">
-                  <label className="text-sm font-medium">Senha atual</label>
+                  <label className="text-sm font-medium">{t("profile.password.current", "Senha atual")}</label>
                   <div className="relative">
                     <Input
                       type={showCurrentPwd ? "text" : "password"}
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder={t("profile.password.placeholder.current", "••••••••")}
                       className="pr-10"
                     />
                     <button
@@ -255,13 +258,13 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarR
                   </div>
                 </div>
                 <div className="grid gap-1.5">
-                  <label className="text-sm font-medium">Nova senha</label>
+                  <label className="text-sm font-medium">{t("profile.password.new", "Nova senha")}</label>
                   <div className="relative">
                     <Input
                       type={showNewPwd ? "text" : "password"}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder={t("profile.password.placeholder.new", "••••••••")}
                       className="pr-10"
                     />
                     <button
@@ -274,13 +277,13 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarR
                   </div>
                 </div>
                 <div className="grid gap-1.5">
-                  <label className="text-sm font-medium">Confirmar nova senha</label>
+                  <label className="text-sm font-medium">{t("profile.password.confirm", "Confirmar nova senha")}</label>
                   <div className="relative">
                     <Input
                       type={showConfirmPwd ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder={t("profile.password.placeholder.confirm", "••••••••")}
                       className="pr-10"
                     />
                     <button
@@ -299,15 +302,15 @@ export function UserProfileModal({ open, onOpenChange, onAvatarUpload, onAvatarR
 
         <ModalFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
+            {t("common.action.cancel", "Cancelar")}
           </Button>
           {activeTab === "profile" ? (
             <Button onClick={() => void handleSaveProfile()} disabled={isSaving}>
-              {isSaving ? "Salvando..." : "Salvar"}
+              {isSaving ? t("common.action.saving", "Salvando...") : t("profile.action.saveProfile", "Salvar")}
             </Button>
           ) : (
             <Button onClick={() => void handleChangePassword()} disabled={!canSavePassword}>
-              {isChangingPassword ? "Alterando..." : "Alterar senha"}
+              {isChangingPassword ? t("common.action.saving", "Alterando...") : t("profile.action.changePassword", "Alterar senha")}
             </Button>
           )}
         </ModalFooter>

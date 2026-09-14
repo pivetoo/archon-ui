@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
 import { Input } from './input'
+import { useOptionalI18n } from '../../i18n/I18nProvider'
 
 export interface SearchableSelectOption {
   value: string
@@ -29,11 +30,14 @@ export function SearchableSelect({
   value,
   onValueChange,
   options,
-  placeholder = 'Selecione...',
-  searchPlaceholder = 'Buscar...',
+  placeholder,
+  searchPlaceholder,
   disabled,
   onSearch,
 }: SearchableSelectProps) {
+  const i18n = useOptionalI18n()
+  const resolvedPlaceholder = placeholder ?? i18n?.t('searchableSelect.placeholder') ?? 'Selecione...'
+  const resolvedSearchPlaceholder = searchPlaceholder ?? i18n?.t('common.action.search') ?? 'Buscar...'
   const [search, setSearch] = useState('')
   const [open, setOpen] = useState(false)
   const [asyncOptions, setAsyncOptions] = useState<SearchableSelectOption[] | null>(null)
@@ -56,7 +60,7 @@ export function SearchableSelect({
   const selectedOption = activeOptions.find((opt) => opt.value === (value ?? ''))
     ?? options.find((opt) => opt.value === (value ?? ''))
 
-  const selectedLabel = selectedOption?.label ?? placeholder
+  const selectedLabel = selectedOption?.label ?? resolvedPlaceholder
   const selectedIconUrl = selectedOption?.iconUrl
 
   useEffect(() => {
@@ -111,7 +115,7 @@ export function SearchableSelect({
   return (
     <Select open={open} onOpenChange={handleOpenChange} value={safeValue} onValueChange={(v) => { setSearch(''); setAsyncOptions(null); onValueChange(v === EMPTY_SENTINEL ? '' : v) }} disabled={disabled}>
       <SelectTrigger>
-        <SelectValue placeholder={placeholder}>
+        <SelectValue placeholder={resolvedPlaceholder}>
           {selectedIconUrl ? (
             <span className="flex items-center gap-1.5">
               <img src={selectedIconUrl} alt="" className="h-4 w-4 rounded-sm object-contain shrink-0" />
@@ -124,7 +128,7 @@ export function SearchableSelect({
         <div className="px-2 pt-2 pb-1">
           <Input
             ref={inputRef}
-            placeholder={searchPlaceholder}
+            placeholder={resolvedSearchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => { if (!SELECT_KEYS.has(e.key)) e.stopPropagation() }}
@@ -133,9 +137,9 @@ export function SearchableSelect({
         </div>
         <div className="max-h-[200px] overflow-y-auto">
           {searching ? (
-            <div className="px-2 py-3 text-sm text-muted-foreground text-center">Buscando...</div>
+            <div className="px-2 py-3 text-sm text-muted-foreground text-center">{i18n?.t('searchableSelect.searching') ?? 'Buscando...'}</div>
           ) : filteredOptions.length === 0 ? (
-            <div className="px-2 py-3 text-sm text-muted-foreground text-center">Nenhum resultado</div>
+            <div className="px-2 py-3 text-sm text-muted-foreground text-center">{i18n?.t('searchableSelect.noResults') ?? 'Nenhum resultado'}</div>
           ) : (
             filteredOptions.map((opt) => (
               <SelectItem key={opt.value} value={opt.value ? opt.value : EMPTY_SENTINEL}>

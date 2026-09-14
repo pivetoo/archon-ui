@@ -726,7 +726,10 @@ export function DataTable<T = any>({
       {data.length > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-1 py-3 md:border-t md:border-border/60 md:px-4 md:py-2.5">
           <span className="text-sm text-muted-foreground">
-            {startIndex + 1}–{endIndex} de {effectiveTotalCount}
+            {resolveLabel("common.table.pageRange", "{0}–{1} de {2}")
+              .replace("{0}", String(startIndex + 1))
+              .replace("{1}", String(endIndex))
+              .replace("{2}", String(effectiveTotalCount))}
           </span>
 
           <div className="flex items-center gap-3">
