@@ -7172,7 +7172,10 @@ const ol = ({
   "div",
   {
     className: K(
-      "min-h-0 flex-1 overflow-y-auto",
+      // relative: campo com input escondido em position absolute (select dentro de form) passa a se posicionar no
+      // corpo, que rola. Sem isso ele se ancorava no ModalContent, esticava a caixa e criava um segundo scroll com
+      // espaco em branco abaixo do rodape.
+      "relative min-h-0 flex-1 overflow-y-auto",
       e
     ),
     ...t
@@ -29523,7 +29526,8 @@ const Tte = ({
   "div",
   {
     className: K(
-      "min-h-0 flex-1 overflow-y-auto",
+      // relative pelo mesmo motivo do ModalBody: elemento absolute do conteudo nao estica o painel.
+      "relative min-h-0 flex-1 overflow-y-auto",
       "group-data-[padded]/sheet:-mx-6 group-data-[padded]/sheet:px-6",
       e
     ),
