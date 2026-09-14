@@ -12,6 +12,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from "./modal"
+import { useOptionalI18n } from "../../i18n/I18nProvider"
 
 export interface RolePermissionsPickerModalProps {
   open: boolean
@@ -22,20 +23,20 @@ export interface RolePermissionsPickerModalProps {
   disabled?: boolean
 }
 
-function getActionInfo(method: string): { label: string; className: string } {
+function getActionInfo(method: string, t: (key: string, fallback: string) => string): { label: string; className: string } {
   switch (method?.toUpperCase()) {
     case "GET":
-      return { label: "Consultar", className: "border-emerald-500/40 text-emerald-700 dark:text-emerald-300" }
+      return { label: t("common.method.get", "Consultar"), className: "border-emerald-500/40 text-emerald-700 dark:text-emerald-300" }
     case "POST":
-      return { label: "Criar", className: "border-blue-500/40 text-blue-700 dark:text-blue-300" }
+      return { label: t("common.method.post", "Criar"), className: "border-blue-500/40 text-blue-700 dark:text-blue-300" }
     case "PUT":
-      return { label: "Editar", className: "border-amber-500/40 text-amber-700 dark:text-amber-300" }
+      return { label: t("common.method.put", "Editar"), className: "border-amber-500/40 text-amber-700 dark:text-amber-300" }
     case "PATCH":
-      return { label: "Ajustar", className: "border-violet-500/40 text-violet-700 dark:text-violet-300" }
+      return { label: t("common.method.patch", "Ajustar"), className: "border-violet-500/40 text-violet-700 dark:text-violet-300" }
     case "DELETE":
-      return { label: "Excluir", className: "border-red-500/40 text-red-700 dark:text-red-300" }
+      return { label: t("common.method.delete", "Excluir"), className: "border-red-500/40 text-red-700 dark:text-red-300" }
     default:
-      return { label: method || "Outro", className: "" }
+      return { label: method || t("common.method.other", "Outro"), className: "" }
   }
 }
 
@@ -47,6 +48,10 @@ export function RolePermissionsPickerModal({
   onConfirm,
   disabled = false,
 }: RolePermissionsPickerModalProps) {
+  const i18n = useOptionalI18n()
+  const t = (key: string, fallback: string) => i18n?.t(key) ?? fallback
+  const tf = (key: string, fallback: string, ...values: Array<string | number>) =>
+    values.reduce((message: string, value, index) => message.replace(`{${index}}`, String(value)), t(key, fallback))
   const [search, setSearch] = React.useState("")
   const [draftIds, setDraftIds] = React.useState<number[]>(selectedResourceIds)
   const [collapsedGroups, setCollapsedGroups] = React.useState<Set<string>>(new Set())
@@ -143,37 +148,37 @@ export function RolePermissionsPickerModal({
     <Modal open={open} onOpenChange={onOpenChange}>
       <ModalContent size="full" className="h-[92vh] max-w-[96vw] grid-rows-[auto_auto_minmax(0,1fr)_auto]">
         <ModalHeader>
-          <ModalTitle>Selecionar permissões</ModalTitle>
+          <ModalTitle>{t("usersManagement.picker.title", "Selecionar permissões")}</ModalTitle>
         </ModalHeader>
 
         <div className="flex flex-col gap-4 py-4 min-h-0">
           <div className="rounded-lg border bg-muted/20 p-4">
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-1">
-                <p className="text-sm font-medium">Permissões disponíveis</p>
+                <p className="text-sm font-medium">{t("usersManagement.picker.availableTitle", "Permissões disponíveis")}</p>
                 <p className="text-sm text-muted-foreground">
-                  Marque o que este perfil pode fazer. Mudanças afetam todos os usuários vinculados.
+                  {t("usersManagement.picker.description", "Marque o que este perfil pode fazer. Mudanças afetam todos os usuários vinculados.")}
                 </p>
               </div>
               <div className="flex flex-shrink-0 flex-col items-end gap-1">
                 <div className="text-xs text-muted-foreground">
-                  {draftIds.length} de {resources.length} selecionadas
+                  {tf("usersManagement.picker.selectedCount", "{0} de {1} selecionadas", draftIds.length, resources.length)}
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <button type="button" className="text-primary hover:underline" onClick={handleSelectAll} disabled={disabled}>
-                    Marcar tudo
+                    {t("usersManagement.picker.selectAll", "Marcar tudo")}
                   </button>
                   <span className="text-muted-foreground">·</span>
                   <button type="button" className="text-primary hover:underline" onClick={handleClearAll} disabled={disabled}>
-                    Limpar
+                    {t("usersManagement.picker.clearAll", "Limpar")}
                   </button>
                   <span className="text-muted-foreground">·</span>
                   <button type="button" className="text-primary hover:underline" onClick={expandAll}>
-                    Expandir tudo
+                    {t("usersManagement.picker.expandAll", "Expandir tudo")}
                   </button>
                   <span className="text-muted-foreground">·</span>
                   <button type="button" className="text-primary hover:underline" onClick={collapseAll}>
-                    Colapsar tudo
+                    {t("usersManagement.picker.collapseAll", "Colapsar tudo")}
                   </button>
                 </div>
               </div>
@@ -181,11 +186,11 @@ export function RolePermissionsPickerModal({
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">Buscar permissão</label>
+            <label className="text-sm font-medium">{t("usersManagement.picker.searchLabel", "Buscar permissão")}</label>
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Filtrar permissões…"
+              placeholder={t("usersManagement.picker.searchPlaceholder", "Filtrar permissões…")}
               disabled={disabled}
             />
           </div>
@@ -193,9 +198,9 @@ export function RolePermissionsPickerModal({
           <div className="min-h-0 space-y-4 overflow-y-auto pr-1">
             {filteredGroups.length === 0 ? (
               <div className="rounded-lg border border-dashed p-8 text-center">
-                <p className="text-sm font-medium">Nenhuma permissão encontrada</p>
+                <p className="text-sm font-medium">{t("usersManagement.picker.empty.title", "Nenhuma permissão encontrada")}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Ajuste a busca ou aguarde a sincronização das permissões do sistema.
+                  {t("usersManagement.picker.empty.description", "Ajuste a busca ou aguarde a sincronização das permissões do sistema.")}
                 </p>
               </div>
             ) : (
@@ -231,14 +236,14 @@ export function RolePermissionsPickerModal({
                           onCheckedChange={(checked) => toggleGroup(resourceIds, checked === true)}
                           disabled={disabled}
                         />
-                        Marcar grupo
+                        {t("usersManagement.picker.selectGroup", "Marcar grupo")}
                       </label>
                     </div>
 
                     {isCollapsed ? null : (
                       <div className="grid gap-3 px-4 py-4 md:grid-cols-2 xl:grid-cols-3">
                         {group.resources.map((resource) => {
-                          const actionInfo = getActionInfo(resource.httpMethod)
+                          const actionInfo = getActionInfo(resource.httpMethod, t)
                           return (
                             <label
                               key={resource.id}
@@ -278,10 +283,10 @@ export function RolePermissionsPickerModal({
 
         <ModalFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
+            {t("common.action.cancel", "Cancelar")}
           </Button>
           <Button variant="primary" onClick={handleConfirm} disabled={disabled}>
-            Aplicar permissões
+            {t("usersManagement.picker.apply", "Aplicar permissões")}
           </Button>
         </ModalFooter>
       </ModalContent>
