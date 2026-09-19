@@ -146,7 +146,13 @@ const ModalBody = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "min-h-0 flex-1 overflow-y-auto",
+      // relative: campo com input escondido em position absolute (select dentro de form) passa a se posicionar no
+      // corpo, que rola. Sem isso ele se ancorava no ModalContent, esticava a caixa e criava um segundo scroll com
+      // espaco em branco abaixo do rodape.
+      "relative min-h-0 flex-1 overflow-y-auto",
+      // Com o padding padrao, o corpo sangra ate a borda como o cabecalho e o rodape: a barra de rolagem fica na borda
+      // do modal, longe dos campos, e o conteudo mantem o mesmo recuo.
+      "group-data-[padded]/modal:-mx-4 group-data-[padded]/modal:px-4 sm:group-data-[padded]/modal:-mx-6 sm:group-data-[padded]/modal:px-6",
       className
     )}
     {...props}

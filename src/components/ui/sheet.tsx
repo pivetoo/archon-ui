@@ -137,7 +137,8 @@ const SheetBody = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "min-h-0 flex-1 overflow-y-auto",
+      // relative pelo mesmo motivo do ModalBody: elemento absolute do conteudo nao estica o painel.
+      "relative min-h-0 flex-1 overflow-y-auto",
       "group-data-[padded]/sheet:-mx-6 group-data-[padded]/sheet:px-6",
       className
     )}
