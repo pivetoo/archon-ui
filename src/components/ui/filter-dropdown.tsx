@@ -8,6 +8,7 @@ import {
   DropdownSeparator,
   DropdownTrigger,
 } from "./dropdown"
+import { useOptionalI18n } from "../../i18n/I18nProvider"
 
 export interface FilterDropdownOption {
   value: string
@@ -28,9 +29,11 @@ export function FilterDropdown({
   value,
   options,
   onChange,
-  clearLabel = "Limpar filtros",
+  clearLabel,
   allValue = "all",
 }: FilterDropdownProps) {
+  const i18n = useOptionalI18n()
+  const resolvedClearLabel = clearLabel ?? i18n?.t("common.action.clearFilters") ?? "Limpar filtros"
   const hasActiveFilters = value !== allValue
 
   return (
@@ -60,7 +63,7 @@ export function FilterDropdown({
           className="w-full rounded-sm px-2 py-1.5 text-left text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
           onClick={() => onChange(allValue)}
         >
-          {clearLabel}
+          {resolvedClearLabel}
         </button>
       </DropdownContent>
     </Dropdown>

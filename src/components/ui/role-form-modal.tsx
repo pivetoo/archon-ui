@@ -22,6 +22,7 @@ import {
 import { RolePermissionsPickerModal } from "./role-permissions-picker-modal"
 import { Switch } from "./switch"
 import { useToast } from "./use-toast"
+import { useOptionalI18n } from "../../i18n/I18nProvider"
 
 export interface RoleFormInitialData {
   name: string
@@ -92,6 +93,10 @@ function groupByModule(capabilities: AccessCapability[]): CapabilityModule[] {
 
 export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessResources, capabilities = [], onSaved }: RoleFormModalProps) {
   const { toast } = useToast()
+  const i18n = useOptionalI18n()
+  const t = (key: string, fallback: string) => i18n?.t(key) ?? fallback
+  const tf = (key: string, fallback: string, ...values: Array<string | number>) =>
+    values.reduce((message: string, value, index) => message.replace(`{${index}}`, String(value)), t(key, fallback))
   const isEditMode = roleId !== null
   const hasCatalog = capabilities.length > 0
 
@@ -138,13 +143,13 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Falha ao carregar perfil",
-        description: getApiErrorMessage(error, "Tente novamente."),
+        title: t("usersManagement.role.toast.loadErrorTitle", "Falha ao carregar perfil"),
+        description: getApiErrorMessage(error, t("common.error.retry", "Tente novamente.")),
       })
     } finally {
       setLoading(false)
     }
-  }, [isEditMode, roleId, initialData, toast])
+  }, [isEditMode, roleId, initialData, toast, i18n])
 
   React.useEffect(() => {
     if (open) {
@@ -175,8 +180,8 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
     if (!form.name.trim()) {
       toast({
         variant: "destructive",
-        title: "Nome obrigatório",
-        description: "Informe um nome para o perfil.",
+        title: t("usersManagement.role.validation.nameRequiredTitle", "Nome obrigatório"),
+        description: t("usersManagement.role.validation.nameRequiredDescription", "Informe um nome para o perfil."),
       })
       return
     }
@@ -197,7 +202,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
           capabilityKeys,
         }
         await UsersManagementService.updateRole(roleId, payload)
-        toast({ variant: "success", title: "Perfil atualizado", description: form.name })
+        toast({ variant: "success", title: t("usersManagement.role.toast.updatedTitle", "Perfil atualizado"), description: form.name })
       } else {
         const payload: CreateRolePayload = {
           name: form.name.trim(),
@@ -208,7 +213,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
           capabilityKeys,
         }
         await UsersManagementService.createRole(payload)
-        toast({ variant: "success", title: "Perfil criado", description: form.name })
+        toast({ variant: "success", title: t("usersManagement.role.toast.createdTitle", "Perfil criado"), description: form.name })
       }
 
       onSaved()
@@ -216,8 +221,10 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
     } catch (error) {
       toast({
         variant: "destructive",
-        title: isEditMode ? "Falha ao atualizar perfil" : "Falha ao criar perfil",
-        description: getApiErrorMessage(error, "Verifique os dados e tente novamente."),
+        title: isEditMode
+          ? t("usersManagement.role.toast.updateErrorTitle", "Falha ao atualizar perfil")
+          : t("usersManagement.role.toast.createErrorTitle", "Falha ao criar perfil"),
+        description: getApiErrorMessage(error, t("common.error.checkDataAndRetry", "Verifique os dados e tente novamente.")),
       })
     } finally {
       setSaving(false)
@@ -230,13 +237,13 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
     <div className="flex flex-col gap-3">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <p className="text-sm font-medium">O que este perfil pode fazer</p>
+          <p className="text-sm font-medium">{t("usersManagement.role.matrix.title", "O que este perfil pode fazer")}</p>
           <p className="text-sm text-muted-foreground">
-            Marque por módulo. Cada opção já libera todas as telas e ações correspondentes.
+            {t("usersManagement.role.matrix.description", "Marque por módulo. Cada opção já libera todas as telas e ações correspondentes.")}
           </p>
         </div>
         <div className="text-xs text-muted-foreground">
-          {selectedNonBaseline.length} de {capabilities.length - baselineKeys.length} marcadas
+          {tf("usersManagement.role.matrix.selectedCount", "{0} de {1} marcadas", selectedNonBaseline.length, capabilities.length - baselineKeys.length)}
         </div>
       </div>
 
@@ -260,7 +267,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
                 {selectable.length > 1 ? (
                   <label className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Checkbox checked={allSelected} onCheckedChange={(checked) => toggleModule(module, checked === true)} />
-                    Tudo do módulo
+                    {t("usersManagement.role.matrix.selectModule", "Tudo do módulo")}
                   </label>
                 ) : null}
               </div>
@@ -281,7 +288,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
                       <div className="min-w-0 flex-1 space-y-0.5">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="font-medium">{capability.label}</span>
-                          {capability.isBaseline ? <Badge variant="outline">Sempre incluído</Badge> : null}
+                          {capability.isBaseline ? <Badge variant="outline">{t("usersManagement.role.matrix.alwaysIncluded", "Sempre incluído")}</Badge> : null}
                         </div>
                         {capability.description ? (
                           <p className="text-xs text-muted-foreground">{capability.description}</p>
@@ -304,9 +311,9 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
     <>
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <p className="text-sm font-medium">Permissões deste perfil</p>
+          <p className="text-sm font-medium">{t("usersManagement.role.legacy.title", "Permissões deste perfil")}</p>
           <p className="text-sm text-muted-foreground">
-            {selectedIds.length} de {accessResources.length} permissões selecionadas.
+            {tf("usersManagement.role.legacy.selectedCount", "{0} de {1} permissões selecionadas.", selectedIds.length, accessResources.length)}
           </p>
         </div>
       </div>
@@ -316,7 +323,7 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
           onClick={() => setIsPickerOpen(true)}
           disabled={accessResources.length === 0}
         >
-          Selecionar permissões
+          {t("usersManagement.role.legacy.selectButton", "Selecionar permissões")}
         </Button>
       </div>
     </>
@@ -327,33 +334,33 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
       <Modal open={open} onOpenChange={onOpenChange}>
         <ModalContent size={hasCatalog ? "5xl" : "lg"}>
           <ModalHeader>
-            <ModalTitle>{isEditMode ? "Editar perfil" : "Novo perfil"}</ModalTitle>
+            <ModalTitle>{isEditMode ? t("usersManagement.role.modal.editTitle", "Editar perfil") : t("usersManagement.role.modal.newTitle", "Novo perfil")}</ModalTitle>
             <ModalDescription>
-              Define o nome, descrição e permissões deste perfil.
+              {t("usersManagement.role.modal.description", "Define o nome, descrição e permissões deste perfil.")}
             </ModalDescription>
           </ModalHeader>
           <ModalBody>
             {loading ? (
-              <div className="flex items-center justify-center py-12 text-sm text-muted-foreground">Carregando…</div>
+              <div className="flex items-center justify-center py-12 text-sm text-muted-foreground">{t("common.loading", "Carregando…")}</div>
             ) : (
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div className="space-y-1">
                     <label className="text-xs text-muted-foreground">
-                      Nome <span className="text-destructive">*</span>
+                      {t("common.field.name", "Nome")} <span className="text-destructive">*</span>
                     </label>
                     <Input
                       value={form.name}
                       onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-                      placeholder="Ex: Comercial"
+                      placeholder={t("usersManagement.role.field.namePlaceholder", "Ex: Comercial")}
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs text-muted-foreground">Descrição</label>
+                    <label className="text-xs text-muted-foreground">{t("common.field.description", "Descrição")}</label>
                     <Input
                       value={form.description}
                       onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
-                      placeholder="Pipeline e propostas"
+                      placeholder={t("usersManagement.role.field.descriptionPlaceholder", "Pipeline e propostas")}
                     />
                   </div>
                 </div>
@@ -364,22 +371,22 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
                       checked={form.isRoot}
                       onCheckedChange={(checked) => setForm((prev) => ({ ...prev, isRoot: checked }))}
                     />
-                    <label className="cursor-pointer text-sm font-medium">Acesso total ao sistema</label>
+                    <label className="cursor-pointer text-sm font-medium">{t("usersManagement.role.field.isRoot", "Acesso total ao sistema")}</label>
                   </div>
                   <div className="flex items-center gap-2">
                     <Switch
                       checked={form.isDefault}
                       onCheckedChange={(checked) => setForm((prev) => ({ ...prev, isDefault: checked }))}
                     />
-                    <label className="cursor-pointer text-sm font-medium">Perfil padrão</label>
+                    <label className="cursor-pointer text-sm font-medium">{t("usersManagement.role.field.isDefault", "Perfil padrão")}</label>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium">Permissões</label>
+                  <label className="text-sm font-medium">{t("usersManagement.role.field.permissions", "Permissões")}</label>
                   {form.isRoot ? (
                     <div className="rounded-md border border-dashed border-warning/40 bg-warning/10 p-3 text-sm">
-                      Perfis com acesso total não precisam de permissões específicas — podem fazer tudo no sistema.
+                      {t("usersManagement.role.rootNotice", "Perfis com acesso total não precisam de permissões específicas — podem fazer tudo no sistema.")}
                     </div>
                   ) : hasCatalog ? (
                     renderCapabilityMatrix()
@@ -392,10 +399,10 @@ export function RoleFormModal({ open, onOpenChange, roleId, initialData, accessR
           </ModalBody>
           <ModalFooter>
             <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
-              Cancelar
+              {t("common.action.cancel", "Cancelar")}
             </Button>
             <Button onClick={handleSave} disabled={saving || loading}>
-              {saving ? "Salvando…" : isEditMode ? "Salvar" : "Criar perfil"}
+              {saving ? t("common.action.saving", "Salvando…") : isEditMode ? t("common.action.save", "Salvar") : t("usersManagement.role.action.create", "Criar perfil")}
             </Button>
           </ModalFooter>
         </ModalContent>

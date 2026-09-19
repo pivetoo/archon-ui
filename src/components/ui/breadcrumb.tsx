@@ -1,6 +1,7 @@
 import * as React from "react"
 import { ChevronRight } from "lucide-react"
 import { cn } from "../../lib/utils"
+import { useOptionalI18n } from "../../i18n/I18nProvider"
 
 export interface BreadcrumbItem {
   label: string
@@ -14,13 +15,14 @@ export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
 
 const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
   ({ className, items, separator, ...props }, ref) => {
+    const i18n = useOptionalI18n()
     if (items.length === 0) return null
 
     return (
       <nav
         ref={ref}
         className={cn("flex items-center gap-2 text-sm min-w-0 overflow-hidden", className)}
-        aria-label="Breadcrumb"
+        aria-label={i18n?.t("common.nav.breadcrumb") ?? "Breadcrumb"}
         {...props}
       >
         {items.map((item, index) => (

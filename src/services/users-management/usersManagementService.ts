@@ -1,4 +1,5 @@
 import { httpClient } from "../http/client"
+import { translate } from "../../i18n/store"
 
 export interface ContractUser {
   userId: number
@@ -101,7 +102,7 @@ export class UsersManagementService {
   static async createInCurrentContract(payload: CreateUserInContractPayload): Promise<ContractUser> {
     const response = await httpClient.post<ContractUser>(`${RESOURCE}/Create`, payload)
     if (!response.data) {
-      throw new Error(response.message || "Falha ao criar usuário")
+      throw new Error(response.message || translate("usersManagement.error.createUser"))
     }
     return response.data
   }
@@ -109,7 +110,7 @@ export class UsersManagementService {
   static async updateRoleInCurrentContract(userId: number, roleId: number): Promise<ContractUser> {
     const response = await httpClient.put<ContractUser>(`${RESOURCE}/UpdateRole/${userId}`, { roleId })
     if (!response.data) {
-      throw new Error(response.message || "Falha ao atualizar perfil")
+      throw new Error(response.message || translate("usersManagement.error.updateRole"))
     }
     return response.data
   }
@@ -121,7 +122,7 @@ export class UsersManagementService {
   static async updateInCurrentContract(userId: number, payload: UpdateUserPayload): Promise<ContractUser> {
     const response = await httpClient.put<ContractUser>(`${RESOURCE}/Update/${userId}`, payload)
     if (!response.data) {
-      throw new Error(response.message || "Falha ao atualizar usuário")
+      throw new Error(response.message || translate("usersManagement.error.updateUser"))
     }
     return response.data
   }
@@ -129,7 +130,7 @@ export class UsersManagementService {
   static async getRoleById(roleId: number): Promise<ContractRole> {
     const response = await httpClient.get<ContractRole>(`${RESOURCE}/GetRoleById/${roleId}`)
     if (!response.data) {
-      throw new Error(response.message || "Perfil não encontrado")
+      throw new Error(response.message || translate("usersManagement.error.roleNotFound"))
     }
     return response.data
   }
@@ -137,7 +138,7 @@ export class UsersManagementService {
   static async createRole(payload: CreateRolePayload): Promise<ContractRole> {
     const response = await httpClient.post<ContractRole>(`${RESOURCE}/CreateRole`, payload)
     if (!response.data) {
-      throw new Error(response.message || "Falha ao criar perfil")
+      throw new Error(response.message || translate("usersManagement.error.createRole"))
     }
     return response.data
   }
@@ -145,7 +146,7 @@ export class UsersManagementService {
   static async updateRole(roleId: number, payload: UpdateRolePayload): Promise<ContractRole> {
     const response = await httpClient.put<ContractRole>(`${RESOURCE}/UpdateRole/${roleId}`, payload)
     if (!response.data) {
-      throw new Error(response.message || "Falha ao atualizar perfil")
+      throw new Error(response.message || translate("usersManagement.error.updateRole"))
     }
     return response.data
   }

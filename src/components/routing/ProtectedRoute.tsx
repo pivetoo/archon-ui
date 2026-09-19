@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { buildIdentityManagementAuthorizeUrl, buildIdentityManagementLoginUrl } from './return-url'
 import { consumePromptLogin } from '../../services/auth/promptLogin'
+import { useOptionalI18n } from '../../i18n/I18nProvider'
 
 export interface ProtectedRouteProps {
   children: React.ReactElement
@@ -46,11 +47,13 @@ const completeIdentityLaunch = async ({
   authorizationSessionToken,
   contractId,
   authorizeUrl,
+  t,
 }: {
   identityManagementUrl: string
   authorizationSessionToken: string
   contractId: string
   authorizeUrl: string
+  t: (key: string, fallback: string) => string
 }) => {
   const completeAuthorizeUrl = new URL('/api/oidc/complete-authorize', identityManagementUrl)
   const response = await fetch(completeAuthorizeUrl.toString(), {
@@ -66,12 +69,12 @@ const completeIdentityLaunch = async ({
   })
 
   if (!response.ok) {
-    throw new Error('Não foi possível completar o login pelo Identity Management.')
+    throw new Error(t('auth.oidc.completeLoginFailed', 'Não foi possível completar o login pelo Identity Management.'))
   }
 
   const data = await response.json() as { redirectUrl?: string }
   if (!data.redirectUrl) {
-    throw new Error('Resposta inválida ao completar o login pelo Identity Management.')
+    throw new Error(t('auth.oidc.completeLoginInvalidResponse', 'Resposta inválida ao completar o login pelo Identity Management.'))
   }
 
   return data.redirectUrl
@@ -89,6 +92,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const location = useLocation()
   const hasRedirectedRef = useRef(false)
+  const i18n = useOptionalI18n()
+  const t = (key: string, fallback: string) => (i18n ? i18n.t(key) : fallback)
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -122,6 +127,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
             authorizationSessionToken: identityLaunch.authorizationSessionToken,
             contractId: identityLaunch.contractId,
             authorizeUrl,
+            t,
           })
 
           hasRedirectedRef.current = true

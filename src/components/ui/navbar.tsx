@@ -183,7 +183,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       if (minutes < 60) return formatMessage("nav.time.minutesAgo", minutes)
       if (hours < 24) return formatMessage("nav.time.hoursAgo", hours)
       if (days < 7) return formatMessage("nav.time.daysAgo", days)
-      return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
+      return date.toLocaleDateString(i18n?.culture ?? 'pt-BR', { day: '2-digit', month: '2-digit' })
     }
     return (
       <nav
@@ -273,9 +273,9 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
             <SearchBar
               asButton
               onButtonClick={onSearchClick}
-              placeholder="Buscar…"
-              hotkeyHint="Espaço"
-              aria-label="Buscar"
+              placeholder={translate("nav.search.placeholder")}
+              hotkeyHint={translate("nav.search.hotkey")}
+              aria-label={translate("nav.search.placeholder")}
               className="hidden w-56 md:flex"
             />
           )}

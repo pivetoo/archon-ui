@@ -29,6 +29,7 @@ import { SearchableSelect } from "./searchable-select"
 import { Tabs, TabsBadge, TabsContent, TabsList, TabsTrigger } from "./tabs"
 import { useToast } from "./use-toast"
 import { ConfirmModal } from "./confirm-modal"
+import { useOptionalI18n } from "../../i18n/I18nProvider"
 
 export interface UsersManagementPageProps {
   title?: string
@@ -73,14 +74,20 @@ function getApiErrorMessage(error: unknown, fallback: string): string {
 }
 
 export function UsersManagementPage({
-  title = "Controle de Acesso",
-  subtitle = "Gerencie usuários e perfis do contrato ativo",
+  title,
+  subtitle,
   className,
   initialTab = "users",
   hideTabs = false,
 }: UsersManagementPageProps) {
   const { isRoot } = usePermissions()
   const { toast } = useToast()
+  const i18n = useOptionalI18n()
+  const t = (key: string, fallback: string) => i18n?.t(key) ?? fallback
+  const tf = (key: string, fallback: string, ...values: Array<string | number>) =>
+    values.reduce((message: string, value, index) => message.replace(`{${index}}`, String(value)), t(key, fallback))
+  const resolvedTitle = title ?? t("usersManagement.page.title", "Controle de Acesso")
+  const resolvedSubtitle = subtitle ?? t("usersManagement.page.subtitle", "Gerencie usuários e perfis do contrato ativo")
 
   const [activeTab, setActiveTab] = React.useState<ActiveTab>(initialTab)
 
@@ -122,13 +129,13 @@ export function UsersManagementPage({
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Falha ao carregar dados",
-        description: getApiErrorMessage(error, "Tente novamente em alguns instantes."),
+        title: t("usersManagement.page.toast.loadErrorTitle", "Falha ao carregar dados"),
+        description: getApiErrorMessage(error, t("common.error.retryShortly", "Tente novamente em alguns instantes.")),
       })
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [toast, i18n])
 
   React.useEffect(() => {
     if (isRoot) {
@@ -182,8 +189,8 @@ export function UsersManagementPage({
       if (!form.name || !form.roleId) {
         toast({
           variant: "destructive",
-          title: "Preencha os campos obrigatórios",
-          description: "Nome e perfil são obrigatórios.",
+          title: t("usersManagement.page.validation.editRequiredTitle", "Preencha os campos obrigatórios"),
+          description: t("usersManagement.page.validation.editRequiredDescription", "Nome e perfil são obrigatórios."),
         })
         return
       }
@@ -198,14 +205,14 @@ export function UsersManagementPage({
       setIsSaving(true)
       try {
         await UsersManagementService.updateInCurrentContract(editingUser!.userId, payload)
-        toast({ variant: "success", title: "Usuário atualizado", description: editingUser!.name })
+        toast({ variant: "success", title: t("usersManagement.page.toast.userUpdatedTitle", "Usuário atualizado"), description: editingUser!.name })
         closeForm()
         await loadData()
       } catch (error) {
         toast({
           variant: "destructive",
-          title: "Não foi possível atualizar o usuário",
-          description: getApiErrorMessage(error, "Verifique os dados e tente novamente."),
+          title: t("usersManagement.page.toast.userUpdateErrorTitle", "Não foi possível atualizar o usuário"),
+          description: getApiErrorMessage(error, t("common.error.checkDataAndRetry", "Verifique os dados e tente novamente.")),
         })
       } finally {
         setIsSaving(false)
@@ -216,8 +223,8 @@ export function UsersManagementPage({
     if (!form.username || !form.email || !form.name || !form.password || !form.roleId) {
       toast({
         variant: "destructive",
-        title: "Preencha todos os campos",
-        description: "Username, e-mail, nome, senha e perfil são obrigatórios.",
+        title: t("usersManagement.page.validation.createRequiredTitle", "Preencha todos os campos"),
+        description: t("usersManagement.page.validation.createRequiredDescription", "Username, e-mail, nome, senha e perfil são obrigatórios."),
       })
       return
     }
@@ -235,16 +242,16 @@ export function UsersManagementPage({
       await UsersManagementService.createInCurrentContract(payload)
       toast({
         variant: "success",
-        title: "Usuário criado",
-        description: "O usuário já tem acesso ao contrato ativo.",
+        title: t("usersManagement.page.toast.userCreatedTitle", "Usuário criado"),
+        description: t("usersManagement.page.toast.userCreatedDescription", "O usuário já tem acesso ao contrato ativo."),
       })
       closeForm()
       await loadData()
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Não foi possível criar o usuário",
-        description: getApiErrorMessage(error, "Verifique os dados e tente novamente."),
+        title: t("usersManagement.page.toast.userCreateErrorTitle", "Não foi possível criar o usuário"),
+        description: getApiErrorMessage(error, t("common.error.checkDataAndRetry", "Verifique os dados e tente novamente.")),
       })
     } finally {
       setIsSaving(false)
@@ -253,12 +260,12 @@ export function UsersManagementPage({
 
   if (!isRoot) {
     return (
-      <PageLayout title={title} subtitle={subtitle} showDefaultActions={false} className={className}>
+      <PageLayout title={resolvedTitle} subtitle={resolvedSubtitle} showDefaultActions={false} className={className}>
         <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border/70 bg-muted/20 p-10 text-center">
           <Shield className="mb-3 h-10 w-10 text-muted-foreground" />
-          <h3 className="text-base font-semibold text-foreground">Acesso restrito</h3>
+          <h3 className="text-base font-semibold text-foreground">{t("usersManagement.page.restricted.title", "Acesso restrito")}</h3>
           <p className="mt-1 max-w-md text-sm text-muted-foreground">
-            Apenas administradores do contrato podem gerenciar o controle de acesso.
+            {t("usersManagement.page.restricted.description", "Apenas administradores do contrato podem gerenciar o controle de acesso.")}
           </p>
         </div>
       </PageLayout>
@@ -266,75 +273,75 @@ export function UsersManagementPage({
   }
 
   const userColumns: DataTableColumn<ContractUser>[] = [
-    { key: "name", title: "Nome", dataIndex: "name" },
-    { key: "username", title: "Usuário", dataIndex: "username" },
-    { key: "email", title: "E-mail", dataIndex: "email" },
+    { key: "name", title: t("common.field.name", "Nome"), dataIndex: "name" },
+    { key: "username", title: t("usersManagement.field.username", "Usuário"), dataIndex: "username" },
+    { key: "email", title: t("common.field.email", "E-mail"), dataIndex: "email" },
     {
       key: "roleName",
-      title: "Perfil",
+      title: t("usersManagement.field.role", "Perfil"),
       dataIndex: "roleName",
       render: (value: string) => <span>{value}</span>,
     },
     {
       key: "isActive",
-      title: "Status",
+      title: t("common.field.status", "Status"),
       dataIndex: "isActive",
       render: (value: boolean) => (
-        <Badge variant={value ? "success" : "destructive"}>{value ? "Ativo" : "Inativo"}</Badge>
+        <Badge variant={value ? "success" : "destructive"}>{value ? t("common.status.active", "Ativo") : t("common.status.inactive", "Inativo")}</Badge>
       ),
     },
     {
       key: "lastLoginAt",
-      title: "Último login",
+      title: t("usersManagement.field.lastLogin", "Último login"),
       dataIndex: "lastLoginAt",
       render: (value?: string) =>
-        value ? new Date(value).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : "-",
+        value ? new Date(value).toLocaleString(i18n?.culture ?? "pt-BR", { dateStyle: "short", timeStyle: "short" }) : "-",
     },
   ]
 
   const roleColumns: DataTableColumn<ContractRole>[] = [
-    { key: "name", title: "Perfil", dataIndex: "name" },
+    { key: "name", title: t("usersManagement.field.role", "Perfil"), dataIndex: "name" },
     {
       key: "description",
-      title: "Descrição",
+      title: t("common.field.description", "Descrição"),
       dataIndex: "description",
       render: (value?: string) => value || "-",
     },
     {
       key: "isRoot",
-      title: "Tipo",
+      title: t("common.field.type", "Tipo"),
       dataIndex: "isRoot",
       render: (value: boolean) =>
-        value ? <Badge variant="warning">Acesso total</Badge> : <Badge variant="outline">Restrito</Badge>,
+        value ? <Badge variant="warning">{t("usersManagement.badge.fullAccess", "Acesso total")}</Badge> : <Badge variant="outline">{t("usersManagement.badge.restricted", "Restrito")}</Badge>,
     },
     {
       key: "permissions",
-      title: "Permissões",
+      title: t("usersManagement.role.field.permissions", "Permissões"),
       dataIndex: "id",
       render: (_value: number, role: ContractRole) => {
         if (role.isRoot) {
-          return "Tudo"
+          return t("usersManagement.value.all", "Tudo")
         }
         const modules = new Set((role.capabilityKeys ?? []).map((key) => key.split(".")[0]))
         const parts: string[] = []
         if (modules.size > 0) {
-          parts.push(`${modules.size} módulo(s)`)
+          parts.push(tf("usersManagement.value.moduleCount", "{0} módulo(s)", modules.size))
         }
         if ((role.accessResourceIds ?? []).length > 0) {
-          parts.push(`${role.accessResourceIds!.length} ação(ões)`)
+          parts.push(tf("usersManagement.value.actionCount", "{0} ação(ões)", role.accessResourceIds!.length))
         }
-        return parts.length > 0 ? parts.join(" · ") : <span className="text-muted-foreground">Nenhuma</span>
+        return parts.length > 0 ? parts.join(" · ") : <span className="text-muted-foreground">{t("common.status.none", "Nenhuma")}</span>
       },
     },
     {
       key: "isDefault",
-      title: "Default",
+      title: t("usersManagement.field.isDefaultColumn", "Default"),
       dataIndex: "isDefault",
-      render: (value: boolean) => (value ? <Badge variant="success">Sim</Badge> : "-"),
+      render: (value: boolean) => (value ? <Badge variant="success">{t("common.status.yes", "Sim")}</Badge> : "-"),
     },
     {
       key: "userCount",
-      title: "Usuários",
+      title: t("usersManagement.field.userCount", "Usuários"),
       dataIndex: "id",
       render: (value: number) => userCountByRole.get(value) ?? 0,
     },
@@ -345,8 +352,8 @@ export function UsersManagementPage({
       if (!selectedUser) {
         toast({
           variant: "warning",
-          title: "Selecione um usuário",
-          description: "Marque a linha do usuário que você quer editar.",
+          title: t("usersManagement.page.toast.selectUserTitle", "Selecione um usuário"),
+          description: t("usersManagement.page.toast.selectUserEditDescription", "Marque a linha do usuário que você quer editar."),
         })
         return
       }
@@ -357,8 +364,8 @@ export function UsersManagementPage({
     if (!selectedRole) {
       toast({
         variant: "warning",
-        title: "Selecione um perfil",
-        description: "Marque a linha do perfil que você quer editar.",
+        title: t("usersManagement.page.toast.selectRoleTitle", "Selecione um perfil"),
+        description: t("usersManagement.page.toast.selectRoleEditDescription", "Marque a linha do perfil que você quer editar."),
       })
       return
     }
@@ -381,8 +388,8 @@ export function UsersManagementPage({
     if (!selectedRole) {
       toast({
         variant: "warning",
-        title: "Selecione um perfil",
-        description: "Marque a linha do perfil que você quer duplicar.",
+        title: t("usersManagement.page.toast.selectRoleTitle", "Selecione um perfil"),
+        description: t("usersManagement.page.toast.selectRoleDuplicateDescription", "Marque a linha do perfil que você quer duplicar."),
       })
       return
     }
@@ -390,7 +397,7 @@ export function UsersManagementPage({
     try {
       const source = await UsersManagementService.getRoleById(selectedRole.id)
       setDuplicateInitial({
-        name: `${source.name} (cópia)`,
+        name: `${source.name}${t("usersManagement.page.duplicateSuffix", " (cópia)")}`,
         description: source.description ?? "",
         isRoot: source.isRoot,
         isDefault: false,
@@ -402,8 +409,8 @@ export function UsersManagementPage({
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Não foi possível duplicar",
-        description: getApiErrorMessage(error, "Tente novamente."),
+        title: t("usersManagement.page.toast.duplicateErrorTitle", "Não foi possível duplicar"),
+        description: getApiErrorMessage(error, t("common.error.retry", "Tente novamente.")),
       })
     }
   }
@@ -416,8 +423,8 @@ export function UsersManagementPage({
     if (!selectedRole) {
       toast({
         variant: "warning",
-        title: "Selecione um perfil",
-        description: "Marque a linha do perfil que você quer excluir.",
+        title: t("usersManagement.page.toast.selectRoleTitle", "Selecione um perfil"),
+        description: t("usersManagement.page.toast.selectRoleDeleteDescription", "Marque a linha do perfil que você quer excluir."),
       })
       return
     }
@@ -426,8 +433,8 @@ export function UsersManagementPage({
     if (usersInRole > 0) {
       toast({
         variant: "destructive",
-        title: "Perfil com usuários vinculados",
-        description: `Existem ${usersInRole} usuário(s) usando este perfil. Reatribua antes de excluir.`,
+        title: t("usersManagement.page.toast.roleHasUsersTitle", "Perfil com usuários vinculados"),
+        description: tf("usersManagement.page.toast.roleHasUsersDescription", "Existem {0} usuário(s) usando este perfil. Reatribua antes de excluir.", usersInRole),
       })
       return
     }
@@ -440,15 +447,15 @@ export function UsersManagementPage({
     setIsDeletingRole(true)
     try {
       await UsersManagementService.deleteRole(selectedRole.id)
-      toast({ variant: "success", title: "Perfil excluído", description: selectedRole.name })
+      toast({ variant: "success", title: t("usersManagement.page.toast.roleDeletedTitle", "Perfil excluído"), description: selectedRole.name })
       setIsConfirmDeleteRoleOpen(false)
       setSelectedRole(null)
       await loadData()
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Não foi possível excluir",
-        description: getApiErrorMessage(error, "Tente novamente."),
+        title: t("usersManagement.page.toast.deleteErrorTitle", "Não foi possível excluir"),
+        description: getApiErrorMessage(error, t("common.error.retry", "Tente novamente.")),
       })
     } finally {
       setIsDeletingRole(false)
@@ -462,8 +469,8 @@ export function UsersManagementPage({
   return (
     <>
       <PageLayout
-        title={title}
-        subtitle={subtitle}
+        title={resolvedTitle}
+        subtitle={resolvedSubtitle}
         className={className}
         onRefresh={() => void loadData()}
         onAdd={handleAdd}
@@ -473,7 +480,7 @@ export function UsersManagementPage({
         actions={activeTab === "roles" ? [
           {
             key: "duplicate",
-            label: "Duplicar perfil",
+            label: t("usersManagement.page.action.duplicateRole", "Duplicar perfil"),
             icon: <Copy className="h-4 w-4" />,
             variant: "outline",
             onClick: () => void handleDuplicateRole(),
@@ -493,12 +500,12 @@ export function UsersManagementPage({
             <TabsList variant="underline" className="mb-4">
               <TabsTrigger value="users">
                 <Users className="h-4 w-4" />
-                Usuários
+                {t("usersManagement.tab.users", "Usuários")}
                 <TabsBadge>{users.length}</TabsBadge>
               </TabsTrigger>
               <TabsTrigger value="roles">
                 <ShieldCheck className="h-4 w-4" />
-                Perfis
+                {t("usersManagement.tab.roles", "Perfis")}
                 <TabsBadge>{roles.length}</TabsBadge>
               </TabsTrigger>
             </TabsList>
@@ -509,7 +516,7 @@ export function UsersManagementPage({
               columns={userColumns}
               data={users}
               rowKey="userId"
-              emptyText="Nenhum usuário vinculado a este contrato."
+              emptyText={t("usersManagement.page.usersEmpty", "Nenhum usuário vinculado a este contrato.")}
               loading={loading}
               pageSize={10}
               pageSizeOptions={[10, 25, 50]}
@@ -524,7 +531,7 @@ export function UsersManagementPage({
               columns={roleColumns}
               data={roles}
               rowKey="id"
-              emptyText="Nenhum perfil cadastrado neste contrato."
+              emptyText={t("usersManagement.page.rolesEmpty", "Nenhum perfil cadastrado neste contrato.")}
               loading={loading}
               pageSize={10}
               pageSizeOptions={[10, 25, 50]}
@@ -539,62 +546,62 @@ export function UsersManagementPage({
       <Modal open={isFormOpen} onOpenChange={(open) => (open ? setIsFormOpen(true) : closeForm())}>
         <ModalContent size="lg">
           <ModalHeader>
-            <ModalTitle>{isEditMode ? "Editar usuário" : "Novo usuário"}</ModalTitle>
+            <ModalTitle>{isEditMode ? t("usersManagement.page.userModal.editTitle", "Editar usuário") : t("usersManagement.page.userModal.newTitle", "Novo usuário")}</ModalTitle>
             <ModalDescription>
               {isEditMode
-                ? "Username e e-mail não são editáveis."
-                : "O usuário será criado e vinculado automaticamente ao contrato ativo."}
+                ? t("usersManagement.page.userModal.editDescription", "Username e e-mail não são editáveis.")
+                : t("usersManagement.page.userModal.newDescription", "O usuário será criado e vinculado automaticamente ao contrato ativo.")}
             </ModalDescription>
           </ModalHeader>
           <ModalBody>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Nome completo</label>
+                <label className="text-xs text-muted-foreground">{t("usersManagement.page.field.fullName", "Nome completo")}</label>
                 <Input
                   value={form.name}
                   onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-                  placeholder="Maria Silva"
+                  placeholder={t("usersManagement.page.field.fullNamePlaceholder", "Maria Silva")}
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Username</label>
+                <label className="text-xs text-muted-foreground">{t("usersManagement.page.field.usernameLabel", "Username")}</label>
                 <Input
                   value={form.username}
                   onChange={(event) => setForm((prev) => ({ ...prev, username: event.target.value }))}
-                  placeholder="maria.silva"
+                  placeholder={t("usersManagement.page.field.usernamePlaceholder", "maria.silva")}
                   disabled={isEditMode}
                   readOnly={isEditMode}
                 />
               </div>
               <div className="space-y-1 sm:col-span-2">
-                <label className="text-xs text-muted-foreground">E-mail</label>
+                <label className="text-xs text-muted-foreground">{t("common.field.email", "E-mail")}</label>
                 <Input
                   type="email"
                   value={form.email}
                   onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
-                  placeholder="maria@empresa.com"
+                  placeholder={t("usersManagement.page.field.emailPlaceholder", "maria@empresa.com")}
                   disabled={isEditMode}
                   readOnly={isEditMode}
                 />
               </div>
               <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">
-                  {isEditMode ? "Nova senha (opcional)" : "Senha"}
+                  {isEditMode ? t("usersManagement.page.field.passwordOptional", "Nova senha (opcional)") : t("usersManagement.page.field.password", "Senha")}
                 </label>
                 <Input
                   type="password"
                   value={form.password}
                   onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
-                  placeholder={isEditMode ? "Deixe em branco para manter" : "Mínimo 6 caracteres"}
+                  placeholder={isEditMode ? t("usersManagement.page.field.passwordKeepPlaceholder", "Deixe em branco para manter") : t("usersManagement.page.field.passwordMinPlaceholder", "Mínimo 6 caracteres")}
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Perfil</label>
+                <label className="text-xs text-muted-foreground">{t("usersManagement.field.role", "Perfil")}</label>
                 <SearchableSelect
                   value={form.roleId}
                   onValueChange={(value) => setForm((prev) => ({ ...prev, roleId: value }))}
                   options={roleOptions}
-                  placeholder="Selecione um perfil"
+                  placeholder={t("usersManagement.page.field.rolePlaceholder", "Selecione um perfil")}
                 />
               </div>
               {isEditMode ? (
@@ -607,7 +614,7 @@ export function UsersManagementPage({
                     className="h-4 w-4 rounded border-border"
                   />
                   <label htmlFor="user-active-toggle" className="text-sm text-foreground">
-                    Usuário ativo
+                    {t("usersManagement.page.field.userActive", "Usuário ativo")}
                   </label>
                 </div>
               ) : null}
@@ -615,10 +622,10 @@ export function UsersManagementPage({
           </ModalBody>
           <ModalFooter>
             <Button variant="outline" onClick={closeForm} disabled={isSaving}>
-              Cancelar
+              {t("common.action.cancel", "Cancelar")}
             </Button>
             <Button onClick={handleSave} disabled={isSaving}>
-              {isSaving ? "Salvando..." : isEditMode ? "Salvar" : "Criar usuário"}
+              {isSaving ? t("common.action.saving", "Salvando...") : isEditMode ? t("common.action.save", "Salvar") : t("usersManagement.page.action.createUser", "Criar usuário")}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -647,13 +654,13 @@ export function UsersManagementPage({
         open={isConfirmDeleteRoleOpen}
         onOpenChange={(open) => setIsConfirmDeleteRoleOpen(open)}
         onConfirm={() => void confirmDeleteRole()}
-        title="Excluir perfil"
+        title={t("usersManagement.page.confirmDelete.title", "Excluir perfil")}
         description={
           selectedRole
-            ? `Confirma a exclusão do perfil "${selectedRole.name}"? Esta ação não pode ser desfeita.`
+            ? tf("usersManagement.page.confirmDelete.description", 'Confirma a exclusão do perfil "{0}"? Esta ação não pode ser desfeita.', selectedRole.name)
             : ""
         }
-        confirmText="Excluir"
+        confirmText={t("common.action.delete", "Excluir")}
         variant="danger"
         loading={isDeletingRole}
       />

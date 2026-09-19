@@ -6,6 +6,24 @@ import type { ArchonCulture, I18nContextValue, LocalizationCatalog } from "./typ
 import { LANGUAGE_KEY as LANGUAGE_STORAGE_KEY } from "../services/storage/keys"
 const DEFAULT_CULTURE: ArchonCulture = "pt-BR"
 
+// O catalogo de traducao ainda nao existe quando estas mensagens disparam (e a falha e
+// justamente carregar esse catalogo), entao nao da pra resolver com t(): precisam do proprio
+// texto embutido, nas 3 culturas suportadas.
+const CATALOG_LOAD_FALLBACK: Record<ArchonCulture, { empty: string; failed: string }> = {
+  "pt-BR": {
+    empty: "O catálogo de localização não foi retornado pela API.",
+    failed: "Não foi possível carregar o catálogo de localização."
+  },
+  "en-US": {
+    empty: "The localization catalog was not returned by the API.",
+    failed: "Could not load the localization catalog."
+  },
+  "es-AR": {
+    empty: "El catálogo de localización no fue devuelto por la API.",
+    failed: "No se pudo cargar el catálogo de localización."
+  }
+}
+
 const I18nContext = React.createContext<I18nContextValue | null>(null)
 
 const isSupportedCulture = (value: string | null): value is ArchonCulture => {
@@ -60,7 +78,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
         : (await httpClient.get<LocalizationCatalog>(`/Localization/catalog?lang=${encodeURIComponent(nextCulture)}`)).data
 
       if (!catalog) {
-        throw new Error("O catálogo de localização não foi retornado pela API.")
+        throw new Error(CATALOG_LOAD_FALLBACK[nextCulture].empty)
       }
 
       setCultureState(nextCulture)
@@ -71,7 +89,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
     } catch (currentError) {
       const message = currentError instanceof Error
         ? currentError.message
-        : "Não foi possível carregar o catálogo de localização."
+        : CATALOG_LOAD_FALLBACK[nextCulture].failed
 
       setError(message)
       throw currentError

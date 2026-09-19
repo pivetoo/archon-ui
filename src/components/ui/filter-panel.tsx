@@ -2,6 +2,7 @@ import { Filter, Check } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Button } from "./button"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover"
+import { useOptionalI18n } from "../../i18n/I18nProvider"
 
 export interface FilterOption {
   value: string
@@ -73,9 +74,12 @@ export function FilterPanel({
   sections,
   onClearAll,
   className,
-  title = "Filtros",
-  clearLabel = "Limpar tudo",
+  title,
+  clearLabel,
 }: FilterPanelProps) {
+  const i18n = useOptionalI18n()
+  const resolvedTitle = title ?? i18n?.t("table.filter.title") ?? "Filtros"
+  const resolvedClearLabel = clearLabel ?? i18n?.t("common.action.clearAll") ?? "Limpar tudo"
   const activeCount = sections.reduce(
     (acc, section) => acc + (section.value && section.value !== "" ? 1 : 0),
     0,
@@ -98,7 +102,7 @@ export function FilterPanel({
           variant={hasActive ? "outline-primary" : "outline"}
           size="sm"
           className={cn("gap-1.5 px-2.5", className)}
-          aria-label={title}
+          aria-label={resolvedTitle}
         >
           <Filter className="h-4 w-4" />
           {hasActive && (
@@ -110,14 +114,14 @@ export function FilterPanel({
       </PopoverTrigger>
       <PopoverContent align="end" className={cn("p-0", needsWidePopover ? "w-[380px]" : "w-80")}>
         <div className="flex items-center justify-between border-b px-3 py-2">
-          <span className="text-sm font-semibold">{title}</span>
+          <span className="text-sm font-semibold">{resolvedTitle}</span>
           {hasActive && (
             <button
               type="button"
               onClick={handleClear}
               className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              {clearLabel}
+              {resolvedClearLabel}
             </button>
           )}
         </div>
@@ -136,7 +140,8 @@ interface FilterPanelSectionProps {
 }
 
 function FilterPanelSection({ section }: FilterPanelSectionProps) {
-  const allLabel = section.allLabel ?? "Todos"
+  const i18n = useOptionalI18n()
+  const allLabel = section.allLabel ?? i18n?.t("common.filter.all") ?? "Todos"
   const selectedValue = section.value || ""
   const useChips = isChipsSection(section)
 
